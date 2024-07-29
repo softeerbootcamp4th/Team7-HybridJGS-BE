@@ -1,0 +1,5 @@
+/Server/.gradle/
+/Server/.idea/
+/Server/build/
+/Server/src/main/resources/application.properties
+/.idea/
