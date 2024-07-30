@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.Set;
 
+@Entity
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;
