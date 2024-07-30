@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.entity.casperBot;
 import JGS.CasperEvent.domain.event.entity.casperBot.casperEnum.*;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import com.google.gson.annotations.SerializedName;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -72,5 +73,24 @@ public class CasperBot extends BaseEntity {
 
     public String getExpectation() {
         return expectation;
+    }
+
+    @PostConstruct
+    public void validateEnumFields() {
+        if (eyeShape == null) {
+            throw new IllegalArgumentException("EyeShape cannot be null");
+        }
+        if (eyePosition == null) {
+            throw new IllegalArgumentException("EyePosition cannot be null");
+        }
+        if (mouthShape == null) {
+            throw new IllegalArgumentException("MouthShape cannot be null");
+        }
+        if (color == null) {
+            throw new IllegalArgumentException("Color cannot be null");
+        }
+        if (sticker == null) {
+            throw new IllegalArgumentException("Sticker cannot be null");
+        }
     }
 }
