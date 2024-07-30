@@ -62,5 +62,11 @@ jobs:
           key: ${{ secrets.EC2_SECRET }}
           script: |
             cd /home/ubuntu/spring-boot
+            echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" > .env
+            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+            echo "SPRING_JPA_HIBERNATE_DDL_AUTO=update" >> .env
+            echo "SPRING_REDIS_HOST=redis" >> .env
+            echo "SPRING_REDIS_PORT=6379" >> .env
             docker-compose pull
             docker-compose up -d
