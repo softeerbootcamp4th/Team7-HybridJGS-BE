@@ -1,4 +1,4 @@
-package JGS.CasperEvent.LotteryEventTests;
+package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,15 +9,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LotteryEvent.class)
-public class CasperBotTest {
+public class LotteryEventControllerTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -43,22 +44,22 @@ public class CasperBotTest {
                 "\"expectation\": \"myExpectation\"" + "}";
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
+        ResultActions perform = mockMvc.perform(post("/event/lottery")
                 .contentType(MediaType.APPLICATION_JSON)
                 .contentType(casperBotRequest));
 
         //then
-        perform.andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(201))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("생성에 성공하였습니다."))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.eyeShape").value("ALLOY_WHEEL_17"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.eyePosition").value("CENTER"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.mouthShape").value("BEAMING"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.color").value("SIENNA_ORANGE_METALLIC"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.sticker").value("LOVELY_RIBBON"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.name").value("myCasperBot"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.expectation").value("myExpectation"))
-                .andDo(MockMvcResultHandlers.print());
+        perform.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusCode").value(201))
+                .andExpect(jsonPath("$.message").value("생성에 성공하였습니다."))
+                .andExpect(jsonPath("$.result.eyeShape").value("ALLOY_WHEEL_17"))
+                .andExpect(jsonPath("$.result.eyePosition").value("CENTER"))
+                .andExpect(jsonPath("$.result.mouthShape").value("BEAMING"))
+                .andExpect(jsonPath("$.result.color").value("SIENNA_ORANGE_METALLIC"))
+                .andExpect(jsonPath("$.result.sticker").value("LOVELY_RIBBON"))
+                .andExpect(jsonPath("$.result.name").value("myCasperBot"))
+                .andExpect(jsonPath("$.result.expectation").value("myExpectation"))
+                .andDo(print());
     }
 
     @Test
@@ -74,14 +75,14 @@ public class CasperBotTest {
                 "\"expectation\": \"myExpectation\"" + "}";
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
+        ResultActions perform = mockMvc.perform(post("/event/lottery")
                 .contentType(MediaType.APPLICATION_JSON)
                 .contentType(casperBotRequest));
 
         //then
-        perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("필수 필드가 입력되지 않았습니다."))
-                .andDo(MockMvcResultHandlers.print());
+        perform.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("필수 필드가 입력되지 않았습니다."))
+                .andDo(print());
     }
 
     @Test
@@ -98,13 +99,13 @@ public class CasperBotTest {
                 "\"expectation\": \"myExpectation\"" + "}";
 
         //when
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
+        ResultActions perform = mockMvc.perform(post("/event/lottery")
                 .contentType(MediaType.APPLICATION_JSON)
                 .contentType(casperBotRequest));
 
         //then
-        perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("잘못된 값이 포함된 요청입니다."))
-                .andDo(MockMvcResultHandlers.print());
+        perform.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("잘못된 값이 포함된 요청입니다."))
+                .andDo(print());
     }
 }
