@@ -29,7 +29,8 @@ public class CasperBotTest {
                 .build();
     }
 
-    @DisplayName("캐스퍼 봇 생성 성공 테스트입니다.")
+    @Test
+    @DisplayName("캐스퍼 봇 생성 성공 테스트")
     void createCasperBotSuccessTest() throws Exception {
         //given
         String casperBotRequest = "{" +
@@ -39,7 +40,7 @@ public class CasperBotTest {
                 "\"color\": \"2\"," +
                 "\"sticker\": \"4\"," +
                 "\"name\": \"myCasperBot\"," +
-                "\"expectation\": \"myExpectation\"," + "}";
+                "\"expectation\": \"myExpectation\"" + "}";
 
         //when
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
@@ -47,9 +48,9 @@ public class CasperBotTest {
                 .contentType(casperBotRequest));
 
         //then
-        perform.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("요청에 성공하였습니다."))
+        perform.andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(201))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("생성에 성공하였습니다."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.eyeShape").value("ALLOY_WHEEL_17"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.eyePosition").value("CENTER"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.mouthShape").value("BEAMING"))
@@ -61,12 +62,49 @@ public class CasperBotTest {
     }
 
     @Test
-    @DisplayName("캐스퍼 봇 생성 실패 테스트입니다.")
-    void createCasperBotFailureTest() {
+    @DisplayName("캐스퍼 봇 생성 실패 테스트입니다. - 필수 필드 없음")
+    void createCasperBotFailureTest_RequiredFieldNotExist() throws Exception {
         //given
+        String casperBotRequest = "{" +
+                "\"eye_shape\": \"2\"," +
+                "\"eye_position\": \"1\"," +
+                "\"mouth_shape\": \"4\"," +
+                "\"color\": \"2\"," +
+                "\"sticker\": \"4\"," +
+                "\"expectation\": \"myExpectation\"" + "}";
 
         //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(casperBotRequest));
 
         //then
+        perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("필수 필드가 입력되지 않았습니다."))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 생성 실패 테스트입니다. - 잘못된 값")
+    void createCasperBotSuccessTest_WrongValue() throws Exception {
+        //given
+        String casperBotRequest = "{" +
+                "\"eye_shape\": \"15\"," +
+                "\"eye_position\": \"1\"," +
+                "\"mouth_shape\": \"4\"," +
+                "\"color\": \"2\"," +
+                "\"sticker\": \"4\"," +
+                "\"name\": \"myCasperBot\"," +
+                "\"expectation\": \"myExpectation\"" + "}";
+
+        //when
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/event/lottery")
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(casperBotRequest));
+
+        //then
+        perform.andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("잘못된 값이 포함된 요청입니다."))
+                .andDo(MockMvcResultHandlers.print());
     }
 }
