@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.Set;
 
+@Entity
 public class LotteryEvent extends BaseEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
