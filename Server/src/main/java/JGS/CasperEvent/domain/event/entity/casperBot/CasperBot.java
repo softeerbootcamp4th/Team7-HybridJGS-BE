@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.entity.casperBot;
 
 import JGS.CasperEvent.domain.event.entity.casperBot.casperEnum.*;
 import JGS.CasperEvent.global.entity.BaseEntity;
+import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -15,18 +16,23 @@ public class CasperBot extends BaseEntity {
 
     private String phoneNumber;
 
+    @SerializedName("eyeShape")
     @Enumerated(EnumType.STRING)
     private EyeShape eyeShape;
 
+    @SerializedName("eyePosition")
     @Enumerated(EnumType.STRING)
     private EyePosition eyePosition;
 
+    @SerializedName("mouthShape")
     @Enumerated(EnumType.STRING)
     private MouthShape mouthShape;
 
+    @SerializedName("color")
     @Enumerated(EnumType.STRING)
     private Color color;
 
+    @SerializedName("sticker")
     @Enumerated(EnumType.STRING)
     private Sticker sticker;
     private String name;
