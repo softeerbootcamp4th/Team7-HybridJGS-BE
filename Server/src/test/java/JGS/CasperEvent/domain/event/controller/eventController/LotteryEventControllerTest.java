@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -148,13 +149,53 @@ public class LotteryEventControllerTest {
     }
 
     @Test
-    @DisplayName("캐스퍼 봇 응모 여부 조회 - 성공")
-    void userHasAppliedCasperBot() {
-
+    @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재할 경우")
+    void userHasAppliedCasperBotSuccessTest_PresentUser() throws Exception {
         //given
+        createCasperBotSuccessTest();
+        Cookie myCookie = new Cookie("userData", "abc");
 
         //when
+        ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(myCookie));
 
         //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재하지 않는 경우")
+    void userHasAppliedCasperBotSuccessTest_NotPresentUser() throws Exception {
+        //given
+        Cookie myCookie = new Cookie("userData", "NotPresentUser");
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(myCookie));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(false))
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 응모 여부 조회 실패 - 쿠키가 없는 경우")
+    void userHasAppliedCasperBotFailureTest_NotPresentCookie() throws Exception {
+        //given
+        //when
+        ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
+                .contentType(MediaType.APPLICATION_JSON));
+        //then
+        perform.andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("유저 정보가 없습니다."))
+                .andDo(print());
+
     }
 }

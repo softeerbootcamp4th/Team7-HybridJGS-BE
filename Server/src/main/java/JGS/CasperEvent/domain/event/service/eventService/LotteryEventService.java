@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static JGS.CasperEvent.global.util.GsonUtil.getGson;
 import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
 
@@ -40,6 +42,15 @@ public class LotteryEventService {
         lotteryParticipantsRepository.save(participants);
         return GetCasperBot.of(casperBot);
     }
+
+    public Boolean isUserApplied(String userData) {
+        String phoneNumber = getDecodedPhoneNumber(userData);
+
+        Optional<LotteryParticipants> participant = lotteryParticipantsRepository.findByPhoneNumber(phoneNumber);
+        if (participant.isEmpty()) return false;
+        else return true;
+    }
+
 
     public LotteryParticipants registerUserIfNeed(String userData) {
         String phoneNumber = getDecodedPhoneNumber(userData);
