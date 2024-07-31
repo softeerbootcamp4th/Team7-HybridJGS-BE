@@ -24,26 +24,46 @@ docs: 문서 작성
 ### 폴더 구조
 
 ```jsx
-└── src
-    ├── apis
-    │   └── badgeAPI.ts
-    ├── components
-    │   └── Header
-    │       └── index.tsx
-    ├── constants
-    │   └── log.ts
-    │   └── color.ts
-    ├── contexts
-    │   └── badgeContext.tsx
-    ├── hooks
-    │   └── useFetch.tsx
-    ├── pages
-    │   └── Main
-    │       └── index.tsx
-    ├── types
-    │   └── badge.ts
-    └── utils
-        └── badge.ts
+.
+├── main
+│   ├── java
+│   │   └── JGS
+│   │       └── CasperEvent
+│   │           ├── domain
+│   │           │   ├── event
+│   │           │   │   ├── controller
+│   │           │   │   │   ├── adminController
+│   │           │   │   │   └── eventController
+│   │           │   │   ├── dto
+│   │           │   │   ├── entity
+│   │           │   │   │   ├── admin
+│   │           │   │   │   ├── casperBot
+│   │           │   │   │   │   └── casperEnum
+│   │           │   │   │   ├── event
+│   │           │   │   │   └── participants
+│   │           │   │   ├── repository
+│   │           │   │   │   ├── eventRepository
+│   │           │   │   │   └── participantsRepository
+│   │           │   │   └── service
+│   │           │   │       ├── AdminService
+│   │           │   │       └── eventService
+│   │           │   ├── health
+│   │           │   │   └── api
+│   │           │   └── url
+│   │           │       ├── controller
+│   │           │       ├── entity
+│   │           │       ├── repository
+│   │           │       └── service
+│   │           └── global
+│   │               ├── entity
+│   │               ├── error
+│   │               └── response
+│   └── resources
+└── test
+    └── java
+        └── JGS
+            └── CasperEvent
+                └── LotteryEventTests
 ```
 
 ### 커밋 템플릿
