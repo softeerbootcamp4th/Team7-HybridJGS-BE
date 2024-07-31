@@ -152,6 +152,7 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재할 경우")
     void userHasAppliedCasperBotSuccessTest_PresentUser() throws Exception {
         //given
+        createCasperBotSuccessTest();
         Cookie myCookie = new Cookie("userData", "abc");
 
         //when
@@ -193,7 +194,7 @@ public class LotteryEventControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
         //then
         perform.andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.result").value("유저 정보가 없습니다."))
+                .andExpect(jsonPath("$.message").value("유저 정보가 없습니다."))
                 .andDo(print());
 
     }
