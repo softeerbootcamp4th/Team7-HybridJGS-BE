@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.GetCasperBot;
+import JGS.CasperEvent.domain.event.dto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 
 import static JGS.CasperEvent.global.util.GsonUtil.getGson;
 import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
@@ -43,12 +44,13 @@ public class LotteryEventService {
         return GetCasperBot.of(casperBot);
     }
 
-    public Boolean isUserApplied(String userData) {
+    public GetLotteryParticipant GetLotteryParticipant(String userData) throws UserPrincipalNotFoundException {
         String phoneNumber = getDecodedPhoneNumber(userData);
 
-        Optional<LotteryParticipants> participant = lotteryParticipantsRepository.findByPhoneNumber(phoneNumber);
-        if (participant.isEmpty()) return false;
-        else return true;
+        LotteryParticipants participant = lotteryParticipantsRepository.findByPhoneNumber(phoneNumber).orElse(null);
+
+        if (participant == null) throw new UserPrincipalNotFoundException("응모 내역이 없습니다.");
+        else return GetLotteryParticipant.of(participant);
     }
 
 
