@@ -26,6 +26,7 @@ public class LotteryEventControllerTest {
     @Autowired
     private LotteryEventService lotteryEventService;
 
+    //TODO: Expecation이 없을때, 있을때 값 증가 테스트
     @Test
     @DisplayName("캐스퍼 봇 생성 성공 테스트")
     void createCasperBotSuccessTest() throws Exception {
@@ -162,7 +163,8 @@ public class LotteryEventControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.result").value(true))
+                .andExpect(jsonPath("$.message").value("요청에 성공했습니다."))
+                .andExpect(jsonPath("$.result").exists())
                 .andDo(print());
 
     }
@@ -179,8 +181,8 @@ public class LotteryEventControllerTest {
                 .cookie(myCookie));
 
         //then
-        perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.result").value(false))
+        perform.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("리소스를 찾을 수 없습니다."))
                 .andDo(print());
 
     }
