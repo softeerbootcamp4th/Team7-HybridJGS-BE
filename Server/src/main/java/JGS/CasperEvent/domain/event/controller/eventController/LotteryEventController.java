@@ -20,4 +20,9 @@ public class LotteryEventController {
                                                                       @RequestBody String body) {
         return new ResponseEntity<>(CustomResponse.create(lotteryEventService.postCasperBot(userData, body)), HttpStatus.CREATED);
     }
+
+    @GetMapping("/applied")
+    public ResponseEntity<CustomResponse<Boolean>> isUserApplied(@CookieValue String userData) {
+        return new ResponseEntity<>(CustomResponse.success(lotteryEventService.isUserApplied(userData)), HttpStatus.OK);
+    }
 }
