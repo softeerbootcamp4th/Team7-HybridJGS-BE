@@ -21,14 +21,30 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.apache.commons:commons-dbcp2:2.9.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'software.amazon.awssdk:ssm'
+    implementation 'software.amazon.awssdk:auth'
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+    implementation 'mysql:mysql-connector-java:8.0.33'  // MySQL JDBC 드라이버 추가
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
     runtimeOnly 'com.h2database:h2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	  implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+configurations {
+    all {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 }
