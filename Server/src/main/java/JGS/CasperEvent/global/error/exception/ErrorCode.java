@@ -12,4 +12,8 @@ public enum ErrorCode {
     ErrorCode(int status) {
         this.status = status;
     }
+
+    public int getStatus(){
+        return status;
+    }
 }

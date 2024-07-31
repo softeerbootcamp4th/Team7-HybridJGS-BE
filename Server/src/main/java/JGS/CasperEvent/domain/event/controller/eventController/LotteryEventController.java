@@ -4,24 +4,20 @@ import JGS.CasperEvent.domain.event.dto.GetCasperBot;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.response.CustomResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/event/lottery")
 public class LotteryEventController {
 
-    private final LotteryEventService lotteryEventService;
-
     @Autowired
-    public LotteryEventController(LotteryEventService lotteryEventService) {
-        this.lotteryEventService = lotteryEventService;
-    }
+    private LotteryEventService lotteryEventService;
 
     @PostMapping
-    public CustomResponse<GetCasperBot> postCasperBot(@RequestBody String body) {
-        return CustomResponse.create(lotteryEventService.postCasperBot(body));
+    public ResponseEntity<CustomResponse<GetCasperBot>> postCasperBot(@CookieValue String userData,
+                                                                      @RequestBody String body) {
+        return new ResponseEntity<>(CustomResponse.create(lotteryEventService.postCasperBot(userData, body)), HttpStatus.CREATED);
     }
 }

@@ -2,8 +2,9 @@ package JGS.CasperEvent.domain.event.entity.casperBot;
 
 import JGS.CasperEvent.domain.event.entity.casperBot.casperEnum.*;
 import JGS.CasperEvent.global.entity.BaseEntity;
+import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.ErrorCode;
 import com.google.gson.annotations.SerializedName;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -75,22 +76,25 @@ public class CasperBot extends BaseEntity {
         return expectation;
     }
 
-    @PostConstruct
-    public void validateEnumFields() {
+    public void validateEnumFields() throws CustomException{
         if (eyeShape == null) {
-            throw new IllegalArgumentException("EyeShape cannot be null");
+            throw new CustomException("eyeShape cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
         if (eyePosition == null) {
-            throw new IllegalArgumentException("EyePosition cannot be null");
+            throw new CustomException("EyePosition cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
         if (mouthShape == null) {
-            throw new IllegalArgumentException("MouthShape cannot be null");
+            throw new CustomException("MouthShape cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
         if (color == null) {
-            throw new IllegalArgumentException("Color cannot be null");
+            throw new CustomException("Color cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
         if (sticker == null) {
-            throw new IllegalArgumentException("Sticker cannot be null");
+            throw new CustomException("Sticker cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
