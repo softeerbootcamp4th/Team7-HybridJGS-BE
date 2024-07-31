@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(HealthController.class)
@@ -32,8 +33,9 @@ class CasperEventApplicationTests {
 	void HealthTest() throws Exception {
 		mockMvc.perform(get("/health"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.statusCode").value(200))
-				.andExpect(jsonPath("$.result").value(true));
+				.andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+				.andExpect(jsonPath("$.result").value(true))
+				.andDo(print());
 	}
 
 }

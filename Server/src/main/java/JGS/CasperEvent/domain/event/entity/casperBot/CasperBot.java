@@ -2,6 +2,8 @@ package JGS.CasperEvent.domain.event.entity.casperBot;
 
 import JGS.CasperEvent.domain.event.entity.casperBot.casperEnum.*;
 import JGS.CasperEvent.global.entity.BaseEntity;
+import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.ErrorCode;
 import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
@@ -72,5 +74,27 @@ public class CasperBot extends BaseEntity {
 
     public String getExpectation() {
         return expectation;
+    }
+
+    public void validateEnumFields() throws CustomException{
+        if (eyeShape == null) {
+            throw new CustomException("eyeShape cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
+        }
+        if (eyePosition == null) {
+            throw new CustomException("EyePosition cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
+        }
+        if (mouthShape == null) {
+            throw new CustomException("MouthShape cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
+        }
+        if (color == null) {
+            throw new CustomException("Color cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
+        }
+        if (sticker == null) {
+            throw new CustomException("Sticker cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
+        }
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
