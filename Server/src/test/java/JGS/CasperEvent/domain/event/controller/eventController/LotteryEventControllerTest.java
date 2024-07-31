@@ -29,14 +29,16 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 성공 테스트")
     void createCasperBotSuccessTest() throws Exception {
         //given
-        String casperBotRequest = "{\n" +
-                "\"eyeShape\": \"2\",\n" +
-                "\"eyePosition\": \"1\",\n" +
-                "\"mouthShape\": \"4\",\n" +
-                "\"color\": \"2\",\n" +
-                "\"sticker\": \"4\",\n" +
-                "\"name\": \"myCasperBot\",\n" +
-                "\"expectation\": \"myExpectation\"\n" + "}";
+        String casperBotRequest = """
+                {
+                "eyeShape": "2",
+                "eyePosition": "1",
+                "mouthShape": "4",
+                "color": "2",
+                "sticker": "4",
+                "name": "myCasperBot",
+                "expectation": "myExpectation"
+                }""";
 
         Cookie myCookie = new Cookie("userData", "abc");
 
@@ -64,13 +66,16 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 실패 테스트 - 필수 필드 없음")
     void createCasperBotFailureTest_RequiredFieldNotExist() throws Exception {
         //given
-        String casperBotRequest = "{" +
-                "\"eye_shape\": \"2\"," +
-                "\"eye_position\": \"1\"," +
-                "\"mouth_shape\": \"4\"," +
-                "\"color\": \"2\"," +
-                "\"sticker\": \"4\"," +
-                "\"expectation\": \"myExpectation\"" + "}";
+        String casperBotRequest = """
+                {
+                "eye_shape": "2",
+                "eye_position": "1",
+                "mouth_shape": "4",
+                "color": "2",
+                "sticker": "4",
+                "expectation": "myExpectation"
+                }
+                """;
 
         Cookie myCookie = new Cookie("userData", "abc");
 
@@ -90,14 +95,16 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 실패 테스트 - 잘못된 값")
     void createCasperBotSuccessTest_WrongValue() throws Exception {
         //given
-        String casperBotRequest = "{" +
-                "\"eyeShape\": \"15\"," +
-                "\"eyePosition\": \"1\"," +
-                "\"mouthShape\": \"4\"," +
-                "\"color\": \"2\"," +
-                "\"sticker\": \"4\"," +
-                "\"name\": \"myCasperBot\"," +
-                "\"expectation\": \"myExpectation\"" + "}";
+        String casperBotRequest = """
+                {
+                "eyeShape": "15",
+                "eyePosition": "1",
+                "mouthShape": "4",
+                "color": "2",
+                "sticker": "4",
+                "name": "myCasperBot",
+                "expectation": "myExpectation"
+                }""";
         Cookie myCookie = new Cookie("userData", "abc");
 
         //when
@@ -116,14 +123,17 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 실패 테스트 - 쿠키 없음")
     void createCasperBotSuccessTest_CookieNotPresent() throws Exception {
         //given
-        String casperBotRequest = "{" +
-                "\"eyeShape\": \"1\"," +
-                "\"eyePosition\": \"1\"," +
-                "\"mouthShape\": \"4\"," +
-                "\"color\": \"2\"," +
-                "\"sticker\": \"4\"," +
-                "\"name\": \"myCasperBot\"," +
-                "\"expectation\": \"myExpectation\"" + "}";
+        String casperBotRequest = """
+                {
+                "eyeShape": "1",
+                "eyePosition": "1",
+                "mouthShape": "4",
+                "color": "2",
+                "sticker": "4",
+                "name": "myCasperBot",
+                "expectation": "myExpectation"
+                }
+                """;
 
         //when
         ResultActions perform = mockMvc.perform(post("/event/lottery")

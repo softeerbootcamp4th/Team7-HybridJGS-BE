@@ -18,7 +18,6 @@ public class LotteryEventController {
     @PostMapping
     public ResponseEntity<CustomResponse<GetCasperBot>> postCasperBot(@CookieValue String userData,
                                                                       @RequestBody String body) {
-
         return new ResponseEntity<>(CustomResponse.create(lotteryEventService.postCasperBot(userData, body)), HttpStatus.CREATED);
     }
 }
