@@ -17,6 +17,18 @@ public class LotteryParticipants extends BaseEntity {
         return phoneNumber;
     }
 
+    public int getLinkClickedCount() {
+        return linkClickedCount;
+    }
+
+    public int getExpectations() {
+        return expectations;
+    }
+
+    public int getAppliedCount() {
+        return appliedCount;
+    }
+
     public LotteryParticipants() {
 
     }
