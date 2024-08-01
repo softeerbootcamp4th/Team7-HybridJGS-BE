@@ -25,6 +25,15 @@ public class RushEvent extends BaseEvent {
     @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RushParticipants> rushParticipants;
 
+    public RushEvent() {
+    }
+
+    // 파라미터가 있는 생성자
+    public RushEvent(String prizeImageUrl, String prizeDescription) {
+        this.prizeImageUrl = prizeImageUrl;
+        this.prizeDescription = prizeDescription;
+    }
+
     public String getPrizeImageUrl() {
         return prizeImageUrl;
     }
