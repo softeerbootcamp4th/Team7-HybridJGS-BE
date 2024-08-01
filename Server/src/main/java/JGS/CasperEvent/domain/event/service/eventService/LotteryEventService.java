@@ -11,10 +11,14 @@ import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.error.exception.ErrorCode;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.List;
 
 import static JGS.CasperEvent.global.util.GsonUtil.getGson;
 import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
@@ -23,12 +27,16 @@ import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
 @Transactional
 public class LotteryEventService {
 
-    @Autowired
     private LotteryEventRepository lotteryEventRepository;
-    @Autowired
     private LotteryParticipantsRepository lotteryParticipantsRepository;
-    @Autowired
     private CasperBotRepository casperBotRepository;
+
+    @Autowired
+    public LotteryEventService(LotteryEventRepository lotteryEventRepository, LotteryParticipantsRepository lotteryParticipantsRepository, CasperBotRepository casperBotRepository) {
+        this.lotteryEventRepository = lotteryEventRepository;
+        this.lotteryParticipantsRepository = lotteryParticipantsRepository;
+        this.casperBotRepository = casperBotRepository;
+    }
 
     public GetCasperBot postCasperBot(String userData, String body) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(userData);
@@ -73,5 +81,16 @@ public class LotteryEventService {
         }
 
         return participants;
+    }
+
+    public void getCasperBots(){
+        Pageable pageable = PageRequest.of(0, 100);
+
+        Page<CasperBot> casperBots = casperBotRepository.findAll(pageable);
+        List<CasperBot> content = casperBots.getContent();
+
+        for (CasperBot casperBot : content) {
+            System.out.println("casperBot = " + casperBot);
+        }
     }
 }
