@@ -45,6 +45,7 @@ public class LotteryEventService {
         return GetCasperBot.of(casperBot);
     }
 
+
     public GetLotteryParticipant getLotteryParticipant(String userData) throws UserPrincipalNotFoundException {
         String phoneNumber = getDecodedPhoneNumber(userData);
 

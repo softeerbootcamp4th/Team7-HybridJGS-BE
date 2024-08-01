@@ -27,6 +27,7 @@ dependencies {
     implementation 'software.amazon.awssdk:auth'
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
+    implementation("io.awspring.cloud:spring-cloud-aws-starter")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
     implementation 'mysql:mysql-connector-java:8.0.33'  // MySQL JDBC 드라이버 추가
 
