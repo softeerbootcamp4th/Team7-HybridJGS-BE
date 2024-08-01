@@ -14,7 +14,7 @@ public class CasperBot extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int casperId;
+    private long casperId;
 
     private String phoneNumber;
 
@@ -40,7 +40,7 @@ public class CasperBot extends BaseEntity {
     private String name;
     private String expectation;
 
-    public int getCasperId() {
+    public long getCasperId() {
         return casperId;
     }
 
