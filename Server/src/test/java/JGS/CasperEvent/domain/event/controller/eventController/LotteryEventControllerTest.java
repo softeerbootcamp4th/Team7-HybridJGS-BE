@@ -31,6 +31,7 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 테스트")
     class CasperBotTest {
         //TODO: Expecation이 없을때, 있을때 값 증가 테스트
+        //TODO: DB에 없는 사용자 테스트 작성
         @Test
         @DisplayName("캐스퍼 봇 생성 성공 테스트")
         public void createCasperBotSuccessTest() throws Exception {
@@ -206,6 +207,23 @@ public class LotteryEventControllerTest {
                     .andExpect(jsonPath("$.message").value("유저 정보가 없습니다."))
                     .andDo(print());
 
+        }
+    }
+
+    @Nested
+    @DisplayName("캐스퍼 봇 조회 테스트")
+    class GetCasperBotTest{
+        @Test
+        @DisplayName("캐스퍼 봇 조회 테스트 성공")
+        void GetCasperBotSuccessTest() throws Exception {
+            //when
+            ResultActions perform = mockMvc.perform(get("/event/lottery/caspers"));
+
+            //then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message").value("요청에 성공했습니다."))
+                    .andExpect(jsonPath("$.result").exists())
+                    .andDo(print());
         }
     }
 }
