@@ -4,17 +4,28 @@ import JGS.CasperEvent.domain.event.entity.casperBot.casperEnum.*;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.error.exception.ErrorCode;
+import JGS.CasperEvent.global.util.UserUtil;
 import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class CasperBot extends BaseEntity {
 
+    public CasperBot(CasperBot casperBot, String phoneNumber){
+        this.casperId = UserUtil.generateId();
+        this.phoneNumber = phoneNumber;
+        this.eyeShape = casperBot.getEyeShape();
+        this.eyePosition = casperBot.getEyePosition();
+        this.mouthShape = casperBot.getMouthShape();
+        this.color = casperBot.getColor();
+        this.sticker = casperBot.getSticker();
+        this.name = casperBot.getName();
+        this.expectation = casperBot.getExpectation();
+    }
+
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private long casperId;
+    private Long casperId;
 
     private String phoneNumber;
 
@@ -40,7 +51,11 @@ public class CasperBot extends BaseEntity {
     private String name;
     private String expectation;
 
-    public long getCasperId() {
+    public CasperBot() {
+
+    }
+
+    public Long getCasperId() {
         return casperId;
     }
 
@@ -76,7 +91,7 @@ public class CasperBot extends BaseEntity {
         return expectation;
     }
 
-    public void validateEnumFields() throws CustomException{
+    public void validateEnumFields() throws CustomException {
         if (eyeShape == null) {
             throw new CustomException("eyeShape cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
@@ -92,10 +107,6 @@ public class CasperBot extends BaseEntity {
         if (sticker == null) {
             throw new CustomException("Sticker cannot be null", ErrorCode.INVALID_REQUEST_ERROR);
         }
-    }
-
-    public void updatePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     @Override
