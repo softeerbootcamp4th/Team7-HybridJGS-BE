@@ -26,6 +26,11 @@ public class LotteryEventController {
 
     @GetMapping("/applied")
     public ResponseEntity<CustomResponse<GetLotteryParticipant>> GetLotteryParticipant(@CookieValue String userData) throws UserPrincipalNotFoundException {
-        return new ResponseEntity<>(CustomResponse.success(lotteryEventService.GetLotteryParticipant(userData)), HttpStatus.OK);
+        return new ResponseEntity<>(CustomResponse.success(lotteryEventService.getLotteryParticipant(userData)), HttpStatus.OK);
+    }
+
+    @GetMapping("/{casperId}")
+    public ResponseEntity<CustomResponse<GetCasperBot>> getCasperBot(@PathVariable String casperId) {
+        return new ResponseEntity<>(CustomResponse.success(lotteryEventService.getCasperBot(Long.parseLong(casperId))), HttpStatus.OK);
     }
 }
