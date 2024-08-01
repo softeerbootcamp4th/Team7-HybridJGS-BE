@@ -16,17 +16,22 @@ import static JGS.CasperEvent.global.response.CustomErrorResponse.returnError;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<CustomErrorResponse> handler(CustomException e){
-        return new ResponseEntity<>(returnError(e), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> handler(CustomException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
-    public ResponseEntity<CustomErrorResponse> missingCookieHandler(MissingRequestCookieException e){
-        return new ResponseEntity<>(returnError("유저 정보가 없습니다."), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> missingCookieHandler(){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("유저 정보가 없습니다.");
     }
 
     @ExceptionHandler(UserPrincipalNotFoundException.class)
-    public ResponseEntity<CustomErrorResponse> userPrincipalNotFoundHandler(UserPrincipalNotFoundException e){
-        return new ResponseEntity<>(returnError("응모 내역이 없는 사용자입니다."), HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> userPrincipalNotFoundHandler(){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("응모 내역이 없는 사용자입니다.");
     }
 }
