@@ -12,11 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,6 +31,7 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 생성 테스트")
     class CasperBotTest {
         //TODO: Expecation이 없을때, 있을때 값 증가 테스트
+        //TODO: DB에 없는 사용자 테스트 작성
         @Test
         @DisplayName("캐스퍼 봇 생성 성공 테스트")
         public void createCasperBotSuccessTest() throws Exception {
@@ -57,14 +58,13 @@ public class LotteryEventControllerTest {
             //then
             perform
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.message").value("생성에 성공했습니다."))
-                    .andExpect(jsonPath("$.result.eyeShape").value("ALLOY_WHEEL_17"))
-                    .andExpect(jsonPath("$.result.eyePosition").value("CENTER"))
-                    .andExpect(jsonPath("$.result.mouthShape").value("BEAMING"))
-                    .andExpect(jsonPath("$.result.color").value("SIENNA_ORANGE_METALLIC"))
-                    .andExpect(jsonPath("$.result.sticker").value("LOVELY_RIBBON"))
-                    .andExpect(jsonPath("$.result.name").value("myCasperBot"))
-                    .andExpect(jsonPath("$.result.expectation").value("myExpectation"))
+                    .andExpect(jsonPath("$.eyeShape").value("ALLOY_WHEEL_17"))
+                    .andExpect(jsonPath("$.eyePosition").value("CENTER"))
+                    .andExpect(jsonPath("$.mouthShape").value("BEAMING"))
+                    .andExpect(jsonPath("$.color").value("SIENNA_ORANGE_METALLIC"))
+                    .andExpect(jsonPath("$.sticker").value("LOVELY_RIBBON"))
+                    .andExpect(jsonPath("$.name").value("myCasperBot"))
+                    .andExpect(jsonPath("$.expectation").value("myExpectation"))
                     .andDo(print());
         }
 
@@ -93,7 +93,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
+                    .andExpect(content().string("eyeShape cannot be null"))
                     .andDo(print());
         }
 
@@ -121,7 +121,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
+                    .andExpect(content().string("eyeShape cannot be null"))
                     .andDo(print());
         }
 
@@ -148,7 +148,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.message").value("유저 정보가 없습니다."))
+                    .andExpect(content().string("유저 정보가 없습니다."))
                     .andDo(print());
 
         }
@@ -170,8 +170,6 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("요청에 성공했습니다."))
-                    .andExpect(jsonPath("$.result").exists())
                     .andDo(print());
 
         }
@@ -189,7 +187,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value("응모 내역이 없는 사용자입니다."))
+                    .andExpect(content().string("응모 내역이 없는 사용자입니다."))
                     .andDo(print());
 
         }
@@ -203,9 +201,52 @@ public class LotteryEventControllerTest {
                     .contentType(MediaType.APPLICATION_JSON));
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.message").value("유저 정보가 없습니다."))
+                    .andExpect(content().string("유저 정보가 없습니다."))
                     .andDo(print());
 
+        }
+    }
+
+    @Nested
+    @DisplayName("캐스퍼 봇 조회 테스트")
+    class GetCasperBotTest {
+        @Test
+        @DisplayName("캐스퍼 봇 조회 테스트 성공")
+        void GetCasperBotSuccessTest() throws Exception {
+            //when
+            ResultActions perform = mockMvc.perform(get("/event/lottery/caspers"));
+
+            //then
+            perform.andExpect(status().isOk())
+                    .andExpect(result -> {
+                        String responseBody = result.getResponse().getContentAsString();
+                        assertFalse(responseBody.isEmpty(), "Response body should not be empty");
+                    });
+        }
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 100개 생성 API")
+    void CreateCasperBots() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            String casperBotRequest = """
+                    {
+                    "eyeShape": "2",
+                    "eyePosition": "1",
+                    "mouthShape": "4",
+                    "color": "2",
+                    "sticker": "4",
+                    "name": "myCasperBot",
+                    "expectation": "myExpectation"
+                    }""";
+
+            Cookie myCookie = new Cookie("userData", "abc");
+
+            //when
+            ResultActions perform = mockMvc.perform(post("/event/lottery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(casperBotRequest)
+                    .cookie(myCookie));
         }
     }
 }

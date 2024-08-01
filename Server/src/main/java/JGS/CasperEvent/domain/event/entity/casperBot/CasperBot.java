@@ -14,7 +14,7 @@ public class CasperBot extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int casperId;
+    private long casperId;
 
     private String phoneNumber;
 
@@ -40,7 +40,7 @@ public class CasperBot extends BaseEntity {
     private String name;
     private String expectation;
 
-    public int getCasperId() {
+    public long getCasperId() {
         return casperId;
     }
 
@@ -96,5 +96,22 @@ public class CasperBot extends BaseEntity {
 
     public void updatePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "CasperBot{" +
+                "casperId=" + casperId +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", eyeShape=" + eyeShape +
+                ", eyePosition=" + eyePosition +
+                ", mouthShape=" + mouthShape +
+                ", color=" + color +
+                ", sticker=" + sticker +
+                ", name='" + name + '\'' +
+                ", expectation='" + expectation + '\'' +
+                ", createdAt='" + getCreatedAt() + '\'' +
+                ", updatedAt='" + getUpdatedAt() + '\'' +
+                '}';
     }
 }
