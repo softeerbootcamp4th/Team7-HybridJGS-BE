@@ -7,18 +7,15 @@ import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.error.exception.ErrorCode;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.List;
 
 import static JGS.CasperEvent.global.util.GsonUtil.getGson;
 import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
@@ -30,27 +27,33 @@ public class LotteryEventService {
     private LotteryEventRepository lotteryEventRepository;
     private LotteryParticipantsRepository lotteryParticipantsRepository;
     private CasperBotRepository casperBotRepository;
+    private RedisService redisService;
 
     @Autowired
-    public LotteryEventService(LotteryEventRepository lotteryEventRepository, LotteryParticipantsRepository lotteryParticipantsRepository, CasperBotRepository casperBotRepository) {
+    public LotteryEventService(LotteryEventRepository lotteryEventRepository,
+                               LotteryParticipantsRepository lotteryParticipantsRepository,
+                               CasperBotRepository casperBotRepository,
+                               RedisService redisService) {
         this.lotteryEventRepository = lotteryEventRepository;
         this.lotteryParticipantsRepository = lotteryParticipantsRepository;
         this.casperBotRepository = casperBotRepository;
+        this.redisService = redisService;
     }
 
     public GetCasperBot postCasperBot(String userData, String body) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(userData);
 
         Gson gson = getGson();
-        CasperBot casperBot = gson.fromJson(body, CasperBot.class);
+        CasperBot casperBot = new CasperBot(gson.fromJson(body, CasperBot.class), participants.getPhoneNumber());
         casperBot.validateEnumFields();
-        casperBot.updatePhoneNumber(participants.getPhoneNumber());
 
         if (casperBot.getExpectation() != null) participants.expectationAdded();
-
-        casperBotRepository.save(casperBot);
         lotteryParticipantsRepository.save(participants);
-        return GetCasperBot.of(casperBot);
+        casperBotRepository.save(casperBot);
+
+        GetCasperBot casperBotDto = GetCasperBot.of(casperBot);
+        redisService.addData(casperBotDto);
+        return casperBotDto;
     }
 
 
@@ -84,14 +87,4 @@ public class LotteryEventService {
         return participants;
     }
 
-    public void getCasperBots(){
-        Pageable pageable = PageRequest.of(0, 100);
-
-        Page<CasperBot> casperBots = casperBotRepository.findAll(pageable);
-        List<CasperBot> content = casperBots.getContent();
-
-        for (CasperBot casperBot : content) {
-            System.out.println("casperBot = " + casperBot);
-        }
-    }
 }

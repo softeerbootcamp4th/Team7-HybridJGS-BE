@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
-import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,9 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private LotteryEventService lotteryEventService;
 
     @Nested
     @DisplayName("캐스퍼 봇 생성 테스트")
@@ -211,42 +207,53 @@ public class LotteryEventControllerTest {
     @DisplayName("캐스퍼 봇 조회 테스트")
     class GetCasperBotTest {
         @Test
-        @DisplayName("캐스퍼 봇 조회 테스트 성공")
-        void GetCasperBotSuccessTest() throws Exception {
-            //when
-            ResultActions perform = mockMvc.perform(get("/event/lottery/caspers"));
+        @DisplayName("캐스퍼 봇 조회 테스트 성공 - Redis")
+        void GetCasperBotSuccessTest_redis() throws Exception {
+            for (int i = 0; i < 100; i++) {
+                ResultActions perform = mockMvc.perform(get("/event/lottery/caspers"));
 
-            //then
-            perform.andExpect(status().isOk())
-                    .andExpect(result -> {
-                        String responseBody = result.getResponse().getContentAsString();
-                        assertFalse(responseBody.isEmpty(), "Response body should not be empty");
-                    });
+                //then
+                perform.andExpect(status().isOk())
+                        .andExpect(result -> {
+                            String responseBody = result.getResponse().getContentAsString();
+                            assertFalse(responseBody.isEmpty(), "Response body should not be empty");
+                        });
+
+            }
         }
     }
-
-    @Test
-    @DisplayName("캐스퍼 봇 100개 생성 API")
-    void CreateCasperBots() throws Exception {
-        for (int i = 0; i < 100; i++) {
-            String casperBotRequest = """
-                    {
-                    "eyeShape": "2",
-                    "eyePosition": "1",
-                    "mouthShape": "4",
-                    "color": "2",
-                    "sticker": "4",
-                    "name": "myCasperBot",
-                    "expectation": "myExpectation"
-                    }""";
-
-            Cookie myCookie = new Cookie("userData", "abc");
-
-            //when
-            ResultActions perform = mockMvc.perform(post("/event/lottery")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(casperBotRequest)
-                    .cookie(myCookie));
-        }
-    }
+//
+//    @Test
+//    @DisplayName("캐스퍼 봇 1000개 생성 API")
+//    void CreateCasperBots() throws Exception {
+//        for (int i = 0; i < 1000; i++) {
+//            String casperBotRequest = String.format("""
+//                            {
+//                            "eyeShape": "%d",
+//                            "eyePosition": "%d",
+//                            "mouthShape": "%d",
+//                            "color": "%d",
+//                            "sticker": "%d",
+//                            "name": "myCasperBot_%d",
+//                            "expectation": "myExpectation_%d"
+//                            }""",
+//                    (i % 8) + 1,
+//                    (i % 3) + 1,
+//                    (i % 5) + 1,
+//                    (i % 17) + 1,
+//                    (i % 5) + 1,
+//                    i,
+//                    i
+//            );
+//
+//            // Cookie 생성
+//            Cookie myCookie = new Cookie("userData", Integer.toString((i % 7) + 1));
+//
+//            //when
+//            ResultActions perform = mockMvc.perform(post("/event/lottery")
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .content(casperBotRequest)
+//                    .cookie(myCookie));
+//        }
+//    }
 }
