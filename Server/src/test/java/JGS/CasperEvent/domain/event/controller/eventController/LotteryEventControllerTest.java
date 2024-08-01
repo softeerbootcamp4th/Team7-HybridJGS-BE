@@ -156,8 +156,24 @@ public class LotteryEventControllerTest {
         @Test
         @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재할 경우")
         void userHasAppliedCasperBotSuccessTest_PresentUser() throws Exception {
-            //given
+            String casperBotRequest = """
+                    {
+                    "eyeShape": "2",
+                    "eyePosition": "1",
+                    "mouthShape": "4",
+                    "color": "2",
+                    "sticker": "4",
+                    "name": "myCasperBot",
+                    "expectation": "myExpectation"
+                    }""";
+
             Cookie myCookie = new Cookie("userData", "abc");
+
+            //when
+            mockMvc.perform(post("/event/lottery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(casperBotRequest)
+                    .cookie(myCookie));
 
             //when
             ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
