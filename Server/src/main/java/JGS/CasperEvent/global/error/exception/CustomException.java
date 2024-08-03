@@ -1,14 +1,16 @@
 package JGS.CasperEvent.global.error.exception;
 
-public class CustomException extends RuntimeException {
-    private final ErrorCode errorCode;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
 
-    public CustomException(String message, ErrorCode errorCode) {
+public class CustomException extends RuntimeException {
+    private final CustomErrorCode errorCode;
+
+    public CustomException(String message, CustomErrorCode errorCode) {
         super(message);
         this.errorCode = errorCode;
     }
 
-    public ErrorCode getErrorCode() {
+    public CustomErrorCode getErrorCode() {
         return errorCode;
     }
 }
