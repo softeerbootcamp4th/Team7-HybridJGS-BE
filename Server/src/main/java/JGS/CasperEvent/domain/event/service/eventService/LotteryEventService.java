@@ -8,8 +8,8 @@ import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.ErrorCode;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class LotteryEventService {
 
     public GetCasperBot getCasperBot(Long casperId){
         CasperBot casperBot = casperBotRepository.findById(casperId).orElse(null);
-        if(casperBot == null) throw new CustomException("캐스퍼 봇이 없음", ErrorCode.USER_NOT_FOUND);
+        if(casperBot == null) throw new CustomException("캐스퍼 봇이 없음", CustomErrorCode.CASPERBOT_NOT_FOUND);
         return GetCasperBot.of(casperBot);
     }
 

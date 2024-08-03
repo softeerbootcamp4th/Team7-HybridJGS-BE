@@ -50,7 +50,7 @@ public class LotteryEventController {
                 .body(redisService.getRecentData());
     }
 
-    // 테스트용 캐스퍼 봇 조회 API
+    // 캐스퍼 봇 조회 API
     @GetMapping("/{casperId}")
     public ResponseEntity<GetCasperBot> getCasperBot(@PathVariable String casperId) {
         return ResponseEntity

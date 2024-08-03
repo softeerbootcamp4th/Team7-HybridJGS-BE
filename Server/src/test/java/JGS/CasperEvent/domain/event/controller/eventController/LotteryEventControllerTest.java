@@ -165,7 +165,8 @@ public class LotteryEventControllerTest {
                     "sticker": "4",
                     "name": "myCasperBot",
                     "expectation": "myExpectation"
-                    }""";
+                    }
+                    """;
 
             Cookie myCookie = new Cookie("userData", "abc");
 
