@@ -6,7 +6,8 @@ public enum CustomErrorCode {
     CASPERBOT_NOT_FOUND("배지를 찾을 수 없습니다."),
     BAD_REQUEST("잘못된 요청입니다."),
     UNAUTHORIZED("권한이 없습니다."),
-    USER_NOT_FOUND("응모하지 않은 사용자입니다.");
+    USER_NOT_FOUND("응모하지 않은 사용자입니다."),
+    CONFLICT("이미 존재하는 ID입니다.");
 
     private final String message;
 
