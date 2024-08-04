@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("local")
 public class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -89,7 +91,8 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(content().string("eyeShape cannot be null"))
+                    .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
                     .andDo(print());
         }
 
@@ -117,7 +120,8 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(content().string("eyeShape cannot be null"))
+                    .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
                     .andDo(print());
         }
 
@@ -144,7 +148,8 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(content().string("유저 정보가 없습니다."))
+                    .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"))
+                    .andExpect(jsonPath("$.message").value("권한이 없습니다."))
                     .andDo(print());
 
         }
@@ -200,7 +205,8 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isNotFound())
-                    .andExpect(content().string("응모 내역이 없는 사용자입니다."))
+                    .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
+                    .andExpect(jsonPath("$.message").value("응모하지 않은 사용자입니다."))
                     .andDo(print());
 
         }
@@ -214,7 +220,8 @@ public class LotteryEventControllerTest {
                     .contentType(MediaType.APPLICATION_JSON));
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(content().string("유저 정보가 없습니다."))
+                    .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"))
+                    .andExpect(jsonPath("$.message").value("권한이 없습니다."))
                     .andDo(print());
 
         }
