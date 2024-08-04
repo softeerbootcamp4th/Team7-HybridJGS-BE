@@ -13,8 +13,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Aspect
 @Component
 public class AuthCheckAspect {
@@ -50,8 +48,8 @@ public class AuthCheckAspect {
     @Around("@annotation(JGS.CasperEvent.global.auth.AdminCheck)")
     public Object adminCheck(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String token = httpServletRequest.getHeader(Authorization);
-        System.out.println("token = " + token);
-        boolean valid = UserUtil.getIsValidAdminToken(token);
+
+        boolean valid = UserUtil.isValidAdminToken(token);
 
         if(!valid)
             throw new CustomException("권한이 없습니다.", CustomErrorCode.UNAUTHORIZED);
