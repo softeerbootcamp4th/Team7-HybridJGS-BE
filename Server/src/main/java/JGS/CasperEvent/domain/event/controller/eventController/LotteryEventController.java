@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
-import JGS.CasperEvent.domain.event.dto.GetCasperBot;
-import JGS.CasperEvent.domain.event.dto.GetLotteryParticipant;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import org.springframework.beans.factory.annotation.Autowired;

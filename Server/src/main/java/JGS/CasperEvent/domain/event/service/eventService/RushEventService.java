@@ -1,19 +1,13 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.GetRushEvent;
-import JGS.CasperEvent.domain.event.dto.RushEventListAndServerTimeResponse;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.GetRushEvent;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
-import JGS.CasperEvent.global.enums.CustomErrorCode;
-import JGS.CasperEvent.global.util.RepositoryErrorHandler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import static JGS.CasperEvent.global.util.RepositoryErrorHandler.existsByIdOrElseThrow;
-import static JGS.CasperEvent.global.util.RepositoryErrorHandler.findByIdOrElseThrow;
 
 @Service
 public class RushEventService {
