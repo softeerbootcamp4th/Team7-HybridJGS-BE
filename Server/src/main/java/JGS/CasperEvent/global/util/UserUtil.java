@@ -13,7 +13,8 @@ public class UserUtil {
 
     //TODO: 현재는 true 리턴, jwt로 변경 필요
     public static Boolean isValidAdminToken(String token){
-        return true;
+        if (token.equals("adminToken")) return true;
+        return false;
     }
     public static long generateId(){
         return counter.incrementAndGet();

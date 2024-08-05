@@ -9,4 +9,13 @@ public class Admin extends BaseEntity {
     @Id
     private String adminId;
     private String password;
+
+    public Admin(String adminId, String password) {
+        this.adminId = adminId;
+        this.password = password;
+    }
+
+    public Admin() {
+
+    }
 }
