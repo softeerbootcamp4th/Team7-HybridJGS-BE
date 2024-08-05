@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

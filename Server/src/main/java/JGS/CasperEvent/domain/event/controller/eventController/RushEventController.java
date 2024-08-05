@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.RushEventListAndServerTimeResponse;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
