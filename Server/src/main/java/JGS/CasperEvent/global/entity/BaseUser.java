@@ -1,10 +1,8 @@
 package JGS.CasperEvent.global.entity;
 
+import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.global.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
@@ -14,6 +12,9 @@ public class BaseUser extends BaseEntity {
     @Id
     String id;
     Role role;
+
+    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LotteryParticipants lotteryParticipants;
 
     public BaseUser(String id, Role role) {
         this.id = id;
