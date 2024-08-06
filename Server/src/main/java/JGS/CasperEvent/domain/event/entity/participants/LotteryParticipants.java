@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
 import jakarta.persistence.Entity;
@@ -11,6 +12,12 @@ public class LotteryParticipants extends BaseUser {
     private int linkClickedCount;
     private int expectations;
     private int appliedCount;
+
+    private Long casperId;
+
+    public void updateCasperId(Long casperId){
+        this.casperId = casperId;
+    }
 
     public String getPhoneNumber() {
         return getId();
