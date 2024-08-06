@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface LotteryParticipantsRepository extends JpaRepository<LotteryParticipants, String> {
-    Optional<LotteryParticipants> findByPhoneNumber(String phoneNumber);
 }
 
