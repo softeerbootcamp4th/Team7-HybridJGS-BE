@@ -16,6 +16,10 @@ public class BaseUser extends BaseEntity {
     @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private LotteryParticipants lotteryParticipants;
 
+    public void updateLotteryParticipants(LotteryParticipants lotteryParticipant) {
+        this.lotteryParticipants = lotteryParticipant;
+    }
+
     public BaseUser(String id, Role role) {
         this.id = id;
         this.role = role;
