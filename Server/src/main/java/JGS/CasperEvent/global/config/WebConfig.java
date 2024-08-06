@@ -65,7 +65,8 @@ public class WebConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new JwtAuthorizationFilter(provider, mapper));
         filterRegistrationBean.setOrder(2);
         return filterRegistrationBean;
-      
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registration) {
         registration.addMapping("/**")
