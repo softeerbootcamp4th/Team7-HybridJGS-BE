@@ -21,7 +21,7 @@ public class LotteryParticipants {
 
     private Long casperId;
 
-    public void updateCasperId(Long casperId){
+    public void updateCasperId(Long casperId) {
         this.casperId = casperId;
     }
 
@@ -29,8 +29,14 @@ public class LotteryParticipants {
 
     }
 
-    public void expectationAdded(){
+    public void expectationAdded() {
         expectations++;
+        appliedCount = Math.max(10, appliedCount + 1);
+    }
+
+    public void linkClickedCountAdded() {
+        linkClickedCount++;
+        appliedCount = Math.max(10, appliedCount + 1);
     }
 
     public LotteryParticipants(BaseUser baseUser) {
