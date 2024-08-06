@@ -107,7 +107,7 @@ public class JwtAuthorizationFilter implements Filter {
         ErrorResponse errorResponse = new ErrorResponse(errorCode, errorCode.getMessage());
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);
 
-        response.setContentType("application/json");
+        response.setContentType("application/json; charset=UTF-8");
         response.setStatus(errorCode.getStatus());
         response.getWriter().write(jsonResponse);
     }
