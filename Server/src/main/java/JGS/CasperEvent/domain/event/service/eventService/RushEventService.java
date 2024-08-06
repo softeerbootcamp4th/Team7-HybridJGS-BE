@@ -4,6 +4,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.GetRushEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
+import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,11 +12,12 @@ import java.util.List;
 
 @Service
 public class RushEventService {
-
     private final RushEventRepository rushEventRepository;
+    private final RushParticipantsRepository rushParticipantsRepository;
 
-    public RushEventService(RushEventRepository rushEventRepository) {
+    public RushEventService(RushEventRepository rushEventRepository, RushParticipantsRepository rushParticipantsRepository) {
         this.rushEventRepository = rushEventRepository;
+        this.rushParticipantsRepository = rushParticipantsRepository;
     }
 
     public RushEventListAndServerTimeResponse getAllRushEvents() {
@@ -29,10 +31,7 @@ public class RushEventService {
         return new RushEventListAndServerTimeResponse(rushEventDtoList, LocalDateTime.now());
     }
 
-//    public boolean isExists(Long eventId, String userData) {
-//        RushEvent rushEvent = findByIdOrElseThrow(rushEventRepository, eventId, CustomErrorCode.NO_RUSH_EVENT);
-//
-//
-//    }
-
+    public boolean isExists(Long eventId, String userId) {
+        return rushParticipantsRepository.existsByRushEventIdAndUserId(eventId, userId);
+    }
 }
