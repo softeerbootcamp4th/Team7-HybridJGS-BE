@@ -5,6 +5,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,14 @@ public class LotteryEventController {
     }
 
     // 캐스퍼 봇 생성 API
-    //TODO: 쿠키 이름 정하기 (프론트랑 협의)x
     @PostMapping
-    public ResponseEntity<GetCasperBot> postCasperBot(@CookieValue String userData,
-                                                      @RequestBody @Valid PostCasperBot postCasperBot) {
+    public ResponseEntity<GetCasperBot> postCasperBot(
+            HttpServletRequest request,
+            @RequestBody @Valid PostCasperBot postCasperBot) {
+        String userId = request.getAttribute("userId").toString();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(lotteryEventService.postCasperBot(userData, postCasperBot));
+                .body(lotteryEventService.postCasperBot(userId, postCasperBot));
     }
 
     // 응모 여부 조회 API

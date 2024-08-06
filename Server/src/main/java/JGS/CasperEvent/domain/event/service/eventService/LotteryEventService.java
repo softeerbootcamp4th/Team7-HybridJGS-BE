@@ -39,11 +39,10 @@ public class LotteryEventService {
         this.redisService = redisService;
     }
 
-    public GetCasperBot postCasperBot(String userData, PostCasperBot postCasperBot) throws CustomException {
-        LotteryParticipants participants = registerUserIfNeed(userData);
+    public GetCasperBot postCasperBot(String userId, PostCasperBot postCasperBot) throws CustomException {
+        LotteryParticipants participants = registerUserIfNeed(userId);
 
         CasperBot casperBot = new CasperBot(postCasperBot, participants.getPhoneNumber());
-        casperBot.validateEnumFields();
 
         if (casperBot.getExpectation() != null) participants.expectationAdded();
         lotteryParticipantsRepository.save(participants);
@@ -65,25 +64,16 @@ public class LotteryEventService {
         else return GetLotteryParticipant.of(participant);
     }
 
-    public GetCasperBot getCasperBot(Long casperId){
+    public GetCasperBot getCasperBot(Long casperId) {
         CasperBot casperBot = casperBotRepository.findById(casperId).orElse(null);
-        if(casperBot == null) throw new CustomException("캐스퍼 봇이 없음", CustomErrorCode.CASPERBOT_NOT_FOUND);
+        if (casperBot == null) throw new CustomException("캐스퍼 봇이 없음", CustomErrorCode.CASPERBOT_NOT_FOUND);
         return GetCasperBot.of(casperBot);
     }
 
 
-    public LotteryParticipants registerUserIfNeed(String userData) {
-        String phoneNumber = getDecodedPhoneNumber(userData);
-
-        LotteryParticipants participants = lotteryParticipantsRepository.findById(phoneNumber)
-                .orElse(null);
-
-        if (participants == null) {
-            participants = new LotteryParticipants(phoneNumber);
-            lotteryParticipantsRepository.save(participants);
-        }
-
-        return participants;
+    public LotteryParticipants registerUserIfNeed(String userId) {
+        return lotteryParticipantsRepository.findById(userId)
+                .orElseGet(() -> lotteryParticipantsRepository.save(new LotteryParticipants(userId)));
     }
 
 }
