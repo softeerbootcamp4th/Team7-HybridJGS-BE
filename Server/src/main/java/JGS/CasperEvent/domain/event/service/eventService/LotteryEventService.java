@@ -57,8 +57,6 @@ public class LotteryEventService {
         return casperBotDto;
     }
 
-
-    // TODO: 응모 횟수 로직 작성
     public GetLotteryParticipant getLotteryParticipant(BaseUser user) throws UserPrincipalNotFoundException {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user)
                 .orElseThrow(() -> new UserPrincipalNotFoundException("응모 내역이 없습니다."));
