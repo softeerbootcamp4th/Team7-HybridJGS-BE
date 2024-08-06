@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.casperBot;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.PostCasperBot;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.util.UserUtil;
@@ -8,16 +9,16 @@ import jakarta.persistence.*;
 
 @Entity
 public class CasperBot extends BaseEntity {
-    public CasperBot(int eyeShape, int eyePosition, int mouthShape, int color, int sticker, String name, String expectation,String phoneNumber) {
+    public CasperBot(PostCasperBot postCasperBot, String phoneNumber) {
         this.casperId = UserUtil.generateId();
         this.phoneNumber = phoneNumber;
-        this.eyeShape = eyeShape;
-        this.eyePosition = eyePosition;
-        this.mouthShape = mouthShape;
-        this.color = color;
-        this.sticker = sticker;
-        this.name = name;
-        this.expectation = expectation;
+        this.eyeShape = postCasperBot.getEyeShape();
+        this.eyePosition = postCasperBot.getEyePosition();
+        this.mouthShape = postCasperBot.getMouthShape();
+        this.color = postCasperBot.getColor();
+        this.sticker = postCasperBot.getSticker();
+        this.name = postCasperBot.getName();
+        this.expectation = postCasperBot.getExpectation();
     }
 
     @Id
