@@ -25,108 +25,127 @@ public class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    String getToken(String phoneNumber) throws Exception {
+        String requestBody = String.format("""
+                {
+                    "phoneNumber": "%s"
+                }
+                """, phoneNumber);
+
+        ResultActions perform = mockMvc.perform(post("/event/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        String jsonString = perform.andReturn().getResponse().getContentAsString();
+        String tokenPrefix = "\"accessToken\":\"";
+        int start = jsonString.indexOf(tokenPrefix) + tokenPrefix.length();
+        int end = jsonString.indexOf("\"", start);
+
+        return "Bearer " + jsonString.substring(start, end);
+    }
+
+
     @Nested
     @DisplayName("캐스퍼 봇 생성 테스트")
     class CasperBotTest {
         //TODO: Expecation이 없을때, 있을때 값 증가 테스트
         //TODO: DB에 없는 사용자 테스트 작성
-//        @Test
-//        @DisplayName("캐스퍼 봇 생성 성공 테스트")
-//        public void createCasperBotSuccessTest() throws Exception {
-//            //given
-//            String casperBotRequest = """
-//                    {
-//                    "eyeShape": "2",
-//                    "eyePosition": "1",
-//                    "mouthShape": "4",
-//                    "color": "2",
-//                    "sticker": "4",
-//                    "name": "myCasperBot",
-//                    "expectation": "myExpectation"
-//                    }""";
-//
-//            Cookie myCookie = new Cookie("userData", "abc");
-//
-//            //when
-//            ResultActions perform = mockMvc.perform(post("/event/lottery")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(casperBotRequest)
-//                    .cookie(myCookie));
-//
-//            //then
-//            perform
-//                    .andExpect(status().isCreated())
-//                    .andExpect(jsonPath("$.eyeShape").value("ALLOY_WHEEL_17"))
-//                    .andExpect(jsonPath("$.eyePosition").value("CENTER"))
-//                    .andExpect(jsonPath("$.mouthShape").value("BEAMING"))
-//                    .andExpect(jsonPath("$.color").value("SIENNA_ORANGE_METALLIC"))
-//                    .andExpect(jsonPath("$.sticker").value("LOVELY_RIBBON"))
-//                    .andExpect(jsonPath("$.name").value("myCasperBot"))
-//                    .andExpect(jsonPath("$.expectation").value("myExpectation"))
-//                    .andDo(print());
-//        }
+        @Test
+        @DisplayName("캐스퍼 봇 생성 성공 테스트")
+        public void createCasperBotSuccessTest() throws Exception {
+            //given
+            String accessToken = getToken("010-0000-0000");
 
-//        @Test
-//        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 필수 필드 없음")
-//        void createCasperBotFailureTest_RequiredFieldNotExist() throws Exception {
-//            //given
-//            String casperBotRequest = """
-//                    {
-//                    "eye_shape": "2",
-//                    "eye_position": "1",
-//                    "mouth_shape": "4",
-//                    "color": "2",
-//                    "sticker": "4",
-//                    "expectation": "myExpectation"
-//                    }
-//                    """;
-//
-//            Cookie myCookie = new Cookie("userData", "abc");
-//
-//            //when
-//            ResultActions perform = mockMvc.perform(post("/event/lottery")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(casperBotRequest)
-//                    .cookie(myCookie));
-//
-//            //then
-//            perform.andExpect(status().isBadRequest())
-//                    .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
-//                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
-//                    .andDo(print());
-//        }
-//
-//        @Test
-//        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 잘못된 값")
-//        void createCasperBotSuccessTest_WrongValue() throws Exception {
-//            //given
-//            String casperBotRequest = """
-//                    {
-//                    "eyeShape": "15",
-//                    "eyePosition": "1",
-//                    "mouthShape": "4",
-//                    "color": "2",
-//                    "sticker": "4",
-//                    "name": "myCasperBot",
-//                    "expectation": "myExpectation"
-//                    }""";
-//            Cookie myCookie = new Cookie("userData", "abc");
-//
-//            //when
-//            ResultActions perform = mockMvc.perform(post("/event/lottery")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(casperBotRequest)
-//                    .cookie(myCookie));
-//
-//            //then
-//            perform.andExpect(status().isBadRequest())
-//                    .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
-//                    .andExpect(jsonPath("$.message").value("eyeShape cannot be null"))
-//                    .andDo(print());
-//        }
+            String casperBotRequest = """
+                    {
+                    "eyeShape": "2",
+                    "eyePosition": "1",
+                    "mouthShape": "4",
+                    "color": "2",
+                    "sticker": "4",
+                    "name": "myCasperBot",
+                    "expectation": "myExpectation"
+                    }""";
+
+            //when
+            ResultActions perform = mockMvc.perform(post("/event/lottery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(casperBotRequest)
+                    .header("Authorization", accessToken));
+
+            //then
+            perform
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.eyeShape").value(2))
+                    .andExpect(jsonPath("$.eyePosition").value(1))
+                    .andExpect(jsonPath("$.mouthShape").value(4))
+                    .andExpect(jsonPath("$.color").value(2))
+                    .andExpect(jsonPath("$.sticker").value(4))
+                    .andExpect(jsonPath("$.name").value("myCasperBot"))
+                    .andExpect(jsonPath("$.expectation").value("myExpectation"))
+                    .andDo(print());
+        }
 
         @Test
-        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 쿠키 없음")
+        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 필수 필드 없음")
+        void createCasperBotFailureTest_RequiredFieldNotExist() throws Exception {
+            String accessToken = getToken("010-0000-0000");
+            //given
+            String casperBotRequest = """
+                    {
+                    "eye_shape": "2",
+                    "eye_position": "1",
+                    "mouth_shape": "4",
+                    "color": "2",
+                    "sticker": "4",
+                    "expectation": "myExpectation"
+                    }
+                    """;
+
+
+            //when
+            ResultActions perform = mockMvc.perform(post("/event/lottery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(casperBotRequest)
+                    .header("Authorization", accessToken));
+
+            //then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("INVALID_CASPERBOT_PARAMETER"))
+                    .andDo(print());
+
+        }
+
+        @Test
+        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 잘못된 값")
+        void createCasperBotSuccessTest_WrongValue() throws Exception {
+            //given
+            String accessToken = getToken("010-0000-0000");
+            String casperBotRequest = """
+                    {
+                    "eyeShape": "15",
+                    "eyePosition": "1",
+                    "mouthShape": "4",
+                    "color": "2",
+                    "sticker": "4",
+                    "name": "myCasperBot",
+                    "expectation": "myExpectation"
+                    }""";
+
+            //when
+            ResultActions perform = mockMvc.perform(post("/event/lottery")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(casperBotRequest)
+                    .header("Authorization", accessToken));
+
+            //then
+            perform.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode").value("INVALID_CASPERBOT_PARAMETER"))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("캐스퍼 봇 생성 실패 테스트 - 인증 토큰 없음")
         void createCasperBotSuccessTest_CookieNotPresent() throws Exception {
             //given
             String casperBotRequest = """
@@ -148,8 +167,6 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"))
-                    .andExpect(jsonPath("$.message").value("권한이 없습니다."))
                     .andDo(print());
 
         }
@@ -161,6 +178,8 @@ public class LotteryEventControllerTest {
         @Test
         @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재할 경우")
         void userHasAppliedCasperBotSuccessTest_PresentUser() throws Exception {
+            String accessToken = getToken("010-0000-0000");
+
             String casperBotRequest = """
                     {
                     "eyeShape": "2",
@@ -172,19 +191,16 @@ public class LotteryEventControllerTest {
                     "expectation": "myExpectation"
                     }
                     """;
-
-            Cookie myCookie = new Cookie("userData", "abc");
-
             //when
             mockMvc.perform(post("/event/lottery")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest)
-                    .cookie(myCookie));
+                    .header("Authorization", accessToken));
 
             //when
             ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .cookie(myCookie));
+                    .header("Authorization", accessToken));
 
             //then
             perform.andExpect(status().isOk())
@@ -246,38 +262,4 @@ public class LotteryEventControllerTest {
             }
         }
     }
-//
-//    @Test
-//    @DisplayName("캐스퍼 봇 1000개 생성 API")
-//    void CreateCasperBots() throws Exception {
-//        for (int i = 0; i < 1000; i++) {
-//            String casperBotRequest = String.format("""
-//                            {
-//                            "eyeShape": "%d",
-//                            "eyePosition": "%d",
-//                            "mouthShape": "%d",
-//                            "color": "%d",
-//                            "sticker": "%d",
-//                            "name": "myCasperBot_%d",
-//                            "expectation": "myExpectation_%d"
-//                            }""",
-//                    (i % 8) + 1,
-//                    (i % 3) + 1,
-//                    (i % 5) + 1,
-//                    (i % 17) + 1,
-//                    (i % 5) + 1,
-//                    i,
-//                    i
-//            );
-//
-//            // Cookie 생성
-//            Cookie myCookie = new Cookie("userData", Integer.toString((i % 7) + 1));
-//
-//            //when
-//            ResultActions perform = mockMvc.perform(post("/event/lottery")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(casperBotRequest)
-//                    .cookie(myCookie));
-//        }
-//    }
 }
