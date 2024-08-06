@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter implements Filter {
             BaseUser user = getAuthenticateUser(token);
             verifyAuthorization(requestUri, user);
             log.info("값 : {}", user.getId());
-            httpServletRequest.setAttribute("userId", user.getId());
+            httpServletRequest.setAttribute("user", user);
             chain.doFilter(request, response);
         } catch (JsonParseException e) {
             log.error("JsonParseException");
