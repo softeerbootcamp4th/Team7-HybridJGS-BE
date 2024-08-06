@@ -15,4 +15,5 @@ public class Admin extends BaseUser {
     }
 
     public Admin() {}
+
 }

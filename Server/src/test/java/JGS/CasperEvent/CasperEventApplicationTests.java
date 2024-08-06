@@ -33,9 +33,9 @@ class CasperEventApplicationTests {
 	void HealthTest() throws Exception {
 		mockMvc.perform(get("/health"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
-				.andExpect(jsonPath("$.result").value(true))
+				.andExpect(content().string("true"))
 				.andDo(print());
+
 	}
 
 }

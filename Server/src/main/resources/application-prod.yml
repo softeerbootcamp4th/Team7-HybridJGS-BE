@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -14,3 +14,7 @@ spring:
     import: "aws-parameterstore:/spring-app/"
     activate:
       on-profile: prod
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}

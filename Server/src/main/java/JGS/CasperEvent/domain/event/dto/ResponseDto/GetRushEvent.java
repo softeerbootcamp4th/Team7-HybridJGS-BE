@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;

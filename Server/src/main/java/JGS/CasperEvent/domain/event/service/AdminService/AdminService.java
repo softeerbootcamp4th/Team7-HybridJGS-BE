@@ -23,6 +23,7 @@ public class AdminService {
     }
 
     public String postAdmin(String body) {
+
         JsonParser jsonParser = new JsonParser();
 
         JsonObject adminObject = (JsonObject) jsonParser.parse(body);

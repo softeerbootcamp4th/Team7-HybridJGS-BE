@@ -12,9 +12,12 @@ import jakarta.servlet.*;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean verifyUserFilter(ObjectMapper mapper, UserService userService) {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
@@ -62,5 +65,12 @@ public class WebConfig {
         filterRegistrationBean.setFilter(new JwtAuthorizationFilter(provider, mapper));
         filterRegistrationBean.setOrder(2);
         return filterRegistrationBean;
+      
+    @Override
+    public void addCorsMappings(CorsRegistry registration) {
+        registration.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
     }
 }
