@@ -1,21 +1,15 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
+    url: "jdbc:mysql://localhost:3306/jgs?serverTimezone=UTC"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
     password:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-  h2:
-    console:
-      enabled: true
-      path: /h2
-      settings:
-        web-allow-others: true
+        dialect: org.hibernate.dialect.MySQLDialect
   config:
     activate:
       on-profile: local
