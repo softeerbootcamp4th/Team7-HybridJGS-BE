@@ -9,20 +9,21 @@ import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
+import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.jwt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 
-import static JGS.CasperEvent.global.util.UserUtil.getDecodedPhoneNumber;
-
 @Service
 @Transactional
 public class LotteryEventService {
 
+    private final UserRepository userRepository;
     private LotteryEventRepository lotteryEventRepository;
     private LotteryParticipantsRepository lotteryParticipantsRepository;
     private CasperBotRepository casperBotRepository;
@@ -32,17 +33,18 @@ public class LotteryEventService {
     public LotteryEventService(LotteryEventRepository lotteryEventRepository,
                                LotteryParticipantsRepository lotteryParticipantsRepository,
                                CasperBotRepository casperBotRepository,
-                               RedisService redisService) {
+                               RedisService redisService, UserRepository userRepository) {
         this.lotteryEventRepository = lotteryEventRepository;
         this.lotteryParticipantsRepository = lotteryParticipantsRepository;
         this.casperBotRepository = casperBotRepository;
         this.redisService = redisService;
+        this.userRepository = userRepository;
     }
 
     public GetCasperBot postCasperBot(String userId, PostCasperBot postCasperBot) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(userId);
 
-        CasperBot casperBot = new CasperBot(postCasperBot, participants.getPhoneNumber());
+        CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
 
         if (casperBot.getExpectation() != null) participants.expectationAdded();
         lotteryParticipantsRepository.save(participants);
@@ -55,13 +57,12 @@ public class LotteryEventService {
 
 
     // TODO: 응모 횟수 로직 작성
-    public GetLotteryParticipant getLotteryParticipant(String userData) throws UserPrincipalNotFoundException {
-        String phoneNumber = getDecodedPhoneNumber(userData);
-
-        LotteryParticipants participant = lotteryParticipantsRepository.findById(phoneNumber).orElse(null);
+    public GetLotteryParticipant getLotteryParticipant(String userId) throws UserPrincipalNotFoundException {
+        LotteryParticipants participant = lotteryParticipantsRepository.findById(userId).orElse(null);
 
         if (participant == null) throw new UserPrincipalNotFoundException("응모 내역이 없습니다.");
-        else return GetLotteryParticipant.of(participant);
+
+        return GetLotteryParticipant.of(participant, getCasperBot(participant.getCasperId()));
     }
 
     public GetCasperBot getCasperBot(Long casperId) {
@@ -72,8 +73,10 @@ public class LotteryEventService {
 
 
     public LotteryParticipants registerUserIfNeed(String userId) {
-        return lotteryParticipantsRepository.findById(userId)
-                .orElseGet(() -> lotteryParticipantsRepository.save(new LotteryParticipants(userId)));
+        BaseUser baseUser = userRepository.findById(userId).get();
+
+        return lotteryParticipantsRepository.findByBaseUser(baseUser)
+                .orElseGet(() -> lotteryParticipantsRepository.save(new LotteryParticipants(baseUser)));
     }
 
 }
