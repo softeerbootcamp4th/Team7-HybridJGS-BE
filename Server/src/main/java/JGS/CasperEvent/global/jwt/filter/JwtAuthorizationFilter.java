@@ -1,7 +1,9 @@
 package JGS.CasperEvent.global.jwt.filter;
 
 import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
+import JGS.CasperEvent.global.error.ErrorResponse;
 import JGS.CasperEvent.global.error.exception.AuthorizationException;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -58,16 +60,16 @@ public class JwtAuthorizationFilter implements Filter {
             chain.doFilter(request, response);
         } catch (JsonParseException e) {
             log.error("JsonParseException");
-            httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value());
+            sendError(httpServletResponse, CustomErrorCode.BAD_REQUEST);
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.error("JwtException");
-            httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "인증 오류");
+            sendError(httpServletResponse, CustomErrorCode.JWT_PARSE_EXCEPTION);
         } catch (ExpiredJwtException e) {
             log.error("JwtTokenExpired");
-            httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "토큰이 만료됐습니다");
+            sendError(httpServletResponse, CustomErrorCode.JWT_EXPIRED);
         } catch (AuthorizationException e) {
             log.error("AuthorizationException");
-            httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "권한이 없습니다");
+            sendError(httpServletResponse, CustomErrorCode.UNAUTHORIZED);
         }
     }
 
@@ -99,5 +101,14 @@ public class JwtAuthorizationFilter implements Filter {
         if (PatternMatchUtils.simpleMatch("*/admin*", uri) && user.getRole() != Role.ADMIN) {
             throw new AuthorizationException();
         }
+    }
+
+    private void sendError(HttpServletResponse response, CustomErrorCode errorCode) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(errorCode, errorCode.getMessage());
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+        response.setContentType("application/json");
+        response.setStatus(errorCode.getStatus());
+        response.getWriter().write(jsonResponse);
     }
 }

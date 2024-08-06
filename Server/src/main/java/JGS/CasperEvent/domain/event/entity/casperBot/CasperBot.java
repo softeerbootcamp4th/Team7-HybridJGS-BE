@@ -1,23 +1,23 @@
 package JGS.CasperEvent.domain.event.entity.casperBot;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.PostCasperBot;
 import JGS.CasperEvent.global.entity.BaseEntity;
-import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.util.UserUtil;
 import jakarta.persistence.*;
 
 
 @Entity
 public class CasperBot extends BaseEntity {
-    public CasperBot(int eyeShape, int eyePosition, int mouthShape, int color, int sticker, String name, String expectation,String phoneNumber) {
+    public CasperBot(PostCasperBot postCasperBot, String phoneNumber) {
         this.casperId = UserUtil.generateId();
         this.phoneNumber = phoneNumber;
-        this.eyeShape = eyeShape;
-        this.eyePosition = eyePosition;
-        this.mouthShape = mouthShape;
-        this.color = color;
-        this.sticker = sticker;
-        this.name = name;
-        this.expectation = expectation;
+        this.eyeShape = postCasperBot.getEyeShape();
+        this.eyePosition = postCasperBot.getEyePosition();
+        this.mouthShape = postCasperBot.getMouthShape();
+        this.color = postCasperBot.getColor();
+        this.sticker = postCasperBot.getSticker();
+        this.name = postCasperBot.getName();
+        this.expectation = postCasperBot.getExpectation();
     }
 
     @Id
@@ -70,24 +70,6 @@ public class CasperBot extends BaseEntity {
 
     public String getExpectation() {
         return expectation;
-    }
-
-    public void validateEnumFields() throws CustomException {
-//        if (eyeShape == null) {
-//            throw new CustomException("eyeShape cannot be null", CustomErrorCode.INVALID_CASPERBOT_PARAMETER);
-//        }
-//        if (eyePosition == null) {
-//            throw new CustomException("EyePosition cannot be null", CustomErrorCode.INVALID_CASPERBOT_PARAMETER);
-//        }
-//        if (mouthShape == null) {
-//            throw new CustomException("MouthShape cannot be null", CustomErrorCode.INVALID_CASPERBOT_PARAMETER);
-//        }
-//        if (color == null) {
-//            throw new CustomException("Color cannot be null", CustomErrorCode.INVALID_CASPERBOT_PARAMETER);
-//        }
-//        if (sticker == null) {
-//            throw new CustomException("Sticker cannot be null", CustomErrorCode.INVALID_CASPERBOT_PARAMETER);
-//        }
     }
 
     @Override

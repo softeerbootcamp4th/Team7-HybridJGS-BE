@@ -1,19 +1,28 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
 import JGS.CasperEvent.global.entity.BaseUser;
-import JGS.CasperEvent.global.enums.Role;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class LotteryParticipants extends BaseUser {
+public class LotteryParticipants {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "base_user_id")
+    private BaseUser baseUser;
+
     private int linkClickedCount;
     private int expectations;
     private int appliedCount;
 
-    public String getPhoneNumber() {
-        return getId();
+    private Long casperId;
+
+    public void updateCasperId(Long casperId){
+        this.casperId = casperId;
     }
 
     public LotteryParticipants() {
@@ -24,8 +33,8 @@ public class LotteryParticipants extends BaseUser {
         expectations++;
     }
 
-    public LotteryParticipants(String phoneNumber) {
-        super(phoneNumber, Role.USER);
+    public LotteryParticipants(BaseUser baseUser) {
+        this.baseUser = baseUser;
         this.appliedCount = 1;
         this.linkClickedCount = 0;
         this.expectations = 0;
