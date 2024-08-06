@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +23,10 @@ public class RushEventController {
     }
 
     // 밸런스 게임 참여 여부 조회
-//    @GetMapping("/{eventId}/applied")
-//    public ResponseEntity<Boolean> checkUserParticipationInRushEvent(@PathVariable Long eventId,
-//                                                                     @CookieValue String userData) {
-//
-//        return ResponseEntity.ok(rushEventService.isExists(eventId, userData));
-//    }
+    @GetMapping("/{eventId}/applied")
+    public ResponseEntity<Boolean> checkUserParticipationInRushEvent(HttpServletRequest httpServletRequest, @PathVariable("eventId") Long eventId) {
+
+        String userId = httpServletRequest.getAttribute("userId").toString();
+        return ResponseEntity.ok(rushEventService.isExists(eventId, userId));
+    }
 }
