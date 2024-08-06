@@ -1,9 +1,9 @@
 name: Deploy to EC2 with Docker Compose
 
 on:
-  pull_request:
+  push:
     branches:
-      - dev
+      - fix/#44-casper
 
 env:
   AWS_REGION: ap-northeast-2
