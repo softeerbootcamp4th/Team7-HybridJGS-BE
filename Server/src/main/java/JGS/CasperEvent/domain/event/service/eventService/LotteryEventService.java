@@ -68,6 +68,7 @@ public class LotteryEventService {
     }
 
 
+    // TODO: 응모 횟수 로직 작성
     public GetLotteryParticipant getLotteryParticipant(String userData) throws UserPrincipalNotFoundException {
         String phoneNumber = getDecodedPhoneNumber(userData);
 
