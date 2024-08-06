@@ -62,5 +62,14 @@ jobs:
           key: ${{ secrets.EC2_SECRET }}
           script: |
             cd /home/ubuntu/spring-boot
+
+            # Docker 이미지 삭제
+            docker image prune -af
+
+            # 디스크 공간 정리
+            sudo apt-get clean
+            sudo rm -rf /var/lib/docker/tmp/*
+
+            # 새로운 이미지 풀 및 배포
             docker-compose pull
             docker-compose up -d
