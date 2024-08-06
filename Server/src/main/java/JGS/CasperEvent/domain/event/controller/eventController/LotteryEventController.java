@@ -41,10 +41,11 @@ public class LotteryEventController {
 
     // 응모 여부 조회 API
     @GetMapping("/applied")
-    public ResponseEntity<GetLotteryParticipant> GetLotteryParticipant(@CookieValue String userData) throws UserPrincipalNotFoundException {
+    public ResponseEntity<GetLotteryParticipant> GetLotteryParticipant(HttpServletRequest request) throws UserPrincipalNotFoundException {
+        String userId = request.getAttribute("userId").toString();
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lotteryEventService.getLotteryParticipant(userData));
+                .body(lotteryEventService.getLotteryParticipant(userId));
     }
 
     // 최근 100개 캐스퍼 봇 조회
