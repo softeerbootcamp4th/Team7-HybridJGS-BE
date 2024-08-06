@@ -1,32 +1,19 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
-import JGS.CasperEvent.global.entity.BaseEntity;
+import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.Role;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import lombok.Getter;
 
+@Getter
 @Entity
-public class LotteryParticipants extends BaseEntity {
+public class LotteryParticipants extends BaseUser {
     private int linkClickedCount;
     private int expectations;
     private int appliedCount;
 
-    @Id
-    private String phoneNumber;
-
     public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public int getLinkClickedCount() {
-        return linkClickedCount;
-    }
-
-    public int getExpectations() {
-        return expectations;
-    }
-
-    public int getAppliedCount() {
-        return appliedCount;
+        return getId();
     }
 
     public LotteryParticipants() {
@@ -37,8 +24,8 @@ public class LotteryParticipants extends BaseEntity {
         expectations++;
     }
 
-    public LotteryParticipants(String phoneNumber){
-        this.phoneNumber = phoneNumber;
+    public LotteryParticipants(String phoneNumber) {
+        super(phoneNumber, Role.USER);
         this.appliedCount = 1;
         this.linkClickedCount = 0;
         this.expectations = 0;
