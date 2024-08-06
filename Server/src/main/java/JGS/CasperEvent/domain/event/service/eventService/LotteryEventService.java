@@ -71,7 +71,7 @@ public class LotteryEventService {
     public GetLotteryParticipant getLotteryParticipant(String userData) throws UserPrincipalNotFoundException {
         String phoneNumber = getDecodedPhoneNumber(userData);
 
-        LotteryParticipants participant = lotteryParticipantsRepository.findByPhoneNumber(phoneNumber).orElse(null);
+        LotteryParticipants participant = lotteryParticipantsRepository.findById(phoneNumber).orElse(null);
 
         if (participant == null) throw new UserPrincipalNotFoundException("응모 내역이 없습니다.");
         else return GetLotteryParticipant.of(participant);
@@ -87,7 +87,7 @@ public class LotteryEventService {
     public LotteryParticipants registerUserIfNeed(String userData) {
         String phoneNumber = getDecodedPhoneNumber(userData);
 
-        LotteryParticipants participants = lotteryParticipantsRepository.findByPhoneNumber(phoneNumber)
+        LotteryParticipants participants = lotteryParticipantsRepository.findById(phoneNumber)
                 .orElse(null);
 
         if (participants == null) {

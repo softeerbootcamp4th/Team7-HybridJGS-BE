@@ -16,7 +16,6 @@ spring:
       path: /h2
       settings:
         web-allow-others: true
-
   config:
     activate:
       on-profile: local
