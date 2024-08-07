@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AdminLoginDto {
-    private String id;
+    private String adminId;
     private String password;
 }
