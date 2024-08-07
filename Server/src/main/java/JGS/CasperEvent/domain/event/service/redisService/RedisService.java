@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.service.RedisService;
+package JGS.CasperEvent.domain.event.service.redisService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
