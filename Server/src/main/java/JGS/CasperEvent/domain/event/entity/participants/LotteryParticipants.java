@@ -14,6 +14,7 @@ public class LotteryParticipants {
 
     @OneToOne
     @JoinColumn(name = "base_user_id")
+    //todo: 왜이런지 알아보기
     @JsonBackReference
     private BaseUser baseUser;
 
