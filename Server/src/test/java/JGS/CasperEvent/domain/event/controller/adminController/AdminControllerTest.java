@@ -26,7 +26,7 @@ public class AdminControllerTest {
     private MockMvc mockMvc;
 
     @Nested
-    @DisplayName("캐스퍼 봇 생성 테스트")
+    @DisplayName("어드민 테스트")
     class AdminTest{
         @Test
         @DisplayName("어드민 생성 성공 테스트")
@@ -48,7 +48,7 @@ public class AdminControllerTest {
             //then
             perform
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.message").value("관리자 생성 완료"))
+                    .andExpect(jsonPath("$.message").value("관리자 생성 성공"))
                     .andDo(print());
         }
     }
