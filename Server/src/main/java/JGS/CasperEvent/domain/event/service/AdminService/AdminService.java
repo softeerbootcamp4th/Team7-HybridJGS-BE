@@ -19,7 +19,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
 
     public Admin verifyAdmin(AdminLoginDto adminLoginDto) {
-        return adminRepository.findById(adminLoginDto.getId()).orElseThrow(NoSuchElementException::new);
+        return adminRepository.findByIdAndPassword(adminLoginDto.getAdminId(), adminLoginDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
 
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
