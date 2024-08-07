@@ -12,4 +12,8 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
             "FROM RushParticipants rp " +
             "WHERE rp.rushEvent.rushEventId = :eventId AND rp.baseUser.id = :userId")
     boolean existsByRushEventIdAndUserId(@Param("eventId") Long eventId, @Param("userId") String userId);
+
+    @Query("SELECT COUNT(rp) FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId AND rp.optionId = :optionId")
+    long countByRushEventIdAndOptionId(@Param("eventId") Long eventId, @Param("optionId") int optionId);
 }
