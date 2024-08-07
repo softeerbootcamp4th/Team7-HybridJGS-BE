@@ -28,9 +28,7 @@ public class VerifyUserFilter implements Filter {
             try {
                 UserLoginDto userLoginDto = objectMapper.readValue(request.getReader(), UserLoginDto.class);
                 BaseUser user = userService.verifyUser(userLoginDto);
-
                 request.setAttribute(AUTHENTICATE_USER, user);
-
                 chain.doFilter(request, response);
             } catch (Exception e) {
                 log.error("Fail User Verify");
