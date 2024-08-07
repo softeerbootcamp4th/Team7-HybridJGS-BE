@@ -1,13 +1,12 @@
 package JGS.CasperEvent.domain.event.service.AdminService;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.dto.AdminLoginDto;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +21,12 @@ public class AdminService {
         return adminRepository.findById(adminLoginDto.getId()).orElseThrow(NoSuchElementException::new);
     }
 
-    public String postAdmin(String body) {
+    public String postAdmin(AdminRequestDto adminRequestDto) {
 
-        JsonParser jsonParser = new JsonParser();
 
-        JsonObject adminObject = (JsonObject) jsonParser.parse(body);
-
-        String adminId = adminObject.get("id").getAsString();
-        String password = adminObject.get("password").getAsString();
+        String adminId = adminRequestDto.getAdminId();
+        //Todo: 비밀번호 암호화 필요
+        String password = adminRequestDto.getPassword();
 
         Admin admin = adminRepository.findById(adminId).orElse(null);
 

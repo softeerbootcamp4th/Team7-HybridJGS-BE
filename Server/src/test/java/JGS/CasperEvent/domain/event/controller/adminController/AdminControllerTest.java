@@ -41,7 +41,7 @@ public class AdminControllerTest {
             """, adminId);
 
             //when
-            ResultActions perform = mockMvc.perform(post("/admin/auth")
+            ResultActions perform = mockMvc.perform(post("/admin/join")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(adminRequest));
 
