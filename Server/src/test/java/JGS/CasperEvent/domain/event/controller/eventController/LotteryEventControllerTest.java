@@ -69,7 +69,7 @@ public class LotteryEventControllerTest {
                     """;
 
             //when
-            ResultActions perform = mockMvc.perform(post("/event/lottery")
+            ResultActions perform = mockMvc.perform(post("/event/lottery/casperBot")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest)
                     .header("Authorization", accessToken));
@@ -105,7 +105,7 @@ public class LotteryEventControllerTest {
 
 
             //when
-            ResultActions perform = mockMvc.perform(post("/event/lottery")
+            ResultActions perform = mockMvc.perform(post("/event/lottery/casperBot")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest)
                     .header("Authorization", accessToken));
@@ -134,7 +134,7 @@ public class LotteryEventControllerTest {
                     }""";
 
             //when
-            ResultActions perform = mockMvc.perform(post("/event/lottery")
+            ResultActions perform = mockMvc.perform(post("/event/lottery/casperBot")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest)
                     .header("Authorization", accessToken));
@@ -162,7 +162,7 @@ public class LotteryEventControllerTest {
                     """;
 
             //when
-            ResultActions perform = mockMvc.perform(post("/event/lottery")
+            ResultActions perform = mockMvc.perform(post("/event/lottery/casperBot")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest));
 
@@ -193,7 +193,7 @@ public class LotteryEventControllerTest {
                     }
                     """;
             //when
-            mockMvc.perform(post("/event/lottery")
+            mockMvc.perform(post("/event/lottery/casperBot")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(casperBotRequest)
                     .header("Authorization", accessToken));
