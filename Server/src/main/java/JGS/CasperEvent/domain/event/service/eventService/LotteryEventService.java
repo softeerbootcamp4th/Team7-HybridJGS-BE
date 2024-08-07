@@ -2,7 +2,7 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryEvent;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -87,8 +87,8 @@ public class LotteryEventService {
     }
 
     // TODO: 가짜 API, DB 접속되도록 수정
-    public GetLotteryEvent getLotteryEvent(){
-        return new GetLotteryEvent(1L, LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27), 363);
+    public LotteryEventResponseDto getLotteryEvent(){
+        return new LotteryEventResponseDto(1L, LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27), 363);
     }
 
 }

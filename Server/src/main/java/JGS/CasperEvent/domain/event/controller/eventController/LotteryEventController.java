@@ -2,7 +2,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryEvent;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
@@ -32,7 +32,7 @@ public class LotteryEventController {
     }
     // 추첨 이벤트 조회 API  -> 가짜 API
     @GetMapping
-    public ResponseEntity<GetLotteryEvent> getLotteryEvent(){
+    public ResponseEntity<LotteryEventResponseDto> getLotteryEvent(){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(lotteryEventService.getLotteryEvent());
