@@ -22,32 +22,33 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registration) {
-//        registration.addMapping("/**")
-//                .allowedOrigins("*")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowedHeaders("*");
+    @Override
+    public void addCorsMappings(CorsRegistry registration) {
+        registration.addMapping("/**")
+                .allowCredentials(true)
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
+
+//    @Bean
+//    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+//        FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new CorsFilter(createCorsConfigurationSource()));
+//        registrationBean.setOrder(0);
+//        return registrationBean;
 //    }
-
-    @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
-        FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new CorsFilter(createCorsConfigurationSource()));
-        registrationBean.setOrder(0); // 가장 먼저 동작하도록 설정
-        return registrationBean;
-    }
-
-    private UrlBasedCorsConfigurationSource createCorsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+//
+//    private UrlBasedCorsConfigurationSource createCorsConfigurationSource() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.addAllowedOrigin("*");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
 
     @Bean
     public FilterRegistrationBean verifyUserFilter(ObjectMapper mapper, UserService userService) {
