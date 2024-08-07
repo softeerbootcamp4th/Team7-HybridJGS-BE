@@ -5,12 +5,12 @@ import JGS.CasperEvent.domain.event.entity.event.RushOption;
 
 import java.time.LocalDate;
 
-public record GetRushEvent (Long rushEventId, LocalDate startDate, LocalDate endDate,
-                            int winnerCount, String prizeImageUrl, String prizeDescription,
-                            RushOption leftOption, RushOption rightOption){
+public record RushEventResponseDto(Long rushEventId, LocalDate startDate, LocalDate endDate,
+                                   int winnerCount, String prizeImageUrl, String prizeDescription,
+                                   RushOption leftOption, RushOption rightOption){
 
-    public static GetRushEvent of (RushEvent rushEvent){
-        return new GetRushEvent(
+    public static RushEventResponseDto of (RushEvent rushEvent){
+        return new RushEventResponseDto(
                 rushEvent.getRushEventId(),
                 rushEvent.getStartDate(),
                 rushEvent.getEndDate(),

@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetRushEvent;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRate;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
@@ -30,8 +30,8 @@ public class RushEventService {
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
         // RushEvent를 DTO로 전환
-        List<GetRushEvent> rushEventDtoList = rushEventList.stream()
-                .map(GetRushEvent::of)
+        List<RushEventResponseDto> rushEventDtoList = rushEventList.stream()
+                .map(RushEventResponseDto::of)
                 .toList();
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListAndServerTimeResponse(rushEventDtoList, LocalDateTime.now());
