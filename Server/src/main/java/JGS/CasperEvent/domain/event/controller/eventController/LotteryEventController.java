@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.PostCasperBot;
+import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
@@ -41,7 +41,7 @@ public class LotteryEventController {
     @PostMapping("/casperBot")
     public ResponseEntity<GetCasperBot> postCasperBot(
             HttpServletRequest request,
-            @RequestBody @Valid PostCasperBot postCasperBot) throws BadRequestException {
+            @RequestBody @Valid CasperBotRequestDto postCasperBot) throws BadRequestException {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.CREATED)

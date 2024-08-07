@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.PostCasperBot;
+import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
@@ -44,7 +44,7 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public GetCasperBot postCasperBot(BaseUser user, PostCasperBot postCasperBot) throws CustomException, BadRequestException {
+    public GetCasperBot postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException, BadRequestException {
         LotteryParticipants participants = registerUserIfNeed(user);
 
         CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
