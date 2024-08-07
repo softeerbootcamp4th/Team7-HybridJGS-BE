@@ -27,13 +27,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
 
-    private final String[] whiteListUris = new String[]
-            {"/health", "/event/auth",
+    private final String[] whiteListUris = new String[]{
+            "/health", "/event/auth",
             "/event/rush", "/event/lottery/caspers",
             "/admin/join", "/admin/auth", "/h2", "/h2/*",
             "/swagger-ui/*", "/v3/api-docs", "/v3/api-docs/*",
-            "/event/lottery"};
-    private final String[] blackListUris = new String[]{"/event/rush/*"};
+            "/event/lottery"
+    };
+    private final String[] blackListUris = new String[]{
+            "/event/rush/*", "/event/lottery/casperBot"
+    };
 
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
