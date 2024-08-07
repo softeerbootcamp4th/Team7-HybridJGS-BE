@@ -18,3 +18,9 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
+server:
+  ssl:
+    key-store: ${KEY-STORE}
+    key-store-password: ${KEY-STORE-PASSWORD}
+    keyStoreType: ${KEY-STORE-TYPE}
+    keyAlias: ${KEY-ALIAS}
