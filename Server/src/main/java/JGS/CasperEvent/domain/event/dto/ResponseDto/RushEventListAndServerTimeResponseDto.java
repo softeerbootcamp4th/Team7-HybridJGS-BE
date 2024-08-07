@@ -3,11 +3,11 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class RushEventListAndServerTimeResponse {
+public class RushEventListAndServerTimeResponseDto {
     private List<RushEventResponseDto> events;
     private LocalDateTime serverTime;
 
-    public RushEventListAndServerTimeResponse(List<RushEventResponseDto> events, LocalDateTime serverTime) {
+    public RushEventListAndServerTimeResponseDto(List<RushEventResponseDto> events, LocalDateTime serverTime) {
         this.events = events;
         this.serverTime = serverTime;
     }

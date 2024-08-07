@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRate;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -20,7 +20,7 @@ public class RushEventController {
 
     // 전체 선착순 이벤트 조회
     @GetMapping
-    public ResponseEntity<RushEventListAndServerTimeResponse> getRushEventListAndServerTime() {
+    public ResponseEntity<RushEventListAndServerTimeResponseDto> getRushEventListAndServerTime() {
         return ResponseEntity.ok(rushEventService.getAllRushEvents());
     }
 
