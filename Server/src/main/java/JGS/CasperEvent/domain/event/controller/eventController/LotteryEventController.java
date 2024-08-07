@@ -38,7 +38,7 @@ public class LotteryEventController {
                 .body(lotteryEventService.getLotteryEvent());
     }
     // 캐스퍼 봇 생성 API
-    @PostMapping
+    @PostMapping("/casperBot")
     public ResponseEntity<GetCasperBot> postCasperBot(
             HttpServletRequest request,
             @RequestBody @Valid PostCasperBot postCasperBot) throws BadRequestException {
