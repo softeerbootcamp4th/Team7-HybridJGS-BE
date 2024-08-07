@@ -2,6 +2,7 @@ package JGS.CasperEvent.global.entity;
 
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.global.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class BaseUser extends BaseEntity {
     String id;
     Role role;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private LotteryParticipants lotteryParticipants;
 
