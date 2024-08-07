@@ -3,7 +3,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryParticipantResponseDto;
 import JGS.CasperEvent.domain.event.service.RedisService.RedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -50,7 +50,7 @@ public class LotteryEventController {
 
     // 응모 여부 조회 API
     @GetMapping("/applied")
-    public ResponseEntity<GetLotteryParticipant> GetLotteryParticipant(HttpServletRequest request) throws UserPrincipalNotFoundException {
+    public ResponseEntity<LotteryParticipantResponseDto> GetLotteryParticipant(HttpServletRequest request) throws UserPrincipalNotFoundException {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.OK)
