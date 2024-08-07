@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetLotteryParticipant;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
@@ -44,7 +44,7 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public GetCasperBot postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException, BadRequestException {
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException, BadRequestException {
         LotteryParticipants participants = registerUserIfNeed(user);
 
         CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
@@ -54,7 +54,7 @@ public class LotteryEventService {
         lotteryParticipantsRepository.save(participants);
         casperBotRepository.save(casperBot);
 
-        GetCasperBot casperBotDto = GetCasperBot.of(casperBot);
+        CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
         redisService.addData(casperBotDto);
         return casperBotDto;
     }
@@ -65,10 +65,10 @@ public class LotteryEventService {
         return GetLotteryParticipant.of(participant, getCasperBot(participant.getCasperId()));
     }
 
-    public GetCasperBot getCasperBot(Long casperId) {
+    public CasperBotResponseDto getCasperBot(Long casperId) {
         CasperBot casperBot = casperBotRepository.findById(casperId).orElse(null);
         if (casperBot == null) throw new CustomException("캐스퍼 봇이 없음", CustomErrorCode.CASPERBOT_NOT_FOUND);
-        return GetCasperBot.of(casperBot);
+        return CasperBotResponseDto.of(casperBot);
     }
 
 
