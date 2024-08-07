@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface RushParticipantsRepository extends JpaRepository<RushParticipants, String> {
     @Query("SELECT CASE WHEN COUNT(rp) > 0 THEN TRUE ELSE FALSE END " +
             "FROM RushParticipants rp " +
-            "WHERE rp.rushEvent.rushEventId = :eventId AND rp.id = :userId")
+            "WHERE rp.rushEvent.rushEventId = :eventId AND rp.baseUser.id = :userId")
     boolean existsByRushEventIdAndUserId(@Param("eventId") Long eventId, @Param("userId") String userId);
 }

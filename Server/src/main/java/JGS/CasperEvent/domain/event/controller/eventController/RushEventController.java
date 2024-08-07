@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
+import JGS.CasperEvent.global.entity.BaseUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,16 @@ public class RushEventController {
     @GetMapping("/{eventId}/applied")
     public ResponseEntity<Boolean> checkUserParticipationInRushEvent(HttpServletRequest httpServletRequest, @PathVariable("eventId") Long eventId) {
 
-        String userId = httpServletRequest.getAttribute("userId").toString();
-        return ResponseEntity.ok(rushEventService.isExists(eventId, userId));
+        BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
+        return ResponseEntity.ok(rushEventService.isExists(eventId, user.getId()));
+    }
+
+    // 밸런스 게임 응모
+    @PostMapping("/{eventId}/options/{optionId}/apply")
+    public ResponseEntity<Void> applyRushEvent(HttpServletRequest httpServletRequest, @PathVariable("eventId") Long eventId, @PathVariable("optionId") int optionId) {
+        BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
+        rushEventService.apply(user, eventId, optionId);
+
+        return ResponseEntity.noContent().build();
     }
 }

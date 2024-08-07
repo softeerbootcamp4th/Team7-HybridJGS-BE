@@ -3,8 +3,13 @@ package JGS.CasperEvent.domain.event.service.eventService;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetRushEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
+import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.util.RepositoryErrorHandler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,5 +38,18 @@ public class RushEventService {
 
     public boolean isExists(Long eventId, String userId) {
         return rushParticipantsRepository.existsByRushEventIdAndUserId(eventId, userId);
+    }
+
+    public void apply(BaseUser user, Long eventId, int optionId) {
+        if (isExists(eventId, user.getId())) {
+            throw new CustomException("이미 응모한 회원입니다.", CustomErrorCode.CONFLICT);
+        }
+
+        // eventId 를 이용하여 rushEvent 를 꺼냄
+        RushEvent rushEvent = RepositoryErrorHandler.findByIdOrElseThrow(rushEventRepository, eventId, CustomErrorCode.NO_RUSH_EVENT);
+
+        // 새로운 RushParticipants 를 생성하여 DB 에 저장
+        RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
+        rushParticipantsRepository.save(rushParticipants);
     }
 }
