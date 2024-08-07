@@ -13,7 +13,8 @@ public enum CustomErrorCode {
     CONFLICT("이미 존재하는 ID입니다.", 409),
     JWT_PARSE_EXCEPTION("Json 파싱 오류입니다.", 400),
     JWT_EXCEPTION("JWT 오류입니다.", 400),
-    JWT_EXPIRED("만료된 토큰입니다.", 400);
+    JWT_EXPIRED("만료된 토큰입니다.", 400),
+    JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401);
 
 
 
