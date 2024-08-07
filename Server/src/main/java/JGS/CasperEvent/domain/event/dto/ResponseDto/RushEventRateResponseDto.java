@@ -3,11 +3,11 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto;
 import lombok.Getter;
 
 @Getter
-public class RushEventRate {
+public class RushEventRateResponseDto {
     long leftOption;
     long rightOption;
 
-    public RushEventRate(long leftOption, long rightOption) {
+    public RushEventRateResponseDto(long leftOption, long rightOption) {
         this.leftOption = leftOption;
         this.rightOption = rightOption;
     }

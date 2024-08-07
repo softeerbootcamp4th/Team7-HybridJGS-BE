@@ -2,7 +2,7 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRate;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRateResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
@@ -54,10 +54,10 @@ public class RushEventService {
         rushParticipantsRepository.save(rushParticipants);
     }
 
-    public RushEventRate getRushEventRate(Long eventId) {
+    public RushEventRateResponseDto getRushEventRate(Long eventId) {
         long leftOptionCount = rushParticipantsRepository.countByRushEventIdAndOptionId(eventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEventIdAndOptionId(eventId, 2);
 
-        return new RushEventRate(leftOptionCount, rightOptionCount);
+        return new RushEventRateResponseDto(leftOptionCount, rightOptionCount);
     }
 }
