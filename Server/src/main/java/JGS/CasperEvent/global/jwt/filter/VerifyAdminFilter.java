@@ -1,7 +1,7 @@
 package JGS.CasperEvent.global.jwt.filter;
 
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
-import JGS.CasperEvent.domain.event.service.AdminService.AdminService;
+import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.jwt.dto.AdminLoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;

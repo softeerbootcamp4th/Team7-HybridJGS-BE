@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.service.AdminService;
+package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
