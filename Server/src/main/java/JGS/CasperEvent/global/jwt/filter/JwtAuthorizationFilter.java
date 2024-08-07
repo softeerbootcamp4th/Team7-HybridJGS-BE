@@ -28,7 +28,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
 
-    private final String[] whiteListUris = new String[]{"/event/auth", "/event/rush", "/event/lottery/caspers", "/admin/join", "/admin/auth", "/h2", "/h2/*", "/swagger-ui/*", "/v3/api-docs", "/v3/api-docs/*"};
+    private final String[] whiteListUris = new String[]{"/health, /event/auth", "/event/rush", "/event/lottery/caspers", "/admin/join", "/admin/auth", "/h2", "/h2/*", "/swagger-ui/*", "/v3/api-docs", "/v3/api-docs/*"};
     private final String[] blackListUris = new String[]{"/event/rush/*"};
 
     private final JwtProvider jwtProvider;
@@ -47,7 +47,7 @@ public class JwtAuthorizationFilter implements Filter {
         }
 
         if (!isContainToken(httpServletRequest)) {
-            httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "인증 오류");
+            sendError(httpServletResponse, CustomErrorCode.JWT_MISSING);
             return;
         }
 
@@ -107,7 +107,7 @@ public class JwtAuthorizationFilter implements Filter {
         ErrorResponse errorResponse = new ErrorResponse(errorCode, errorCode.getMessage());
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);
 
-        response.setContentType("application/json");
+        response.setContentType("application/json; charset=UTF-8");
         response.setStatus(errorCode.getStatus());
         response.getWriter().write(jsonResponse);
     }

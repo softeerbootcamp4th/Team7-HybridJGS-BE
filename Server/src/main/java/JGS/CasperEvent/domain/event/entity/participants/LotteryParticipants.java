@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
 import JGS.CasperEvent.global.entity.BaseUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class LotteryParticipants {
 
     @OneToOne
     @JoinColumn(name = "base_user_id")
+    @JsonBackReference
     private BaseUser baseUser;
 
     private int linkClickedCount;
@@ -21,7 +23,7 @@ public class LotteryParticipants {
 
     private Long casperId;
 
-    public void updateCasperId(Long casperId){
+    public void updateCasperId(Long casperId) {
         this.casperId = casperId;
     }
 
@@ -29,8 +31,14 @@ public class LotteryParticipants {
 
     }
 
-    public void expectationAdded(){
+    public void expectationAdded() {
         expectations++;
+        appliedCount = Math.max(10, appliedCount + 1);
+    }
+
+    public void linkClickedCountAdded() {
+        linkClickedCount++;
+        appliedCount = Math.max(10, appliedCount + 1);
     }
 
     public LotteryParticipants(BaseUser baseUser) {

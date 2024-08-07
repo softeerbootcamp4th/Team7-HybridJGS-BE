@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -14,7 +16,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(HealthController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("local")
 class CasperEventApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
@@ -33,7 +37,7 @@ class CasperEventApplicationTests {
 	void HealthTest() throws Exception {
 		mockMvc.perform(get("/health"))
 				.andExpect(status().isOk())
-				.andExpect(content().string("true"))
+				.andExpect(content().string("Server OK"))
 				.andDo(print());
 
 	}
