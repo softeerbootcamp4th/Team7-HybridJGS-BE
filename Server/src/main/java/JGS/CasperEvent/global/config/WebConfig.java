@@ -12,16 +12,50 @@ import jakarta.servlet.*;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registration) {
+        registration.addMapping("/**")
+                .allowCredentials(true)
+                .allowedOrigins("http://localhost:5173", "https://d3phfzvzx3wm4l.cloudfront.net/")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
+
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+        FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new CorsFilter(corsConfigurationSource()));
+        registrationBean.setOrder(0);
+        return registrationBean;
+    }
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:5173"); // 허용할 출처를 명시
+        config.addAllowedOrigin("https://d3phfzvzx3wm4l.cloudfront.net/"); // 허용할 출처를 명시
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
     @Bean
     public FilterRegistrationBean verifyUserFilter(ObjectMapper mapper, UserService userService) {
-        FilterRegistrationBean<Filter> filterRegistrationBean = new
-                FilterRegistrationBean<>();
+        FilterRegistrationBean<Filter> filterRegistrationBean =
+                new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new VerifyUserFilter(mapper, userService));
         filterRegistrationBean.setOrder(1);
         filterRegistrationBean.addUrlPatterns("/event/auth");
@@ -63,15 +97,9 @@ public class WebConfig implements WebMvcConfigurer {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new JwtAuthorizationFilter(provider, mapper));
-        filterRegistrationBean.setOrder(2);
+        filterRegistrationBean.setOrder(3);
         return filterRegistrationBean;
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registration) {
-        registration.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*");
-    }
+
 }
