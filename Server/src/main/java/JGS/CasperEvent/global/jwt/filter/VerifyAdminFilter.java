@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,12 +29,14 @@ public class VerifyAdminFilter implements Filter {
             try {
                 AdminLoginDto adminLoginDto = objectMapper.readValue(request.getReader(), AdminLoginDto.class);
                 Admin admin = adminService.verifyAdmin(adminLoginDto);
-
                 request.setAttribute(AUTHENTICATE_ADMIN, admin);
 
                 chain.doFilter(request, response);
+            } catch(NoSuchElementException e){
+                HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+                httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value(), "아이디 혹은 비밀번호가 잘못되었습니다.");
             } catch (Exception e) {
-                log.error("Fail User Verify");
+                log.error("Fail Admin Verify");
                 HttpServletResponse httpServletResponse = (HttpServletResponse) response;
                 httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
             }

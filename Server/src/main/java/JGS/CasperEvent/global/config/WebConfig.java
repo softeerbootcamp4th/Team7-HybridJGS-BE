@@ -1,10 +1,7 @@
 package JGS.CasperEvent.global.config;
 
 import JGS.CasperEvent.domain.event.service.AdminService.AdminService;
-import JGS.CasperEvent.global.jwt.filter.JwtAuthorizationFilter;
-import JGS.CasperEvent.global.jwt.filter.JwtUserFilter;
-import JGS.CasperEvent.global.jwt.filter.VerifyAdminFilter;
-import JGS.CasperEvent.global.jwt.filter.VerifyUserFilter;
+import JGS.CasperEvent.global.jwt.filter.*;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -87,7 +84,7 @@ public class WebConfig implements WebMvcConfigurer {
     public FilterRegistrationBean jwtAdminFilter(JwtProvider provider, ObjectMapper mapper) {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new JwtUserFilter(provider, mapper));
+        filterRegistrationBean.setFilter(new JwtAdminFilter(provider, mapper));
         filterRegistrationBean.setOrder(2);
         filterRegistrationBean.addUrlPatterns("/admin/auth");
         return filterRegistrationBean;
