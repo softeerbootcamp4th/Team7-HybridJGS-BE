@@ -65,7 +65,8 @@ public class LotteryEventControllerTest {
                     "sticker": "4",
                     "name": "myCasperBot",
                     "expectation": "myExpectation"
-                    }""";
+                    }
+                    """;
 
             //when
             ResultActions perform = mockMvc.perform(post("/event/lottery")
@@ -212,13 +213,12 @@ public class LotteryEventControllerTest {
         @DisplayName("캐스퍼 봇 응모 여부 조회 성공 - 유저가 존재하지 않는 경우")
         void userHasAppliedCasperBotSuccessTest_NotPresentUser() throws Exception {
             //given
-            Cookie myCookie = new Cookie("userData", "NotPresentUser");
+            String accessToken = getToken("010-1234-1234");
 
             //when
             ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .cookie(myCookie));
-
+                    .header("Authorization", accessToken));
             //then
             perform.andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
@@ -228,16 +228,15 @@ public class LotteryEventControllerTest {
         }
 
         @Test
-        @DisplayName("캐스퍼 봇 응모 여부 조회 실패 - 쿠키가 없는 경우")
+        @DisplayName("캐스퍼 봇 응모 여부 조회 실패 - 토큰이 없는 경우")
         void userHasAppliedCasperBotFailureTest_NotPresentCookie() throws Exception {
-            //given
             //when
             ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
                     .contentType(MediaType.APPLICATION_JSON));
             //then
             perform.andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED"))
-                    .andExpect(jsonPath("$.message").value("권한이 없습니다."))
+                    .andExpect(jsonPath("$.errorCode").value("JWT_MISSING"))
+                    .andExpect(jsonPath("$.message").value("인증 토큰이 존재하지 않습니다."))
                     .andDo(print());
 
         }

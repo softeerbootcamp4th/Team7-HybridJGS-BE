@@ -3,4 +3,4 @@
 /Server/build/
 /.idea/
 /Server/out/
-/Server/src/main/resources/application.properties
+/Server/src/main/resources/application-local.yml
