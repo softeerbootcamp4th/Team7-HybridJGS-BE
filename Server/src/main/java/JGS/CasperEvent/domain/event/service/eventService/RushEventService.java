@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.GetRushEvent;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRate;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
@@ -51,5 +52,12 @@ public class RushEventService {
         // 새로운 RushParticipants 를 생성하여 DB 에 저장
         RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
         rushParticipantsRepository.save(rushParticipants);
+    }
+
+    public RushEventRate getRushEventRate(Long eventId) {
+        long leftOptionCount = rushParticipantsRepository.countByRushEventIdAndOptionId(eventId, 1);
+        long rightOptionCount = rushParticipantsRepository.countByRushEventIdAndOptionId(eventId, 2);
+
+        return new RushEventRate(leftOptionCount, rightOptionCount);
     }
 }
