@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.service.AdminService.AdminService;
+import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class AdminController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> postAdmin(@RequestBody @Valid AdminRequestDto adminRequestDto){
+    public ResponseEntity<ResponseDto> postAdmin(@RequestBody @Valid AdminRequestDto adminRequestDto){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.postAdmin(adminRequestDto));

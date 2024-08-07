@@ -7,6 +7,7 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.dto.AdminLoginDto;
+import JGS.CasperEvent.global.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,7 @@ public class AdminService {
         return adminRepository.findById(adminLoginDto.getId()).orElseThrow(NoSuchElementException::new);
     }
 
-    public String postAdmin(AdminRequestDto adminRequestDto) {
-
-
+    public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
         String adminId = adminRequestDto.getAdminId();
         //Todo: 비밀번호 암호화 필요
         String password = adminRequestDto.getPassword();
@@ -33,6 +32,6 @@ public class AdminService {
         if (admin != null) throw new CustomException("이미 등록된 ID입니다.", CustomErrorCode.CONFLICT);
         adminRepository.save(new Admin(adminId, password, Role.ADMIN));
 
-        return "admin Created";
+        return ResponseDto.of("관리자 생성 성공");
     }
 }
