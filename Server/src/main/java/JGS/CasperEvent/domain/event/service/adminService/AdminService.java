@@ -6,7 +6,6 @@ import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.jwt.dto.AdminLoginDto;
 import JGS.CasperEvent.global.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,8 @@ import java.util.NoSuchElementException;
 public class AdminService {
     private final AdminRepository adminRepository;
 
-    public Admin verifyAdmin(AdminLoginDto adminLoginDto) {
-        return adminRepository.findById(adminLoginDto.getId()).orElseThrow(NoSuchElementException::new);
+    public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
+        return adminRepository.findById(adminRequestDto.getAdminId()).orElseThrow(NoSuchElementException::new);
     }
 
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {

@@ -1,8 +1,8 @@
 package JGS.CasperEvent.global.jwt.filter;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
-import JGS.CasperEvent.global.jwt.dto.AdminLoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +26,8 @@ public class VerifyAdminFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         if ((httpServletRequest.getMethod().equals("POST"))) {
             try {
-                AdminLoginDto adminLoginDto = objectMapper.readValue(request.getReader(), AdminLoginDto.class);
-                Admin admin = adminService.verifyAdmin(adminLoginDto);
+                AdminRequestDto adminRequestDto = objectMapper.readValue(request.getReader(), AdminRequestDto.class);
+                Admin admin = adminService.verifyAdmin(adminRequestDto);
 
                 request.setAttribute(AUTHENTICATE_ADMIN, admin);
 
