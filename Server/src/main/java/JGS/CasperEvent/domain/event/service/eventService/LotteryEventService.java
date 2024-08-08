@@ -51,7 +51,7 @@ public class LotteryEventService {
         CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
         participants.updateCasperId(casperBot.getCasperId());
 
-        if (casperBot.getExpectation() != null) participants.expectationAdded();
+        if (!casperBot.getExpectation().isEmpty()) participants.expectationAdded();
         lotteryParticipantsRepository.save(participants);
         casperBotRepository.save(casperBot);
 
