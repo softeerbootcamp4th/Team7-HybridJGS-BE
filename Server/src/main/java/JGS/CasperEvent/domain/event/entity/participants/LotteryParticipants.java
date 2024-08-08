@@ -33,13 +33,13 @@ public class LotteryParticipants {
     }
 
     public void expectationAdded() {
-        expectations++;
-        appliedCount = Math.max(10, appliedCount + 1);
+        if(expectations == 0) expectations++;
+        appliedCount = Math.min(10, 1 + expectations + linkClickedCount);
     }
 
     public void linkClickedCountAdded() {
         linkClickedCount++;
-        appliedCount = Math.max(10, appliedCount + 1);
+        appliedCount = Math.min(10, 1 + expectations + linkClickedCount);
     }
 
     public LotteryParticipants(BaseUser baseUser) {
