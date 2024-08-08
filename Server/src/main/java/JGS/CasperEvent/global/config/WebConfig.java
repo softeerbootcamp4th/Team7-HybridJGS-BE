@@ -44,8 +44,9 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173"); // 허용할 출처를 명시
-        config.addAllowedOrigin("https://d3phfzvzx3wm4l.cloudfront.net/"); // 허용할 출처를 명시
+        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("https://d3phfzvzx3wm4l.cloudfront.net/");
+        config.addAllowedOrigin("https://hybrid-jgs.shop");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
