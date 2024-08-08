@@ -3,20 +3,20 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class RushEventListAndServerTimeResponse {
-    private List<GetRushEvent> events;
+public class RushEventListAndServerTimeResponseDto {
+    private List<RushEventResponseDto> events;
     private LocalDateTime serverTime;
 
-    public RushEventListAndServerTimeResponse(List<GetRushEvent> events, LocalDateTime serverTime) {
+    public RushEventListAndServerTimeResponseDto(List<RushEventResponseDto> events, LocalDateTime serverTime) {
         this.events = events;
         this.serverTime = serverTime;
     }
 
     // Getters and setters
-    public List<GetRushEvent> getEvents() {
+    public List<RushEventResponseDto> getEvents() {
         return events;
     }
-    public void setEvents(List<GetRushEvent> events) {
+    public void setEvents(List<RushEventResponseDto> events) {
         this.events = events;
     }
 

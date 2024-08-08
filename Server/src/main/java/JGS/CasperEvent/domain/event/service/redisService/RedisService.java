@@ -1,6 +1,6 @@
-package JGS.CasperEvent.domain.event.service.RedisService;
+package JGS.CasperEvent.domain.event.service.redisService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.GetCasperBot;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,14 +12,14 @@ public class RedisService {
     private static final String LIST_KEY = "recentData";
     private static final int MAX_SIZE = 100;
 
-    private final RedisTemplate<String, GetCasperBot> redisTemplate;
+    private final RedisTemplate<String, CasperBotResponseDto> redisTemplate;
 
     @Autowired
-    public RedisService(RedisTemplate<String, GetCasperBot> redisTemplate) {
+    public RedisService(RedisTemplate<String, CasperBotResponseDto> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    public void addData(GetCasperBot data) {
+    public void addData(CasperBotResponseDto data) {
         redisTemplate.opsForList().leftPush(LIST_KEY, data);
 
         Long size = redisTemplate.opsForList().size(LIST_KEY);
@@ -28,7 +28,7 @@ public class RedisService {
         }
     }
 
-    public List<GetCasperBot> getRecentData() {
+    public List<CasperBotResponseDto> getRecentData() {
         return redisTemplate.opsForList().range(LIST_KEY, 0, -1);
     }
 }

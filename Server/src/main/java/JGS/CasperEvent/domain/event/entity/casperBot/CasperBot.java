@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.casperBot;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.PostCasperBot;
+import JGS.CasperEvent.domain.event.dto.RequestDto.CasperBotRequestDto;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.util.UserUtil;
 import jakarta.persistence.*;
@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class CasperBot extends BaseEntity {
-    public CasperBot(PostCasperBot postCasperBot, String phoneNumber) {
+    public CasperBot(CasperBotRequestDto postCasperBot, String phoneNumber) {
         this.casperId = UserUtil.generateId();
         this.phoneNumber = phoneNumber;
         this.eyeShape = postCasperBot.getEyeShape();

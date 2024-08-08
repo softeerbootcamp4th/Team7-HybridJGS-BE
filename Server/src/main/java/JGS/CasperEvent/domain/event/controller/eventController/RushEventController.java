@@ -1,8 +1,8 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponse;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRate;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventListAndServerTimeResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.RushEventRateResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class RushEventController {
 
     // 전체 선착순 이벤트 조회
     @GetMapping
-    public ResponseEntity<RushEventListAndServerTimeResponse> getRushEventListAndServerTime() {
+    public ResponseEntity<RushEventListAndServerTimeResponseDto> getRushEventListAndServerTime() {
         return ResponseEntity.ok(rushEventService.getAllRushEvents());
     }
 
@@ -43,8 +43,8 @@ public class RushEventController {
 
     // 밸런스 게임 비율 조회
     @GetMapping("/{eventId}/balance")
-    public ResponseEntity<RushEventRate> rushEventRate (@PathVariable("eventId") Long eventId) {
-        RushEventRate rushEventRate = rushEventService.getRushEventRate(eventId);
-        return ResponseEntity.ok(rushEventRate);
+    public ResponseEntity<RushEventRateResponseDto> rushEventRate (@PathVariable("eventId") Long eventId) {
+        RushEventRateResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(eventId);
+        return ResponseEntity.ok(rushEventRateResponseDto);
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class PostCasperBot {
+public class CasperBotRequestDto {
 
     @NotNull(message = "눈 모양 값은 필수 필드입니다.")
     @Min(value = 0, message = "눈 모양 값이 부적절합니다.")

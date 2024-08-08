@@ -5,12 +5,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @RedisHash(value = "casperBot")
-public record GetCasperBot(@Id Long casperId, int eyeShape, int eyePosition,
-                           int mouthShape, int color,
-                           int sticker, String name, String expectation) {
+public record CasperBotResponseDto(@Id Long casperId, int eyeShape, int eyePosition,
+                                   int mouthShape, int color,
+                                   int sticker, String name, String expectation) {
 
-    public static GetCasperBot of(CasperBot casperBot) {
-        return new GetCasperBot(
+    public static CasperBotResponseDto of(CasperBot casperBot) {
+        return new CasperBotResponseDto(
                 casperBot.getCasperId(),
                 casperBot.getEyeShape(),
                 casperBot.getEyePosition(),

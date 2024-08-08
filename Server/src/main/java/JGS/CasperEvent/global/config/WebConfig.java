@@ -1,6 +1,6 @@
 package JGS.CasperEvent.global.config;
 
-import JGS.CasperEvent.domain.event.service.AdminService.AdminService;
+import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.jwt.filter.JwtAuthorizationFilter;
 import JGS.CasperEvent.global.jwt.filter.JwtUserFilter;
 import JGS.CasperEvent.global.jwt.filter.VerifyAdminFilter;

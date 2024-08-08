@@ -244,7 +244,7 @@ public class LotteryEventControllerTest {
 
     @Nested
     @DisplayName("캐스퍼 봇 조회 테스트")
-    class GetCasperBotTest {
+    class CasperBotResponseDtoTest {
         @Test
         @DisplayName("캐스퍼 봇 조회 테스트 성공 - Redis")
         void GetCasperBotSuccessTest_redis() throws Exception {

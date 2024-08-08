@@ -4,14 +4,14 @@ import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import java.time.LocalDateTime;
 
 
-public record GetLotteryParticipant(int linkClickedCount, int expectations, int appliedCount, GetCasperBot casperBot,
-                                    LocalDateTime createdAt, LocalDateTime updatedAt) {
-    public static GetLotteryParticipant of(LotteryParticipants lotteryParticipants, GetCasperBot getcasperBot) {
-        return new GetLotteryParticipant(
+public record LotteryParticipantResponseDto(int linkClickedCount, int expectations, int appliedCount, CasperBotResponseDto casperBot,
+                                            LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public static LotteryParticipantResponseDto of(LotteryParticipants lotteryParticipants, CasperBotResponseDto casperBotResponseDto) {
+        return new LotteryParticipantResponseDto(
                 lotteryParticipants.getLinkClickedCount(),
                 lotteryParticipants.getExpectations(),
                 lotteryParticipants.getAppliedCount(),
-                getcasperBot,
+                casperBotResponseDto,
                 lotteryParticipants.getBaseUser().getCreatedAt(),
                 lotteryParticipants.getBaseUser().getUpdatedAt()
         );
