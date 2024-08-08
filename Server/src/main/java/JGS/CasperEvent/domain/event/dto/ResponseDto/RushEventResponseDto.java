@@ -12,8 +12,8 @@ public record RushEventResponseDto(Long rushEventId, LocalDate startDate, LocalD
     public static RushEventResponseDto of (RushEvent rushEvent){
         return new RushEventResponseDto(
                 rushEvent.getRushEventId(),
-                rushEvent.getStartDate(),
-                rushEvent.getEndDate(),
+                rushEvent.getEventStartDate(),
+                rushEvent.getEventEndDate(),
                 rushEvent.getWinnerCount(),
                 rushEvent.getPrizeImageUrl(),
                 rushEvent.getPrizeDescription(),

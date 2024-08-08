@@ -3,15 +3,18 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
-public record LotteryEventResponseDto(Long lotteryEventId, LocalDate startDate, LocalDate endDate,
-                                      int winnerCount) {
-    public static LotteryEventResponseDto of(LotteryEvent lotteryEvent) {
+public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDate eventStartDate, LocalDate eventEndDate,
+                                      long activePeriod) {
+    public static LotteryEventResponseDto of(LocalDateTime serverDateTime, LotteryEvent lotteryEvent) {
         return new LotteryEventResponseDto(
-                lotteryEvent.getLotteryEventId(),
-                lotteryEvent.getStartDate(),
-                lotteryEvent.getEndDate(),
-                lotteryEvent.getWinnerCount()
+                serverDateTime,
+                lotteryEvent.getEventStartDate(),
+                lotteryEvent.getEventEndDate(),
+                ChronoUnit.DAYS.between(lotteryEvent.getEventStartDate(), lotteryEvent.getEventEndDate())
         );
     }
+
 }

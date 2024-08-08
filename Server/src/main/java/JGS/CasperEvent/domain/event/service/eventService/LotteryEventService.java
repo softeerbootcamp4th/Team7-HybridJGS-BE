@@ -14,23 +14,24 @@ import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @Transactional
 public class LotteryEventService {
 
     private final UserRepository userRepository;
-    private LotteryEventRepository lotteryEventRepository;
-    private LotteryParticipantsRepository lotteryParticipantsRepository;
-    private CasperBotRepository casperBotRepository;
-    private RedisService redisService;
+    private final LotteryEventRepository lotteryEventRepository;
+    private final LotteryParticipantsRepository lotteryParticipantsRepository;
+    private final CasperBotRepository casperBotRepository;
+    private final RedisService redisService;
 
     @Autowired
     public LotteryEventService(LotteryEventRepository lotteryEventRepository,
@@ -44,7 +45,7 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException, BadRequestException {
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(user);
 
         CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
@@ -72,7 +73,7 @@ public class LotteryEventService {
     }
 
 
-    public LotteryParticipants registerUserIfNeed(BaseUser user)  {
+    public LotteryParticipants registerUserIfNeed(BaseUser user) {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user).orElse(null);
 
         if (participant == null) {
@@ -87,8 +88,11 @@ public class LotteryEventService {
     }
 
     // TODO: 가짜 API, DB 접속되도록 수정
-    public LotteryEventResponseDto getLotteryEvent(){
-        return new LotteryEventResponseDto(1L, LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27), 363);
+    public LotteryEventResponseDto getLotteryEvent() {
+        return new LotteryEventResponseDto(LocalDateTime.now(),
+                LocalDate.of(2000, 9, 27),
+                LocalDate.of(2100, 9, 27),
+                ChronoUnit.DAYS.between(LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27)));
     }
 
 }

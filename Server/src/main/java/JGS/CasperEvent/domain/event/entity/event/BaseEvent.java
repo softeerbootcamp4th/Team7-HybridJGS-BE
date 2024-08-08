@@ -5,16 +5,16 @@ import JGS.CasperEvent.global.entity.BaseEntity;
 import java.time.LocalDate;
 
 public class BaseEvent extends BaseEntity {
-    protected LocalDate startDate;
-    protected LocalDate endDate;
+    protected LocalDate eventStartDate;
+    protected LocalDate eventEndDate;
     protected int winnerCount;
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public LocalDate getEventStartDate() {
+        return eventStartDate;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getEventEndDate() {
+        return eventEndDate;
     }
 
     public int getWinnerCount() {
