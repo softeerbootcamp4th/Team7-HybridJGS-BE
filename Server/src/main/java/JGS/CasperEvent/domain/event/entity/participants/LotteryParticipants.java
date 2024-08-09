@@ -1,13 +1,51 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import JGS.CasperEvent.global.entity.BaseUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.Getter;
 
-public class LotteryParticipants extends BaseParticipant{
+@Getter
+@Entity
+public class LotteryParticipants {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "base_user_id")
+    //todo: 왜이런지 알아보기
+    @JsonBackReference
+    private BaseUser baseUser;
+
     private int linkClickedCount;
     private int expectations;
+    private int appliedCount;
 
-    @ManyToOne
-    @JoinColumn(name="lottery_event_id")
-    private Long lotteryEventId;
+    private Long casperId;
+
+    public void updateCasperId(Long casperId) {
+        this.casperId = casperId;
+    }
+
+    public LotteryParticipants() {
+
+    }
+
+    public void expectationAdded() {
+        if(expectations == 0) expectations++;
+        appliedCount = Math.min(10, 1 + expectations + linkClickedCount);
+    }
+
+    public void linkClickedCountAdded() {
+        linkClickedCount++;
+        appliedCount = Math.min(10, 1 + expectations + linkClickedCount);
+    }
+
+    public LotteryParticipants(BaseUser baseUser) {
+        this.baseUser = baseUser;
+        this.appliedCount = 1;
+        this.linkClickedCount = 0;
+        this.expectations = 0;
+    }
 }

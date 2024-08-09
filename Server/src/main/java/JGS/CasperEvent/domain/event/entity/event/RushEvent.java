@@ -1,10 +1,11 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
-import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import jakarta.persistence.*;
 
 import java.util.Set;
 
+@Entity
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;
@@ -22,7 +23,16 @@ public class RushEvent extends BaseEvent {
     private RushOption rightOption;
 
     @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LotteryParticipants> rushParticipants;
+    private Set<RushParticipants> rushParticipants;
+
+    public RushEvent() {
+    }
+
+    // 파라미터가 있는 생성자
+    public RushEvent(String prizeImageUrl, String prizeDescription) {
+        this.prizeImageUrl = prizeImageUrl;
+        this.prizeDescription = prizeDescription;
+    }
 
     public String getPrizeImageUrl() {
         return prizeImageUrl;

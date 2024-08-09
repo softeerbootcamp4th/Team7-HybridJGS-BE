@@ -1,4 +1,9 @@
 package JGS.CasperEvent.domain.event.repository;
 
-public interface CasperBotRepository {
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CasperBotRepository extends JpaRepository<CasperBot, Long> {
 }
