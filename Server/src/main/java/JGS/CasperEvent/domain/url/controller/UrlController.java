@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("link")
 public class UrlController {
@@ -23,7 +29,7 @@ public class UrlController {
     }
 
     @PostMapping
-    public ResponseEntity<ShortenUrlResponseDto> generateShortUrl(HttpServletRequest request) {
+    public ResponseEntity<ShortenUrlResponseDto> generateShortUrl(HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(urlService.generateShortUrl(user));
