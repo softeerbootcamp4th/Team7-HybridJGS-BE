@@ -16,6 +16,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.NoSuchElementException;
 
 @Service
 public class UrlService {
@@ -47,6 +48,12 @@ public class UrlService {
         String shortenUrl = shortenBaseUrl + "/link/" + Base62Utils.encode(urlId);
 
         return new ShortenUrlResponseDto(shortenUrl);
+    }
+
+    public String getOriginalUrl(String encodedId){
+        Long urlId = Base62Utils.decode(encodedId);
+        Url url = urlRepository.findById(urlId).orElseThrow(NoSuchElementException::new);
+        return url.getOriginalUrl();
     }
 
 }
