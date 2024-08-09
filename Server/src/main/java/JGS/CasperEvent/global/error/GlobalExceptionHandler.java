@@ -19,8 +19,8 @@ public class GlobalExceptionHandler  {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handler(CustomException e){
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+                .status(HttpStatus.valueOf(e.getErrorCode().getStatus()))
+                .body(ErrorResponse.of(e.getErrorCode(), e.getMessage()));
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
