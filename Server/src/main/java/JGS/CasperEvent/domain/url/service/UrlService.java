@@ -23,9 +23,12 @@ public class UrlService {
 
     @Value("${client.url}")
     private String clientUrl;
+    @Value("${client.localUrl}")
+    private String localClientUrl;
 
     @Value("${shortenUrlService.url}")
     private String shortenBaseUrl;
+
 
     private final UrlRepository urlRepository;
     private final SecretKey secretKey;
@@ -36,18 +39,27 @@ public class UrlService {
         this.secretKey = secretKey;
     }
 
+    //todo: 테스트 끝나면 수정필요
     public ShortenUrlResponseDto generateShortUrl(BaseUser user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String encryptedUserId = AESUtils.encrypt(user.getId(), secretKey);
+
         String originalUrl = clientUrl + "?" + "referralId=" + encryptedUserId;
+        String originalLocalUrl = localClientUrl + "?" + "referralId=" + encryptedUserId;
 
         Url url = urlRepository.findByOriginalUrl(originalUrl).orElseGet(
                 () -> urlRepository.save(new Url(originalUrl))
         );
+        Url localUrl = urlRepository.findByOriginalUrl(originalLocalUrl).orElseGet(
+                () -> urlRepository.save(new Url(originalLocalUrl))
+        );
 
         Long urlId = url.getId();
-        String shortenUrl = shortenBaseUrl + "/link/" + Base62Utils.encode(urlId);
+        Long localUrlId = localUrl.getId();
 
-        return new ShortenUrlResponseDto(shortenUrl);
+        String shortenUrl = shortenBaseUrl + "/link/" + Base62Utils.encode(urlId);
+        String shortenLocalUrl = shortenBaseUrl + "/link/" + Base62Utils.encode(localUrlId);
+
+        return new ShortenUrlResponseDto(shortenUrl, shortenLocalUrl);
     }
 
     public String getOriginalUrl(String encodedId){
