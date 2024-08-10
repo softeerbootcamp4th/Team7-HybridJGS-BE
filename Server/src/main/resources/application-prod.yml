@@ -19,3 +19,11 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
+  encryption:
+    key: ${AES_128_ENCRYPTION_KEY}
+
+client:
+  url: ${CLIENT_URL}
+  localUrl: ${LOCAL_CLIENT_URL}
+shortenUrlService:
+  url: ${SPRING_SERVER_URL}
