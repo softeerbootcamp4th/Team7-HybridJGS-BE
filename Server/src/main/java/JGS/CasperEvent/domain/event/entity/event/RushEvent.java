@@ -2,10 +2,13 @@ package JGS.CasperEvent.domain.event.entity.event;
 
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import jakarta.persistence.*;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
+@Getter
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;
@@ -14,13 +17,9 @@ public class RushEvent extends BaseEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rushEventId;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "rush_event_id")
-    private RushOption leftOption;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "rush_event_id")
-    private RushOption rightOption;
+    private Set<RushOption> options;
 
     @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RushParticipants> rushParticipants;
@@ -28,29 +27,16 @@ public class RushEvent extends BaseEvent {
     public RushEvent() {
     }
 
-    // 파라미터가 있는 생성자
     public RushEvent(String prizeImageUrl, String prizeDescription) {
+        super();
         this.prizeImageUrl = prizeImageUrl;
         this.prizeDescription = prizeDescription;
     }
 
-    public String getPrizeImageUrl() {
-        return prizeImageUrl;
-    }
 
-    public String getPrizeDescription() {
-        return prizeDescription;
-    }
-
-    public RushOption getLeftOption() {
-        return leftOption;
-    }
-
-    public RushOption getRightOption() {
-        return rightOption;
-    }
-
-    public Long getRushEventId() {
-        return rushEventId;
+    public RushEvent(LocalDateTime startDateTime, LocalDateTime endDateTime, int winnerCount, String prizeImageUrl, String prizeDescription) {
+        super(startDateTime, endDateTime, winnerCount);
+        this.prizeImageUrl = prizeImageUrl;
+        this.prizeDescription = prizeDescription;
     }
 }
