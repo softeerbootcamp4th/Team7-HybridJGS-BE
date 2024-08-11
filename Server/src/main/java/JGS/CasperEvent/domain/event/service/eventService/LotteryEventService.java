@@ -45,10 +45,11 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException {
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(user);
 
-        CasperBot casperBot = casperBotRepository.save(new CasperBot(postCasperBot, participants.getBaseUser().getId()));
+        CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
+
         participants.updateCasperId(casperBot.getCasperId());
 
         if (!casperBot.getExpectation().isEmpty()) participants.expectationAdded();
