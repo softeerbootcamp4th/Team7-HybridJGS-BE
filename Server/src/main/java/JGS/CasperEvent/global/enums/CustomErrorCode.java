@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CustomErrorCode {
     NO_RUSH_EVENT("선착순 이벤트를 찾을 수 없습니다.", 404),
-    INVALID_CASPERBOT_PARAMETER("잘못된 파라미터 입력입니다.", 400),
+    INVALID_PARAMETER("잘못된 파라미터 입력입니다.", 400),
     CASPERBOT_NOT_FOUND("배지를 찾을 수 없습니다.", 404),
     BAD_REQUEST("잘못된 요청입니다.", 400),
     UNAUTHORIZED("권한이 없습니다.", 401),
