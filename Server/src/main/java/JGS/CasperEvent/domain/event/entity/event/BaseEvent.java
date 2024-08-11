@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 public class BaseEvent extends BaseEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime startDateTime;
+    protected LocalDateTime startDateTime;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime endDateTime;
-    private int winnerCount;
+    protected LocalDateTime endDateTime;
+    protected int winnerCount;
 
     // 기본 생성자에서 디폴트 값 설정
     public BaseEvent() {
