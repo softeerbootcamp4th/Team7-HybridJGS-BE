@@ -2,11 +2,9 @@ package JGS.CasperEvent.domain.event.entity.event;
 
 import JGS.CasperEvent.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class RushOption extends BaseEntity {
     @Id
@@ -21,4 +19,13 @@ public class RushOption extends BaseEntity {
     private String resultMainText;
     private String resultSubText;
     private String imageUrl;
+
+    public RushOption(RushEvent rushEvent, String mainText, String subText, String resultMainText, String resultSubText, String imageUrl) {
+        this.rushEvent = rushEvent;
+        this.mainText = mainText;
+        this.subText = subText;
+        this.resultMainText = resultMainText;
+        this.resultSubText = resultSubText;
+        this.imageUrl = imageUrl;
+    }
 }
