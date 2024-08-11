@@ -112,7 +112,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("INVALID_CASPERBOT_PARAMETER"))
+                    .andExpect(jsonPath("$.errorCode").value("INVALID_PARAMETER"))
                     .andDo(print());
 
         }
@@ -141,7 +141,7 @@ public class LotteryEventControllerTest {
 
             //then
             perform.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.errorCode").value("INVALID_CASPERBOT_PARAMETER"))
+                    .andExpect(jsonPath("$.errorCode").value("INVALID_PARAMETER"))
                     .andDo(print());
         }
 
