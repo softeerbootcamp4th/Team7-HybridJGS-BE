@@ -11,6 +11,7 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventReposito
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
 import JGS.CasperEvent.global.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class AdminService {
     }
 
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+        if(lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
                 lotteryEventRequestDto.getEventStartDate(),
                 lotteryEventRequestDto.getEventEndDate(),
