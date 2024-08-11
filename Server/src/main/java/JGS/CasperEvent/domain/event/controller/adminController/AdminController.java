@@ -30,7 +30,7 @@ public class AdminController {
 
     @PostMapping("/event/lottery")
     public ResponseEntity<LotteryEventResponseDto> createLotteryEvent(
-            @RequestBody LotteryEventRequestDto lotteryEventRequestDto) {
+            @Valid @RequestBody  LotteryEventRequestDto lotteryEventRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.createLotteryEvent(lotteryEventRequestDto));
