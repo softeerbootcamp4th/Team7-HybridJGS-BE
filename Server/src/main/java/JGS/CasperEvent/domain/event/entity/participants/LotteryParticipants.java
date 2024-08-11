@@ -12,7 +12,7 @@ public class LotteryParticipants {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne // mappedBy 이용하면 둘 다 저장 안해도 됨
     @JoinColumn(name = "base_user_id")
     //todo: 왜이런지 알아보기
     @JsonBackReference
