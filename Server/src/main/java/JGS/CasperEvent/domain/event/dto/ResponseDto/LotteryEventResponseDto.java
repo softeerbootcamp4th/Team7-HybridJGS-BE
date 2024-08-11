@@ -6,14 +6,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDate eventStartDate, LocalDate eventEndDate,
+public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDateTime eventStartDate, LocalDateTime eventEndDate,
                                       long activePeriod) {
     public static LotteryEventResponseDto of(LocalDateTime serverDateTime, LotteryEvent lotteryEvent) {
         return new LotteryEventResponseDto(
                 serverDateTime,
-                lotteryEvent.getEventStartDate(),
-                lotteryEvent.getEventEndDate(),
-                ChronoUnit.DAYS.between(lotteryEvent.getEventStartDate(), lotteryEvent.getEventEndDate())
+                lotteryEvent.getStartDateTime(),
+                lotteryEvent.getEndDateTime(),
+                ChronoUnit.DAYS.between(lotteryEvent.getStartDateTime(), lotteryEvent.getEndDateTime())
         );
     }
 
