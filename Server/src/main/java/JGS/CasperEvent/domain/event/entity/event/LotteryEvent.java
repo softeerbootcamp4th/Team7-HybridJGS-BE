@@ -12,9 +12,9 @@ public class LotteryEvent extends BaseEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lotteryEventId;
 
-    public LotteryEvent(LocalDateTime eventStartDate, LocalDateTime eventEndDate, int winnerCount){
-        this.eventStartDate = eventStartDate;
-        this.eventEndDate = eventEndDate;
+    public LotteryEvent(LocalDateTime startDateTime, LocalDateTime endDateTime, int winnerCount) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.winnerCount = winnerCount;
     }
 
