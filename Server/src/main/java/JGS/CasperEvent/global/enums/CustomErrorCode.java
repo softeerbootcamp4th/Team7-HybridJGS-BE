@@ -14,7 +14,8 @@ public enum CustomErrorCode {
     JWT_PARSE_EXCEPTION("Json 파싱 오류입니다.", 400),
     JWT_EXCEPTION("JWT 오류입니다.", 400),
     JWT_EXPIRED("만료된 토큰입니다.", 400),
-    JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401);
+    JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401),
+    LOTTERYEVENT_ALREADY_EXISTS("이미 추첨 이벤트가 존재합니다.", 409);
 
 
 
