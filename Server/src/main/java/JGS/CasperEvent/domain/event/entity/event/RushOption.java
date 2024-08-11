@@ -2,16 +2,20 @@ package JGS.CasperEvent.domain.event.entity.event;
 
 import JGS.CasperEvent.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
-public class RushOption extends BaseEntity{
+@AllArgsConstructor
+@NoArgsConstructor
+public class RushOption extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long optionId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "rush_event_id")
     private RushEvent rushEvent;
-
-    @Id
-    private int optionId;
     private String mainText;
     private String subText;
     private String resultMainText;
