@@ -51,7 +51,7 @@ public class GlobalExceptionHandler  {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(CustomErrorCode.INVALID_CASPERBOT_PARAMETER, builder.toString()));
+                .body(ErrorResponse.of(CustomErrorCode.INVALID_PARAMETER, builder.toString()));
     }
 
     @ExceptionHandler(RuntimeException.class)
