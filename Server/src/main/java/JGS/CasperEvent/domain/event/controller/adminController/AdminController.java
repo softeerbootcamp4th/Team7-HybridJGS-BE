@@ -1,6 +1,8 @@
 package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -20,9 +22,17 @@ public class AdminController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<ResponseDto> postAdmin(@RequestBody @Valid AdminRequestDto adminRequestDto){
+    public ResponseEntity<ResponseDto> postAdmin(@RequestBody @Valid AdminRequestDto adminRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.postAdmin(adminRequestDto));
+    }
+
+    @PostMapping("/event/lottery")
+    public ResponseEntity<LotteryEventResponseDto> createLotteryEvent(
+            @Valid @RequestBody  LotteryEventRequestDto lotteryEventRequestDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adminService.createLotteryEvent(lotteryEventRequestDto));
     }
 }

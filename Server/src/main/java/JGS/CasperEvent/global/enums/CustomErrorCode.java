@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CustomErrorCode {
     NO_RUSH_EVENT("선착순 이벤트를 찾을 수 없습니다.", 404),
-    INVALID_CASPERBOT_PARAMETER("잘못된 파라미터 입력입니다.", 400),
+    INVALID_PARAMETER("잘못된 파라미터 입력입니다.", 400),
     CASPERBOT_NOT_FOUND("배지를 찾을 수 없습니다.", 404),
     BAD_REQUEST("잘못된 요청입니다.", 400),
     UNAUTHORIZED("권한이 없습니다.", 401),
@@ -14,9 +14,9 @@ public enum CustomErrorCode {
     JWT_PARSE_EXCEPTION("Json 파싱 오류입니다.", 400),
     JWT_EXCEPTION("JWT 오류입니다.", 400),
     JWT_EXPIRED("만료된 토큰입니다.", 400),
-    JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401);
-
-
+    JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401),
+    MULTIPLE_RUSH_EVENTS_FOUND("해당 날짜에 여러 개의 이벤트가 존재합니다.", 409),
+    TODAY_RUSH_EVENT_NOT_FOUND("오늘의 이벤트를 찾을 수 없습니다.", 404);  // 새로운 예외 추가
 
     private final String message;
     private int status;

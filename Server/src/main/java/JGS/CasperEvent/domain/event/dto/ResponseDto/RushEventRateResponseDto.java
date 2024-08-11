@@ -1,14 +1,11 @@
 package JGS.CasperEvent.domain.event.dto.ResponseDto;
 
-import lombok.Getter;
+public record RushEventRateResponseDto(long leftOption, long rightOption) {
+    public long getLeftOption() {
+        return leftOption;
+    }
 
-@Getter
-public class RushEventRateResponseDto {
-    long leftOption;
-    long rightOption;
-
-    public RushEventRateResponseDto(long leftOption, long rightOption) {
-        this.leftOption = leftOption;
-        this.rightOption = rightOption;
+    public long getRightOption() {
+        return rightOption;
     }
 }

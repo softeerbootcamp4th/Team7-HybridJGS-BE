@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.entity.participants;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.entity.BaseUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class RushParticipants {
     private int optionId;
     @OneToOne
     @JoinColumn(name = "base_user_id")
+    @JsonBackReference
     private BaseUser baseUser;
 
     @ManyToOne

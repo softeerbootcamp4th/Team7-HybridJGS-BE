@@ -45,18 +45,18 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException {
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(user);
 
-        CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
+        CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
+
         participants.updateCasperId(casperBot.getCasperId());
 
         if (!casperBot.getExpectation().isEmpty()) participants.expectationAdded();
-        lotteryParticipantsRepository.save(participants);
-        casperBotRepository.save(casperBot);
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
         redisService.addData(casperBotDto);
+
         return casperBotDto;
     }
 
@@ -90,8 +90,8 @@ public class LotteryEventService {
     // TODO: 가짜 API, DB 접속되도록 수정
     public LotteryEventResponseDto getLotteryEvent() {
         return new LotteryEventResponseDto(LocalDateTime.now(),
-                LocalDate.of(2000, 9, 27),
-                LocalDate.of(2100, 9, 27),
+                LocalDate.of(2000, 9, 27).atStartOfDay(),
+                LocalDate.of(2100, 9, 27).atStartOfDay(),
                 ChronoUnit.DAYS.between(LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27)));
     }
 
