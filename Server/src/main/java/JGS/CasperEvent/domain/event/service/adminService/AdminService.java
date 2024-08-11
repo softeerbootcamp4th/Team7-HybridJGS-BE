@@ -45,8 +45,8 @@ public class AdminService {
 
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
-                lotteryEventRequestDto.getEventStartDate(),
-                lotteryEventRequestDto.getEventEndDate(),
+                lotteryEventRequestDto.getEventStartDateTime(),
+                lotteryEventRequestDto.getEventEndDateTime(),
                 lotteryEventRequestDto.getWinnerCount()
         ));
 
