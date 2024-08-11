@@ -16,7 +16,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class VerifyAdminFilter implements Filter {
-    public static final String AUTHENTICATE_ADMIN = "authenticateAdmin";
+    public static final String AUTHENTICATE_ADMIN = "authenticateUser";
     private final ObjectMapper objectMapper;
 
     private final AdminService adminService;
