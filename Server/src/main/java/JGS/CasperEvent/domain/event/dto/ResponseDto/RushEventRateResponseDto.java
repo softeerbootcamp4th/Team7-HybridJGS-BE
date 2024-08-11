@@ -1,7 +1,4 @@
 package JGS.CasperEvent.domain.event.dto.ResponseDto;
 
-import lombok.Getter;
-
-@Getter
-public record RushEventRateResponseDto(long leftOption, long rightOption) {
+public record RushEventRateResponseDto(int optionId, long leftOption, long rightOption) {
 }
