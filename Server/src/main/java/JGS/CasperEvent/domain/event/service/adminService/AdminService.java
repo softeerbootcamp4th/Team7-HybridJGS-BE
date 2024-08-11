@@ -50,6 +50,6 @@ public class AdminService {
                 lotteryEventRequestDto.getWinnerCount()
         ));
 
-        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return LotteryEventResponseDto.of(LocalDateTime.now(), lotteryEvent);
     }
 }
