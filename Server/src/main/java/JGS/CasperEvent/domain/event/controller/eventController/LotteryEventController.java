@@ -9,13 +9,17 @@ import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -41,7 +45,7 @@ public class LotteryEventController {
     @PostMapping("/casperBot")
     public ResponseEntity<CasperBotResponseDto> postCasperBot(
             HttpServletRequest request,
-            @RequestBody @Valid CasperBotRequestDto postCasperBot) throws BadRequestException {
+            @RequestBody @Valid CasperBotRequestDto postCasperBot) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
