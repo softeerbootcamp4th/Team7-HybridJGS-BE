@@ -8,7 +8,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +17,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
-
-    @Autowired
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
-    }
 
     // 어드민 생성
     @PostMapping("/join")
