@@ -2,9 +2,11 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -55,5 +58,17 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEventParticipants(size, page, phoneNumber));
+    }
+
+    // 선착순 이벤트 생성
+    @PostMapping("/event/rush")
+    public ResponseEntity<RushEventResponseDto> createRushEvent(
+            @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
+            @RequestPart(value = "prizeImg")MultipartFile prizeImg,
+            @RequestPart(value = "leftOptionImg")MultipartFile leftOptionImg,
+            @RequestPart(value = "rightOptionImg")MultipartFile rightOptionImg) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg));
     }
 }
