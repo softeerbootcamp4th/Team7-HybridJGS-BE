@@ -16,17 +16,24 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.error.exception.LotteryEventNotExists;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import JGS.CasperEvent.global.util.AESUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.time.LocalDate;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class LotteryEventService {
 
     private final UserRepository userRepository;
@@ -34,21 +41,10 @@ public class LotteryEventService {
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
     private final CasperBotRepository casperBotRepository;
     private final RedisService redisService;
+    private final SecretKey secretKey;
 
-    @Autowired
-    public LotteryEventService(LotteryEventRepository lotteryEventRepository,
-                               LotteryParticipantsRepository lotteryParticipantsRepository,
-                               CasperBotRepository casperBotRepository,
-                               RedisService redisService, UserRepository userRepository) {
-        this.lotteryEventRepository = lotteryEventRepository;
-        this.lotteryParticipantsRepository = lotteryParticipantsRepository;
-        this.casperBotRepository = casperBotRepository;
-        this.redisService = redisService;
-        this.userRepository = userRepository;
-    }
-
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
-        LotteryParticipants participants = registerUserIfNeed(user);
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
         LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
@@ -80,12 +76,21 @@ public class LotteryEventService {
     }
 
 
-    public LotteryParticipants registerUserIfNeed(BaseUser user) {
+    public LotteryParticipants registerUserIfNeed(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user).orElse(null);
 
         if (participant == null) {
             participant = new LotteryParticipants(user);
             lotteryParticipantsRepository.save(participant);
+        }
+
+        if (!casperBotRequestDto.getReferralId().isEmpty()) {
+            String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
+            Optional<LotteryParticipants> referralParticipant =
+                    lotteryParticipantsRepository.findByBaseUser(
+                            userRepository.findById(referralId).orElse(null)
+                    );
+            referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
         }
 
         user.updateLotteryParticipants(participant);
@@ -94,12 +99,9 @@ public class LotteryEventService {
         return participant;
     }
 
-    // TODO: 가짜 API, DB 접속되도록 수정
     public LotteryEventResponseDto getLotteryEvent() {
-        return new LotteryEventResponseDto(LocalDateTime.now(),
-                LocalDate.of(2000, 9, 27).atStartOfDay(),
-                LocalDate.of(2100, 9, 27).atStartOfDay(),
-                ChronoUnit.DAYS.between(LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27)));
+        LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
 }
