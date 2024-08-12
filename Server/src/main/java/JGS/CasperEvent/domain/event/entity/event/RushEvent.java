@@ -36,9 +36,15 @@ public class RushEvent extends BaseEvent {
     }
 
 
-    public RushEvent(LocalDateTime startDateTime, LocalDateTime endDateTime, int winnerCount, String prizeImageUrl, String prizeDescription) {
+    public RushEvent(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     int winnerCount, String prizeImageUrl, String prizeDescription) {
         super(startDateTime, endDateTime, winnerCount);
         this.prizeImageUrl = prizeImageUrl;
         this.prizeDescription = prizeDescription;
+    }
+
+    public void updateOption(RushOption leftOption, RushOption rightOption){
+        this.options.add(leftOption);
+        this.options.add(rightOption);
     }
 }
