@@ -42,7 +42,7 @@ public class GlobalExceptionHandler  {
     public ResponseEntity<ErrorResponse> tooManyLotteryEventExceptionHandler(){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.of(CustomErrorCode.LOTTERYEVENT_ALREADY_EXISTS));
+                .body(ErrorResponse.of(CustomErrorCode.LOTTERY_EVENT_ALREADY_EXISTS));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

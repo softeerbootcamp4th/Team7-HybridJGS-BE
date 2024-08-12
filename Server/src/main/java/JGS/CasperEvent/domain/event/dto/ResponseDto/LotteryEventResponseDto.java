@@ -5,7 +5,8 @@ import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDateTime eventStartDate, LocalDateTime eventEndDate,
+public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDateTime eventStartDate,
+                                      LocalDateTime eventEndDate,
                                       long activePeriod) {
     public static LotteryEventResponseDto of(LotteryEvent lotteryEvent, LocalDateTime serverDateTime) {
         return new LotteryEventResponseDto(
@@ -15,5 +16,4 @@ public record LotteryEventResponseDto(LocalDateTime serverDateTime, LocalDateTim
                 ChronoUnit.DAYS.between(lotteryEvent.getStartDateTime(), lotteryEvent.getEndDateTime())
         );
     }
-
 }
