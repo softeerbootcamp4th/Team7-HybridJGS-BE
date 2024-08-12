@@ -37,6 +37,7 @@ public class BaseEvent extends BaseEntity {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.winnerCount = winnerCount;
+        this.totalAppliedCount = new AtomicInteger(0);
     }
 
     public void addAppliedCount(){
