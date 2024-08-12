@@ -9,7 +9,6 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @MappedSuperclass
@@ -22,14 +21,14 @@ public class BaseEvent extends BaseEntity {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     protected LocalDateTime endDateTime;
     protected int winnerCount;
-    protected AtomicInteger totalAppliedCount;
+    protected int totalAppliedCount;
 
     // 기본 생성자에서 디폴트 값 설정
     public BaseEvent() {
         this.startDateTime = LocalDateTime.now();
         this.endDateTime = LocalDateTime.now().plusMinutes(10);
         this.winnerCount = 0; // 기본 우승자 수를 0으로 설정
-        this.totalAppliedCount = new AtomicInteger(0);
+        this.totalAppliedCount = 0;
     }
 
     // 특정 값을 설정할 수 있는 생성자
@@ -37,10 +36,10 @@ public class BaseEvent extends BaseEntity {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.winnerCount = winnerCount;
-        this.totalAppliedCount = new AtomicInteger(0);
+        this.totalAppliedCount = 0;
     }
 
-    public void addAppliedCount(){
-        this.totalAppliedCount.addAndGet(1);
+    public void addAppliedCount() {
+        this.totalAppliedCount++;
     }
 }
