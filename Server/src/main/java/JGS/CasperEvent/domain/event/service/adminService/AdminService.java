@@ -2,8 +2,8 @@ package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.LotteryEventRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventDetailResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;

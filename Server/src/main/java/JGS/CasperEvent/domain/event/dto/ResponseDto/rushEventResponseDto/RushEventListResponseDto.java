@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
 import lombok.Getter;
 
