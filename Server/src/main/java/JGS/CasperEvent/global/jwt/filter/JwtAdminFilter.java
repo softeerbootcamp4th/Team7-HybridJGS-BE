@@ -29,8 +29,5 @@ public class JwtAdminFilter implements Filter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
-
-//        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-//        httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value());
     }
 }
