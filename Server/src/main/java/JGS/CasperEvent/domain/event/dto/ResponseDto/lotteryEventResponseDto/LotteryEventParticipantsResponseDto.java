@@ -4,13 +4,13 @@ import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 
 import java.time.LocalDateTime;
 
-public record ParticipantsResponseDto(
+public record LotteryEventParticipantsResponseDto(
         Long id, String phoneNumber, int linkClickedCounts,
         int expectation, int appliedCount,
         LocalDateTime createdAt, LocalDateTime updatedAt) {
 
-    public static ParticipantsResponseDto of(LotteryParticipants participant) {
-        return new ParticipantsResponseDto(
+    public static LotteryEventParticipantsResponseDto of(LotteryParticipants participant) {
+        return new LotteryEventParticipantsResponseDto(
                 participant.getId(),
                 participant.getBaseUser().getId(),
                 participant.getLinkClickedCount(),
