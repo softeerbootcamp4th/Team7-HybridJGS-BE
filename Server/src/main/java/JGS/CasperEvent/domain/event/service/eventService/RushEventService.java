@@ -163,14 +163,14 @@ public class RushEventService {
         rushOptionRepository.deleteAllInBatch();
         rushEventRepository.deleteAllInBatch();
 
-        // 현재 날짜와 시간을 기준으로 이벤트 시간 설정
-        LocalDateTime startDateTime = LocalDateTime.now().withHour(22).withMinute(0).withSecond(0).withNano(0);
+        // 오늘의 날짜를 기준으로 시간 설정
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(2).withHour(22).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endDateTime = startDateTime.plusMinutes(10);
 
         List<RushEvent> rushEvents = new ArrayList<>();
 
         for (int i = 0; i < 6; i++) {
-            // RushEvent 생성 및 초기화
+            // 각 이벤트의 날짜를 오늘 기준으로 설정
             RushEvent rushEvent = new RushEvent(
                     startDateTime.plusDays(i),  // 이벤트 시작 날짜
                     endDateTime.plusDays(i),    // 이벤트 종료 날짜
@@ -212,9 +212,10 @@ public class RushEventService {
             rushEvents.add(rushEvent);
         }
 
-        // 처음으로 생성된 RushEvent를 Redis에 저장
-        rushEventRedisTemplate.opsForValue().set("todayEvent", RushEventResponseDto.of(rushEvents.get(0)));
+        // 세 번째로 생성된 RushEvent를 Redis에 저장
+        rushEventRedisTemplate.opsForValue().set("todayEvent", RushEventResponseDto.of(rushEvents.get(2)));
     }
+
 
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
