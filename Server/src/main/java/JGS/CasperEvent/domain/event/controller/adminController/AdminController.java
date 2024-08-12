@@ -4,7 +4,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.ParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -52,10 +52,10 @@ public class AdminController {
 
     // 추첨 이벤트 참여자 조회
     @GetMapping("/event/lottery/participants")
-    public ResponseEntity<ParticipantsListResponseDto> getLotteryEventParticipants(
+    public ResponseEntity<LotteryEventParticipantsListResponseDto> getLotteryEventParticipants(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
-            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(name = "number", required = false) String phoneNumber) {
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEventParticipants(size, page, phoneNumber));
