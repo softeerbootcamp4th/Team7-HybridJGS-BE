@@ -28,9 +28,7 @@ import javax.crypto.SecretKey;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
