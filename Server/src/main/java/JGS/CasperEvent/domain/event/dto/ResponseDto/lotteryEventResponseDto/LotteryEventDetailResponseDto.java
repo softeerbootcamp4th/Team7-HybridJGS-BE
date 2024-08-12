@@ -23,7 +23,7 @@ public record LotteryEventDetailResponseDto(
                     event.getStartDateTime().toLocalTime(),
                     event.getEndDateTime().toLocalDate(),
                     event.getEndDateTime().toLocalTime(),
-                    event.getAppliedCount(),
+                    event.getTotalAppliedCount(),
                     event.getWinnerCount(),
                     event.getCreatedAt(),
                     event.getUpdatedAt()));
