@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.RequestDto;
+package JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
