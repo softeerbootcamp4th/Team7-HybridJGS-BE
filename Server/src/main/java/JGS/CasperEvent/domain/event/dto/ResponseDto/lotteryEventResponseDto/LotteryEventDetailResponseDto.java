@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public record LotteryEventDetailResponseDto(
         LocalDate startDate, LocalTime startTime,
         LocalDate endDate, LocalTime endTime,
-        AtomicInteger appliedCount, int winnerCount,
+        int appliedCount, int winnerCount,
         LocalDateTime createdAt, LocalDateTime updatedAt) {
 
     public static ArrayList<LotteryEventDetailResponseDto> of(List<LotteryEvent> lotteryEvent) {
