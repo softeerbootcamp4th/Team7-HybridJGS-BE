@@ -101,12 +101,9 @@ public class LotteryEventService {
         return participant;
     }
 
-    // TODO: 가짜 API, DB 접속되도록 수정
     public LotteryEventResponseDto getLotteryEvent() {
-        return new LotteryEventResponseDto(LocalDateTime.now(),
-                LocalDate.of(2000, 9, 27).atStartOfDay(),
-                LocalDate.of(2100, 9, 27).atStartOfDay(),
-                ChronoUnit.DAYS.between(LocalDate.of(2000, 9, 27), LocalDate.of(2100, 9, 27)));
+        LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
 }
