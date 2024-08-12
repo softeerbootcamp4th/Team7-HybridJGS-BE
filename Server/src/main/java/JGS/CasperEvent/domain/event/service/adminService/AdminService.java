@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -11,11 +12,13 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventReposito
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
 import JGS.CasperEvent.global.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -44,6 +47,8 @@ public class AdminService {
     }
 
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+        if(lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
+
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
                 lotteryEventRequestDto.getEventStartDateTime(),
                 lotteryEventRequestDto.getEventEndDateTime(),
@@ -51,5 +56,11 @@ public class AdminService {
         ));
 
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+    }
+
+    public List<LotteryEventDetailResponseDto> getLotteryEvent() {
+        return LotteryEventDetailResponseDto.of(
+                lotteryEventRepository.findAll()
+        );
     }
 }

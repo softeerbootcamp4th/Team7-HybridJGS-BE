@@ -5,6 +5,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.LotteryParticipantResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -13,6 +14,7 @@ import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.LotteryEventNotExists;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,18 +47,23 @@ public class LotteryEventService {
         this.userRepository = userRepository;
     }
 
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto postCasperBot) throws CustomException {
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
         LotteryParticipants participants = registerUserIfNeed(user);
+        LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
 
-        CasperBot casperBot = new CasperBot(postCasperBot, participants.getBaseUser().getId());
+        CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
+        lotteryEvent.addAppliedCount();
+
         participants.updateCasperId(casperBot.getCasperId());
 
-        if (!casperBot.getExpectation().isEmpty()) participants.expectationAdded();
-        lotteryParticipantsRepository.save(participants);
-        casperBotRepository.save(casperBot);
+        if (!casperBot.getExpectation().isEmpty()) {
+            participants.expectationAdded();
+            lotteryEvent.addAppliedCount();
+        }
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
         redisService.addData(casperBotDto);
+
         return casperBotDto;
     }
 

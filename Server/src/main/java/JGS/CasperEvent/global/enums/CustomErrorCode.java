@@ -18,6 +18,7 @@ public enum CustomErrorCode {
     JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401),
     MULTIPLE_RUSH_EVENTS_FOUND("해당 날짜에 여러 개의 이벤트가 존재합니다.", 409),
     TODAY_RUSH_EVENT_NOT_FOUND("오늘의 이벤트를 찾을 수 없습니다.", 404),
+    LOTTERY_EVENT_ALREADY_EXISTS("추첨 이벤트가 이미 존재합니다.", 409),
     INVALID_RUSH_EVENT_OPTIONS_COUNT("이벤트의 옵션 수가 올바르지 않습니다.", 500),
     INVALID_RUSH_EVENT_OPTION_ID("옵션 ID는 1 또는 2여야 합니다.", 400);
 
