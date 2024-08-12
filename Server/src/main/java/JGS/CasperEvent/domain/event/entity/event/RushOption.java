@@ -1,10 +1,14 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
 import JGS.CasperEvent.global.entity.BaseEntity;
+import JGS.CasperEvent.global.enums.Position;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class RushOption extends BaseEntity {
     @Id
@@ -13,6 +17,7 @@ public class RushOption extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "rush_event_id")
+    @JsonBackReference
     private RushEvent rushEvent;
     private String mainText;
     private String subText;
@@ -20,12 +25,16 @@ public class RushOption extends BaseEntity {
     private String resultSubText;
     private String imageUrl;
 
-    public RushOption(RushEvent rushEvent, String mainText, String subText, String resultMainText, String resultSubText, String imageUrl) {
+    @Enumerated(EnumType.STRING)
+    private Position position;
+
+    public RushOption(RushEvent rushEvent, String mainText, String subText, String resultMainText, String resultSubText, String imageUrl, Position position) {
         this.rushEvent = rushEvent;
         this.mainText = mainText;
         this.subText = subText;
         this.resultMainText = resultMainText;
         this.resultSubText = resultSubText;
         this.imageUrl = imageUrl;
+        this.position = position;
     }
 }

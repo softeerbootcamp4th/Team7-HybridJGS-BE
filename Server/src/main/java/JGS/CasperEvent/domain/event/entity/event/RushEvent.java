@@ -1,10 +1,12 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,11 +19,11 @@ public class RushEvent extends BaseEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rushEventId;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "rush_event_id")
-    private Set<RushOption> options;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private final Set<RushOption> options = new HashSet<>();
 
-    @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RushParticipants> rushParticipants;
 
     public RushEvent() {

@@ -19,6 +19,5 @@ public class LotteryEvent extends BaseEvent {
     }
 
     public LotteryEvent() {
-
     }
 }

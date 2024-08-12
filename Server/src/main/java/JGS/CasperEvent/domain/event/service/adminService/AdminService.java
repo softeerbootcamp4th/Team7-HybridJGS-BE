@@ -50,8 +50,8 @@ public class AdminService {
         if(lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
-                lotteryEventRequestDto.getEventStartDate(),
-                lotteryEventRequestDto.getEventEndDate(),
+                lotteryEventRequestDto.getEventStartDateTime(),
+                lotteryEventRequestDto.getEventEndDateTime(),
                 lotteryEventRequestDto.getWinnerCount()
         ));
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CustomErrorCode {
     NO_RUSH_EVENT("선착순 이벤트를 찾을 수 없습니다.", 404),
+    NO_RUSH_EVENT_OPTION("해당 밸런스 게임 선택지를 찾을 수 없습니다.", 404),
     INVALID_PARAMETER("잘못된 파라미터 입력입니다.", 400),
     CASPERBOT_NOT_FOUND("배지를 찾을 수 없습니다.", 404),
     BAD_REQUEST("잘못된 요청입니다.", 400),
@@ -16,8 +17,10 @@ public enum CustomErrorCode {
     JWT_EXPIRED("만료된 토큰입니다.", 400),
     JWT_MISSING("인증 토큰이 존재하지 않습니다.", 401),
     MULTIPLE_RUSH_EVENTS_FOUND("해당 날짜에 여러 개의 이벤트가 존재합니다.", 409),
-    TODAY_RUSH_EVENT_NOT_FOUND("오늘의 이벤트를 찾을 수 없습니다.", 404),  // 새로운 예외 추가
-    LOTTERY_EVENT_ALREADY_EXISTS("추첨 이벤트가 이미 존재합니다.", 409);
+    TODAY_RUSH_EVENT_NOT_FOUND("오늘의 이벤트를 찾을 수 없습니다.", 404),
+    LOTTERY_EVENT_ALREADY_EXISTS("추첨 이벤트가 이미 존재합니다.", 409),
+    INVALID_RUSH_EVENT_OPTIONS_COUNT("이벤트의 옵션 수가 올바르지 않습니다.", 500),
+    INVALID_RUSH_EVENT_OPTION_ID("옵션 ID는 1 또는 2여야 합니다.", 400);
 
     private final String message;
     private int status;
