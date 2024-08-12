@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import jakarta.servlet.http.HttpServletRequest;

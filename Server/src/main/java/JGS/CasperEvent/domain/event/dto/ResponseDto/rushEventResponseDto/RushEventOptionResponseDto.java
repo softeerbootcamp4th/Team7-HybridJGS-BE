@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.global.enums.Position;

@@ -1,13 +1,11 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
-import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;

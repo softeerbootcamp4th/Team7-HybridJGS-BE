@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto;
 
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 

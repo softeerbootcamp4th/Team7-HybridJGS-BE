@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto;
+package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
 public record MainRushEventOptionResponseDto(String mainText,
                                              String subText) {
