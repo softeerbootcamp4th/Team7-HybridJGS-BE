@@ -21,7 +21,8 @@ public enum CustomErrorCode {
     TODAY_RUSH_EVENT_NOT_FOUND("오늘의 이벤트를 찾을 수 없습니다.", 404),
     LOTTERY_EVENT_ALREADY_EXISTS("추첨 이벤트가 이미 존재합니다.", 409),
     INVALID_RUSH_EVENT_OPTIONS_COUNT("이벤트의 옵션 수가 올바르지 않습니다.", 500),
-    INVALID_RUSH_EVENT_OPTION_ID("옵션 ID는 1 또는 2여야 합니다.", 400);
+    INVALID_RUSH_EVENT_OPTION_ID("옵션 ID는 1 또는 2여야 합니다.", 400),
+    EMPTY_FILE("유효하지 않은 파일입니다.", 422);
 
     private final String message;
     private int status;
