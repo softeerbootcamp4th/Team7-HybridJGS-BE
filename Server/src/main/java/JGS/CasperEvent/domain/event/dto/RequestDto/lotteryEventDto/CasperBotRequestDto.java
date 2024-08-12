@@ -37,5 +37,6 @@ public class CasperBotRequestDto {
     private String name;
 
     private String expectation;
-    private String referralId;
+
+    private String referralId = "";
 }
