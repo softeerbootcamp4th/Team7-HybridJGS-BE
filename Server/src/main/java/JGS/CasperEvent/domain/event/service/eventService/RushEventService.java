@@ -163,7 +163,8 @@ public class RushEventService {
         rushOptionRepository.deleteAllInBatch();
         rushEventRepository.deleteAllInBatch();
 
-        LocalDateTime startDateTime = LocalDateTime.of(2024, 8, 11, 22, 0);
+        // 현재 날짜와 시간을 기준으로 이벤트 시간 설정
+        LocalDateTime startDateTime = LocalDateTime.now().withHour(22).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endDateTime = startDateTime.plusMinutes(10);
 
         List<RushEvent> rushEvents = new ArrayList<>();
