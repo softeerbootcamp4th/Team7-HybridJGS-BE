@@ -21,6 +21,15 @@ spring:
       port: ${SPRING_REDIS_PORT}
   encryption:
     key: ${AES_128_ENCRYPTION_KEY}
+  cloud:
+    aws:
+      s3:
+        bucket: ${S3_IMAGE_SERVER}
+        region: ap-northeast-2
+      credentials:
+        accessKey: ${AWS_ACCESS_KEY}
+        secretKey: ${AWS_SECRET_KEY}
+
 
 client:
   url: ${CLIENT_URL}
