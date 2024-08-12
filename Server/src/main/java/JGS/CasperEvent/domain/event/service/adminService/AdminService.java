@@ -11,7 +11,6 @@ import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
-import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
@@ -35,7 +34,6 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final LotteryEventRepository lotteryEventRepository;
-    private final RushEventRepository rushEventRepository;
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
