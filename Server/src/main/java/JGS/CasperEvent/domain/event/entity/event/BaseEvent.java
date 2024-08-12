@@ -39,7 +39,7 @@ public class BaseEvent extends BaseEntity {
         this.totalAppliedCount = 0;
     }
 
-    public void addAppliedCount(){
+    public void addAppliedCount() {
         this.totalAppliedCount++;
     }
 }
