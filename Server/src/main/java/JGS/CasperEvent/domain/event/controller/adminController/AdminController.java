@@ -7,6 +7,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -35,7 +36,7 @@ public class AdminController {
 
     // 추첨 이벤트 조회
     @GetMapping("/event/lottery")
-    public ResponseEntity<List<LotteryEventDetailResponseDto>> getLotteryEvent() {
+    public ResponseEntity<LotteryEventDetailResponseDto> getLotteryEvent() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEvent());
@@ -65,9 +66,9 @@ public class AdminController {
     @PostMapping("/event/rush")
     public ResponseEntity<RushEventResponseDto> createRushEvent(
             @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
-            @RequestPart(value = "prizeImg")MultipartFile prizeImg,
-            @RequestPart(value = "leftOptionImg")MultipartFile leftOptionImg,
-            @RequestPart(value = "rightOptionImg")MultipartFile rightOptionImg) {
+            @RequestPart(value = "prizeImg") MultipartFile prizeImg,
+            @RequestPart(value = "leftOptionImg") MultipartFile leftOptionImg,
+            @RequestPart(value = "rightOptionImg") MultipartFile rightOptionImg) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg));
@@ -75,9 +76,22 @@ public class AdminController {
 
     // 선착순 이벤트 전체 조회
     @GetMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents(){
+    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEvents());
+    }
+
+    // 선착순 이벤트 참여자 조회
+    @GetMapping("/event/rush/{rushEventId}/participants")
+    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
+            @PathVariable("rushEventId") Long rushEventId,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "option", required = false, defaultValue = "0") int option,
+            @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEventParticipants(rushEventId, size, page, option, phoneNumber));
     }
 }
