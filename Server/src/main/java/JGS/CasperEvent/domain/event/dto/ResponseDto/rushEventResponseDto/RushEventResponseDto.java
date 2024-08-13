@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 public record RushEventResponseDto(Long rushEventId,
                                    @JsonSerialize(using = LocalDateTimeSerializer.class)
                                    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-
                                    LocalDateTime startDateTime,
+
                                    @JsonSerialize(using = LocalDateTimeSerializer.class)
                                    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-
                                    LocalDateTime endDateTime,
+
                                    int winnerCount, String prizeImageUrl,
                                    String prizeDescription,
                                    Set<RushEventOptionResponseDto> options){
