@@ -57,7 +57,7 @@ public class AdminService {
     private final S3Service s3Service;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
-        return adminRepository.findById(adminRequestDto.getAdminId()).orElseThrow(NoSuchElementException::new);
+        return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
 
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
@@ -193,5 +193,19 @@ public class AdminService {
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, rushParticipantsRepository.count());
+    }
+  
+    public void deleteLotteryEvent() {
+        List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
+
+        if (lotteryEventList.isEmpty()) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
+        }
+
+        if (lotteryEventList.size() > 1) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+        }
+
+        lotteryEventRepository.deleteAll();
     }
 }

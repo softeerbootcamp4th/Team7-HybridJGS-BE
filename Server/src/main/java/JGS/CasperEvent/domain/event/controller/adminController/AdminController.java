@@ -82,6 +82,7 @@ public class AdminController {
                 .body(adminService.getRushEvents());
     }
 
+
     // 선착순 이벤트 참여자 조회
     @GetMapping("/event/rush/{rushEventId}/participants")
     public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
@@ -93,5 +94,13 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventParticipants(rushEventId, size, page, option, phoneNumber));
+    }
+
+    // 추첨 이벤트 삭제
+    @DeleteMapping("/event/lottery")
+    public ResponseEntity<Void> deleteLotteryEvent() {
+        adminService.deleteLotteryEvent();
+        return ResponseEntity.noContent().build(); // 204 No Content
+
     }
 }
