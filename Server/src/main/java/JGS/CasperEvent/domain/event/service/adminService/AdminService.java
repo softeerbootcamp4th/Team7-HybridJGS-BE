@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -146,5 +147,10 @@ public class AdminService {
         rushEvent.updateOption(leftRushOption, rightRushOption);
 
         return RushEventResponseDto.of(rushEvent);
+    }
+
+    public List<AdminRushEventResponseDto> getRushEvents(){
+        List<RushEvent> rushEvents = rushEventRepository.findAll();
+        return AdminRushEventResponseDto.of(rushEvents);
     }
 }
