@@ -9,6 +9,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final LotteryEventRepository lotteryEventRepository;
 
     // 어드민 생성
     @PostMapping("/join")
@@ -102,5 +104,13 @@ public class AdminController {
         adminService.deleteLotteryEvent();
         return ResponseEntity.noContent().build(); // 204 No Content
 
+    }
+
+    // 추첨 이벤트 수정
+    @PutMapping("/event/lottery")
+    public ResponseEntity<LotteryEventDetailResponseDto> updateLotteryEvent(@RequestBody @Valid LotteryEventRequestDto lotteryEventRequestDto) {
+        LotteryEventDetailResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
+
+        return ResponseEntity.ok(updatedLotteryEventDetailResponseDto);
     }
 }
