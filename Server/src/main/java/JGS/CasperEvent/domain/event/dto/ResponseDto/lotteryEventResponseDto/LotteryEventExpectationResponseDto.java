@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public record LotteryEventExpectationResponseDto(String expectation, LocalDate createdDate,
+public record LotteryEventExpectationResponseDto(Long casperId, String expectation, LocalDate createdDate,
                                                  LocalTime createdTime) {
 
     public static LotteryEventExpectationResponseDto of(CasperBot casperBot) {
@@ -16,6 +16,7 @@ public record LotteryEventExpectationResponseDto(String expectation, LocalDate c
         LocalTime createdTime = createdAt.toLocalTime();
 
         return new LotteryEventExpectationResponseDto(
+                casperBot.getCasperId(),
                 casperBot.getExpectation(),
                 createdDate,
                 createdTime
