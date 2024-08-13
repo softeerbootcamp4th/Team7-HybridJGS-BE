@@ -5,8 +5,10 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventExpectationResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -18,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.http.HttpStatusCode;
 
 import java.util.List;
 
@@ -121,8 +122,16 @@ public class AdminController {
     @DeleteMapping("/event/rush/{rushEventId}")
     public ResponseEntity<ResponseDto> deleteRushEvent(@PathVariable Long rushEventId){
         return ResponseEntity
-                .status(HttpStatusCode.OK)
+                .status(HttpStatus.OK)
                 .body(adminService.deleteRushEvent(rushEventId));
+    }
+
+    // 선착순 이벤트 선택지 조회
+    @GetMapping("/event/rush/{rushEventId}/options")
+    public ResponseEntity<AdminRushEventOptionResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEventOptions(rushEventId));
     }
 
     // 추첨 이벤트 삭제
