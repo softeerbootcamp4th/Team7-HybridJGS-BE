@@ -44,10 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -263,6 +260,7 @@ public class AdminService {
         return lotteryEventList.get(0);
     }
 
+    @Transactional
     public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -319,7 +317,16 @@ public class AdminService {
 
         List<CasperBot> casperBotList = casperBotRepository.findByPhoneNumber(lotteryParticipant.getBaseUser().getId());
 
-        return casperBotList.stream().map(LotteryEventExpectationResponseDto::of).toList();
+        // 기대평을 작성하지 않은 경우(기대평이 빈 문자열인 경우, 삭제된 경우)는 제외하여 반환합니다.
+        return casperBotList.stream().filter(casperBot -> !casperBot.getExpectation().isEmpty() && !casperBot.isDeleted()).map(LotteryEventExpectationResponseDto::of).toList();
+    }
 
+    @Transactional
+    public void deleteLotteryEventExpectation(Long casperId) {
+        CasperBot casperBot = casperBotRepository.findById(casperId).orElseThrow(
+                () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
+        );
+
+        casperBot.deleteExpectation();
     }
 }
