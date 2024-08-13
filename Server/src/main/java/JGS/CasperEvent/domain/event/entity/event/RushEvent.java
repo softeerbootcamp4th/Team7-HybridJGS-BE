@@ -1,6 +1,10 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
+import JGS.CasperEvent.global.enums.Position;
+import JGS.CasperEvent.global.error.exception.CustomException;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,8 +47,29 @@ public class RushEvent extends BaseEvent {
         this.prizeDescription = prizeDescription;
     }
 
-    public void addOption(RushOption leftOption, RushOption rightOption){
+    public void addOption(RushOption leftOption, RushOption rightOption) {
         this.options.add(leftOption);
         this.options.add(rightOption);
+    }
+
+    public RushEvent updateRushEvent(RushEventRequestDto requestDto) {
+        this.startDateTime = LocalDateTime.of(requestDto.getEventDate(), requestDto.getStartTime());
+        this.endDateTime = LocalDateTime.of(requestDto.getEventDate(), requestDto.getEndTime());
+        this.winnerCount = requestDto.getWinnerCount();
+        this.prizeDescription = requestDto.getPrizeDescription();
+        this.prizeImageUrl = requestDto.getPrizeImageUrl();
+        return this;
+    }
+
+    public RushOption getLeftOption() {
+        return options.stream()
+                .filter(option -> option.getPosition() == Position.LEFT)
+                .findFirst().orElseThrow(() -> new CustomException(CustomErrorCode.INVALID_RUSH_EVENT_OPTION));
+    }
+
+    public RushOption getRightOption() {
+        return options.stream()
+                .filter(option -> option.getPosition() == Position.RIGHT)
+                .findFirst().orElseThrow(() -> new CustomException(CustomErrorCode.INVALID_RUSH_EVENT_OPTION));
     }
 }
