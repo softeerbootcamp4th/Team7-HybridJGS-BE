@@ -20,4 +20,11 @@ public class LotteryEvent extends BaseEvent {
 
     public LotteryEvent() {
     }
+
+    public LotteryEvent updateLotteryEvent(LocalDateTime startDateTime, LocalDateTime endDateTime, int winnerCount) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.winnerCount = winnerCount;
+        return this;
+    }
 }

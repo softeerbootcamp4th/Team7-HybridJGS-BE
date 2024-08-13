@@ -9,16 +9,19 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
+import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
@@ -41,10 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -57,6 +57,7 @@ public class AdminService {
     private final RushParticipantsRepository rushParticipantsRepository;
     private final RushOptionRepository rushOptionRepository;
     private final S3Service s3Service;
+    private final CasperBotRepository casperBotRepository;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
@@ -240,12 +241,7 @@ public class AdminService {
         }
 
         // 필드 업데이트
-        currentLotteryEvent.setStartDateTime(newStartDateTime);
-        currentLotteryEvent.setEndDateTime(newEndDateTime);
-        currentLotteryEvent.setWinnerCount(lotteryEventRequestDto.getWinnerCount());
-
-        // 저장
-        lotteryEventRepository.save(currentLotteryEvent);
+        currentLotteryEvent.updateLotteryEvent(newStartDateTime, newEndDateTime, lotteryEventRequestDto.getWinnerCount());
 
         return LotteryEventDetailResponseDto.of(currentLotteryEvent);
     }
@@ -264,6 +260,7 @@ public class AdminService {
         return lotteryEventList.get(0);
     }
 
+    @Transactional
     public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -312,6 +309,7 @@ public class AdminService {
         return rushEventResponseDtoList;
     }
 
+
     @Transactional
     public ResponseDto deleteRushEvent(Long rushEventId){
         RushEvent rushEvent = rushEventRepository.findById(rushEventId).orElseThrow(() -> new CustomException(CustomErrorCode.NO_RUSH_EVENT));
@@ -324,5 +322,25 @@ public class AdminService {
             throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE);
         rushEventRepository.delete(rushEvent);
         return ResponseDto.of("요청에 성공하였습니다.");
+    }
+
+    public List<LotteryEventExpectationResponseDto> getLotteryEventExpectations(Long participantId) {
+        LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
+                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
+        );
+
+        List<CasperBot> casperBotList = casperBotRepository.findByPhoneNumber(lotteryParticipant.getBaseUser().getId());
+
+        // 기대평을 작성하지 않은 경우(기대평이 빈 문자열인 경우, 삭제된 경우)는 제외하여 반환합니다.
+        return casperBotList.stream().filter(casperBot -> !casperBot.getExpectation().isEmpty() && !casperBot.isDeleted()).map(LotteryEventExpectationResponseDto::of).toList();
+    }
+
+    @Transactional
+    public void deleteLotteryEventExpectation(Long casperId) {
+        CasperBot casperBot = casperBotRepository.findById(casperId).orElseThrow(
+                () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
+        );
+
+        casperBot.deleteExpectation();
     }
 }
