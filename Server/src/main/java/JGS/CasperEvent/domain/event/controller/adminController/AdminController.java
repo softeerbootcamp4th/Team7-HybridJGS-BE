@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
@@ -34,6 +35,16 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.postAdmin(adminRequestDto));
+    }
+
+    // 이미지 업로드
+    @PostMapping("/image")
+    public ResponseEntity<ImageUrlResponseDto> postImage(
+            @RequestPart(value = "image") MultipartFile image){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adminService.postImage(image));
+
     }
 
     // 추첨 이벤트 조회
@@ -84,7 +95,6 @@ public class AdminController {
                 .body(adminService.getRushEvents());
     }
 
-
     // 선착순 이벤트 참여자 조회
     @GetMapping("/event/rush/{rushEventId}/participants")
     public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
@@ -96,6 +106,17 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventParticipants(rushEventId, size, page, option, phoneNumber));
+    }
+
+    // 선착순 이벤트 수정
+    @PutMapping("/event/rush")
+    public ResponseEntity<List<AdminRushEventResponseDto>> updateRushEvent(
+            @RequestPart(name = "json") List<RushEventRequestDto> rushEventListRequestDto,
+            @RequestPart(name = "images") List<MultipartFile> images
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.updateRushEvents(rushEventListRequestDto, images));
     }
 
     // 추첨 이벤트 삭제
