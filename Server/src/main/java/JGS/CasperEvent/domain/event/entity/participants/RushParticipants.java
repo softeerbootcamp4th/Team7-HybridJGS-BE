@@ -1,12 +1,15 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.entity.BaseUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
-public class RushParticipants {
+@Getter
+public class RushParticipants extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
