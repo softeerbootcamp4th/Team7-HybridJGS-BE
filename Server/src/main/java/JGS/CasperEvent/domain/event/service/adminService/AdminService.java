@@ -9,16 +9,19 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
+import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
@@ -57,6 +60,7 @@ public class AdminService {
     private final RushParticipantsRepository rushParticipantsRepository;
     private final RushOptionRepository rushOptionRepository;
     private final S3Service s3Service;
+    private final CasperBotRepository casperBotRepository;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
@@ -240,12 +244,7 @@ public class AdminService {
         }
 
         // 필드 업데이트
-        currentLotteryEvent.setStartDateTime(newStartDateTime);
-        currentLotteryEvent.setEndDateTime(newEndDateTime);
-        currentLotteryEvent.setWinnerCount(lotteryEventRequestDto.getWinnerCount());
-
-        // 저장
-        lotteryEventRepository.save(currentLotteryEvent);
+        currentLotteryEvent.updateLotteryEvent(newStartDateTime, newEndDateTime, lotteryEventRequestDto.getWinnerCount());
 
         return LotteryEventDetailResponseDto.of(currentLotteryEvent);
     }
@@ -310,5 +309,17 @@ public class AdminService {
             rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
         }
         return rushEventResponseDtoList;
+    }
+
+
+    public List<LotteryEventExpectationResponseDto> getLotteryEventExpectations(Long participantId) {
+        LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
+                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
+        );
+
+        List<CasperBot> casperBotList = casperBotRepository.findByPhoneNumber(lotteryParticipant.getBaseUser().getId());
+
+        return casperBotList.stream().map(LotteryEventExpectationResponseDto::of).toList();
+
     }
 }
