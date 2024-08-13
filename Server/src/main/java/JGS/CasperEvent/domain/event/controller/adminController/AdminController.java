@@ -5,12 +5,11 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventExpectationResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
-import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -27,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
-    private final LotteryEventRepository lotteryEventRepository;
 
     // 어드민 생성
     @PostMapping("/join")
@@ -131,5 +129,13 @@ public class AdminController {
         LotteryEventDetailResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
 
         return ResponseEntity.ok(updatedLotteryEventDetailResponseDto);
+    }
+
+    // 추첨 이벤트 특정 사용자의 기대평 조회
+    @GetMapping("/event/lottery/participants/{participantId}/expectations")
+    public ResponseEntity<List<LotteryEventExpectationResponseDto>> getLotteryEventExpectations(@PathVariable("participantId") Long participantId) {
+        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(participantId);
+
+        return ResponseEntity.ok(lotteryEventExpectationResponseDtoList);
     }
 }
