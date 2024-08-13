@@ -140,4 +140,20 @@ public class AdminController {
 
         return ResponseEntity.ok(updatedLotteryEventDetailResponseDto);
     }
+
+    // 추첨 이벤트 특정 사용자의 기대평 조회
+    @GetMapping("/event/lottery/participants/{participantId}/expectations")
+    public ResponseEntity<List<LotteryEventExpectationResponseDto>> getLotteryEventExpectations(@PathVariable("participantId") Long participantId) {
+        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(participantId);
+
+        return ResponseEntity.ok(lotteryEventExpectationResponseDtoList);
+    }
+
+    // 추첨 이벤트 특정 기대평을 삭제
+    @PatchMapping("/event/lottery/expecations/{casperId}")
+    public ResponseEntity<Void> deleteLotteryEventExpectation(@PathVariable("casperId") Long casperId) {
+        adminService.deleteLotteryEventExpectation(casperId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

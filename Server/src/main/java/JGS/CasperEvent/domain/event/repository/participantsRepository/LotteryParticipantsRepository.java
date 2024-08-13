@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LotteryParticipantsRepository extends JpaRepository<LotteryParticipants, String> {
+public interface LotteryParticipantsRepository extends JpaRepository<LotteryParticipants, Long> {
     Optional<LotteryParticipants> findByBaseUser(BaseUser baseUser);
 
     Page<LotteryParticipants> findByBaseUser_Id(String id, Pageable pageable);
