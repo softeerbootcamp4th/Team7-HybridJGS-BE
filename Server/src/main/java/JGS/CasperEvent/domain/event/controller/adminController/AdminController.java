@@ -7,6 +7,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -35,7 +36,7 @@ public class AdminController {
 
     // 추첨 이벤트 조회
     @GetMapping("/event/lottery")
-    public ResponseEntity<List<LotteryEventDetailResponseDto>> getLotteryEvent() {
+    public ResponseEntity<LotteryEventDetailResponseDto> getLotteryEvent() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEvent());
@@ -81,10 +82,25 @@ public class AdminController {
                 .body(adminService.getRushEvents());
     }
 
+
+    // 선착순 이벤트 참여자 조회
+    @GetMapping("/event/rush/{rushEventId}/participants")
+    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
+            @PathVariable("rushEventId") Long rushEventId,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "option", required = false, defaultValue = "0") int option,
+            @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEventParticipants(rushEventId, size, page, option, phoneNumber));
+    }
+
     // 추첨 이벤트 삭제
     @DeleteMapping("/event/lottery")
     public ResponseEntity<Void> deleteLotteryEvent() {
         adminService.deleteLotteryEvent();
         return ResponseEntity.noContent().build(); // 204 No Content
+
     }
 }
