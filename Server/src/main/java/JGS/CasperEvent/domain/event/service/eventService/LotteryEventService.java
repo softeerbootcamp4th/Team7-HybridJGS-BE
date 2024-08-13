@@ -54,7 +54,7 @@ public class LotteryEventService {
         }
 
         if (lotteryEventList.size() > 1) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 1개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
         }
 
         LotteryEvent lotteryEvent = lotteryEventList.get(0);
@@ -119,7 +119,7 @@ public class LotteryEventService {
         }
 
         if (lotteryEventList.size() > 1) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 1개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
         }
 
         LotteryEvent lotteryEvent = lotteryEventList.get(0);
