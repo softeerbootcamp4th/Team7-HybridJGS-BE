@@ -4,6 +4,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
@@ -72,6 +73,10 @@ public class AdminService {
         adminRepository.save(new Admin(adminId, password, Role.ADMIN));
 
         return ResponseDto.of("관리자 생성 성공");
+    }
+
+    public ImageUrlResponseDto postImage(MultipartFile image){
+        return new ImageUrlResponseDto(s3Service.upload(image));
     }
 
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
@@ -150,7 +155,7 @@ public class AdminService {
                 Position.RIGHT
         ));
 
-        rushEvent.updateOption(leftRushOption, rightRushOption);
+        rushEvent.addOption(leftRushOption, rightRushOption);
 
         return RushEventResponseDto.of(rushEvent);
     }
@@ -253,5 +258,11 @@ public class AdminService {
         }
 
         return lotteryEventList.get(0);
+    }
+
+    public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList, List<MultipartFile> images) {
+        LocalDateTime now = LocalDateTime.now();
+
+        return null;
     }
 }
