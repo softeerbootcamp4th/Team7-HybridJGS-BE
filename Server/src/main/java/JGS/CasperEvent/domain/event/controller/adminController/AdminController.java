@@ -6,6 +6,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -70,5 +71,13 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg));
+    }
+
+    // 선착순 이벤트 전체 조회
+    @GetMapping("/event/rush")
+    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEvents());
     }
 }
