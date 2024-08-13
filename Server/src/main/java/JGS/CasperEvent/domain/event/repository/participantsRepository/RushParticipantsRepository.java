@@ -1,6 +1,8 @@
 package JGS.CasperEvent.domain.event.repository.participantsRepository;
 
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RushParticipantsRepository extends JpaRepository<RushParticipants, String> {
+public interface RushParticipantsRepository extends JpaRepository<RushParticipants, Long> {
     boolean existsByRushEvent_RushEventIdAndBaseUser_Id(Long eventId, String userId);
     long countByRushEvent_RushEventIdAndOptionId(Long eventId, int optionId);
     @Query("SELECT COUNT(rp) + 1 FROM RushParticipants rp " +
@@ -24,5 +26,13 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
     long countAllByOptionId(int optionId);
     @Query("SELECT rp.optionId FROM RushParticipants rp WHERE rp.baseUser.id = :userId")
     Optional<Integer> getOptionIdByUserId(@Param("userId") String userId);
+
+    Page<RushParticipants> findByRushEvent_RushEventId(Long rushEventId, Pageable pageable);
+
+    Page<RushParticipants> findByRushEvent_RushEventIdAndBaseUser_Id(Long rushEventId, String baseUser_id, Pageable pageable);
+
+    Page<RushParticipants> findByRushEvent_RushEventIdAndOptionId(Long rushEventId, int optionId, Pageable pageable);
+
+    Page<RushParticipants> findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(Long rushEventId, int optionId, String baseUser_id, Pageable pageable);
 
 }
