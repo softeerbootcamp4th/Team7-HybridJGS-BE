@@ -26,9 +26,6 @@ spring:
       s3:
         bucket: ${S3_IMAGE_SERVER}
         region: ap-northeast-2
-      credentials:
-        accessKey: ${AWS_ACCESS_KEY}
-        secretKey: ${AWS_SECRET_KEY}
 
 
 client:
