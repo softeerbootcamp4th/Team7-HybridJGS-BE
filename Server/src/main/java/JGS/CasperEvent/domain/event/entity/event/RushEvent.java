@@ -43,7 +43,7 @@ public class RushEvent extends BaseEvent {
         this.prizeDescription = prizeDescription;
     }
 
-    public void updateOption(RushOption leftOption, RushOption rightOption){
+    public void addOption(RushOption leftOption, RushOption rightOption){
         this.options.add(leftOption);
         this.options.add(rightOption);
     }
