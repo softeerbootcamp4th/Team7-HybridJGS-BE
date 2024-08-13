@@ -65,9 +65,9 @@ public class AdminController {
     @PostMapping("/event/rush")
     public ResponseEntity<RushEventResponseDto> createRushEvent(
             @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
-            @RequestPart(value = "prizeImg")MultipartFile prizeImg,
-            @RequestPart(value = "leftOptionImg")MultipartFile leftOptionImg,
-            @RequestPart(value = "rightOptionImg")MultipartFile rightOptionImg) {
+            @RequestPart(value = "prizeImg") MultipartFile prizeImg,
+            @RequestPart(value = "leftOptionImg") MultipartFile leftOptionImg,
+            @RequestPart(value = "rightOptionImg") MultipartFile rightOptionImg) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg));
@@ -75,9 +75,16 @@ public class AdminController {
 
     // 선착순 이벤트 전체 조회
     @GetMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents(){
+    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEvents());
+    }
+
+    // 추첨 이벤트 삭제
+    @DeleteMapping("/event/lottery")
+    public ResponseEntity<Void> deleteLotteryEvent() {
+        adminService.deleteLotteryEvent();
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }
