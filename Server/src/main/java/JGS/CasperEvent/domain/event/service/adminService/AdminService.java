@@ -37,6 +37,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -77,8 +78,8 @@ public class AdminService {
         if (lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
-                lotteryEventRequestDto.getEventStartDateTime(),
-                lotteryEventRequestDto.getEventEndDateTime(),
+                LocalDateTime.of(lotteryEventRequestDto.getEventStartDate(), lotteryEventRequestDto.getEventStartTime()),
+                LocalDateTime.of(lotteryEventRequestDto.getEventEndDate(), lotteryEventRequestDto.getEventEndTime()),
                 lotteryEventRequestDto.getWinnerCount()
         ));
 
@@ -87,7 +88,7 @@ public class AdminService {
 
     public LotteryEventDetailResponseDto getLotteryEvent() {
         return LotteryEventDetailResponseDto.of(
-                lotteryEventRepository.findAll().get(0)
+                getCurrentLotteryEvent()
         );
     }
 
@@ -194,8 +195,53 @@ public class AdminService {
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, rushParticipantsRepository.count());
     }
-  
+
+    @Transactional
     public void deleteLotteryEvent() {
+        LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
+        lotteryEventRepository.deleteById(currentLotteryEvent.getLotteryEventId());
+    }
+
+    @Transactional
+    public LotteryEventDetailResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+        LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime newStartDateTime = LocalDateTime.of(lotteryEventRequestDto.getEventStartDate(), lotteryEventRequestDto.getEventStartTime());
+        LocalDateTime newEndDateTime = LocalDateTime.of(lotteryEventRequestDto.getEventEndDate(), lotteryEventRequestDto.getEventEndTime());
+
+        // 종료 날짜가 시작 날짜보다 뒤인지 체크
+        if (newEndDateTime.isBefore(newStartDateTime)) {
+            throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
+        }
+
+        if (currentLotteryEvent.getStartDateTime().isBefore(now) && currentLotteryEvent.getEndDateTime().isAfter(now)) {
+            // 현재 진행 중인 이벤트인 경우
+            if (!currentLotteryEvent.getStartDateTime().equals(newStartDateTime)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
+            }
+            if (newEndDateTime.isBefore(now)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
+            }
+        }
+
+        // 이벤트가 시작 전인 경우
+        else if (newStartDateTime.isBefore(now)) {
+            throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
+        }
+
+        // 필드 업데이트
+        currentLotteryEvent.setStartDateTime(newStartDateTime);
+        currentLotteryEvent.setEndDateTime(newEndDateTime);
+        currentLotteryEvent.setWinnerCount(lotteryEventRequestDto.getWinnerCount());
+
+        // 저장
+        lotteryEventRepository.save(currentLotteryEvent);
+
+        return LotteryEventDetailResponseDto.of(currentLotteryEvent);
+    }
+
+    private LotteryEvent getCurrentLotteryEvent() {
         List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
 
         if (lotteryEventList.isEmpty()) {
@@ -206,6 +252,6 @@ public class AdminService {
             throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
         }
 
-        lotteryEventRepository.deleteAll();
+        return lotteryEventList.get(0);
     }
 }
