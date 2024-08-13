@@ -12,7 +12,6 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
@@ -45,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -75,7 +75,7 @@ public class AdminService {
         return ResponseDto.of("관리자 생성 성공");
     }
 
-    public ImageUrlResponseDto postImage(MultipartFile image){
+    public ImageUrlResponseDto postImage(MultipartFile image) {
         return new ImageUrlResponseDto(s3Service.upload(image));
     }
 
@@ -115,7 +115,7 @@ public class AdminService {
         return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, lotteryParticipantsRepository.count());
     }
 
-    public RushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
+    public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
         if (rushEventRepository.count() >= 6) throw new TooManyRushEventException();
 
         String prizeImgSrc = s3Service.upload(prizeImg);
@@ -132,8 +132,8 @@ public class AdminService {
                         rushEventRequestDto.getPrizeDescription()
                 ));
 
-        RushEventOptionRequestDto leftOption = rushEventRequestDto.getLeftOption();
-        RushEventOptionRequestDto rightOption = rushEventRequestDto.getRightOption();
+        RushEventOptionRequestDto leftOption = rushEventRequestDto.getLeftOptionRequestDto();
+        RushEventOptionRequestDto rightOption = rushEventRequestDto.getRightOptionRequestDto();
 
         RushOption leftRushOption = rushOptionRepository.save(new RushOption(
                 rushEvent,
@@ -157,12 +157,16 @@ public class AdminService {
 
         rushEvent.addOption(leftRushOption, rightRushOption);
 
-        return RushEventResponseDto.of(rushEvent);
+        return AdminRushEventResponseDto.of(rushEvent);
     }
 
     public List<AdminRushEventResponseDto> getRushEvents() {
         List<RushEvent> rushEvents = rushEventRepository.findAll();
-        return AdminRushEventResponseDto.of(rushEvents);
+        List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
+        for (RushEvent rushEvent : rushEvents) {
+            rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
+        }
+        return rushEventResponseDtoList;
     }
 
     public RushEventParticipantsListResponseDto getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
@@ -260,9 +264,51 @@ public class AdminService {
         return lotteryEventList.get(0);
     }
 
-    public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList, List<MultipartFile> images) {
+    public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
 
-        return null;
+        for (RushEventRequestDto rushEventRequestDto : rushEventRequestDtoList) {
+            RushEvent rushEvent = rushEventRepository.findByRushEventId(rushEventRequestDto.getRushEventId());
+
+            LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
+            LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
+            LocalDateTime startDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime());
+            LocalDateTime endDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime());
+            if (!Objects.equals(curStartDateTime, startDateTime) || !Objects.equals(curEndDateTime, endDateTime)) {
+                // 종료 날짜가 시작 날짜보다 뒤인지 체크
+                if (endDateTime.isBefore(startDateTime)) {
+                    throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
+                }
+
+                if (curStartDateTime.isBefore(now) && curEndDateTime.isAfter(now)) {
+                    // 현재 진행 중인 이벤트인 경우
+                    if (!curStartDateTime.equals(startDateTime)) {
+                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
+                    }
+                    if (endDateTime.isBefore(now)) {
+                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
+                    }
+                }
+
+                // 이벤트가 시작 전인 경우
+                else if (startDateTime.isBefore(now)) {
+                    throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
+                }
+            }
+
+            RushOption leftOption = rushEvent.getLeftOption();
+            RushOption rightOption = rushEvent.getRightOption();
+
+            rushEvent.updateRushEvent(rushEventRequestDto);
+            leftOption.updateRushOption(rushEventRequestDto.getLeftOptionRequestDto());
+            rightOption.updateRushOption(rushEventRequestDto.getRightOptionRequestDto());
+        }
+
+        List<RushEvent> rushEvents = rushEventRepository.findAll();
+        List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
+        for (RushEvent rushEvent : rushEvents) {
+            rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
+        }
+        return rushEventResponseDtoList;
     }
 }
