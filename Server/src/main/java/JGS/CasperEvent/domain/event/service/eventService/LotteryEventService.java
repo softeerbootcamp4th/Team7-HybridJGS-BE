@@ -29,6 +29,7 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,7 +46,18 @@ public class LotteryEventService {
 
     public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
-        LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
+
+        List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
+
+        if (lotteryEventList.isEmpty()) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
+        }
+
+        if (lotteryEventList.size() > 1) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 1개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+        }
+
+        LotteryEvent lotteryEvent = lotteryEventList.get(0);
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
         lotteryEvent.addAppliedCount();
@@ -100,8 +112,17 @@ public class LotteryEventService {
     }
 
     public LotteryEventResponseDto getLotteryEvent() {
-        LotteryEvent lotteryEvent = lotteryEventRepository.findById(1L).orElseThrow(LotteryEventNotExists::new);
+        List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
+
+        if (lotteryEventList.isEmpty()) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
+        }
+
+        if (lotteryEventList.size() > 1) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 1개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+        }
+
+        LotteryEvent lotteryEvent = lotteryEventList.get(0);
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
-
 }
