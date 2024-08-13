@@ -9,17 +9,21 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
+import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
@@ -48,6 +52,7 @@ public class AdminService {
     private final LotteryEventRepository lotteryEventRepository;
     private final RushEventRepository rushEventRepository;
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
+    private final RushParticipantsRepository rushParticipantsRepository;
     private final RushOptionRepository rushOptionRepository;
     private final S3Service s3Service;
 
@@ -80,9 +85,9 @@ public class AdminService {
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
-    public List<LotteryEventDetailResponseDto> getLotteryEvent() {
+    public LotteryEventDetailResponseDto getLotteryEvent() {
         return LotteryEventDetailResponseDto.of(
-                lotteryEventRepository.findAll()
+                lotteryEventRepository.findAll().get(0)
         );
     }
 
@@ -149,8 +154,44 @@ public class AdminService {
         return RushEventResponseDto.of(rushEvent);
     }
 
-    public List<AdminRushEventResponseDto> getRushEvents(){
+    public List<AdminRushEventResponseDto> getRushEvents() {
         List<RushEvent> rushEvents = rushEventRepository.findAll();
         return AdminRushEventResponseDto.of(rushEvents);
+    }
+
+    public RushEventParticipantsListResponseDto getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<RushParticipants> rushParticipantsPage = null;
+
+        boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
+        boolean isOptionIdValid = optionId == 1 || optionId == 2;
+
+        if (!isPhoneNumberEmpty && isOptionIdValid) {
+            // 전화번호와 유효한 옵션 ID가 있는 경우
+            rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(rushEventId, optionId, phoneNumber, pageable);
+        } else if (isPhoneNumberEmpty && !isOptionIdValid) {
+            // 전화번호가 비어있고 유효하지 않은 옵션 ID가 있는 경우
+            rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventId(rushEventId, pageable);
+        } else if (isOptionIdValid) {
+            // 유효한 옵션 ID가 있지만 전화번호는 비어있는 경우
+            rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionId(rushEventId, optionId, pageable);
+        } else {
+            // 유효하지 않은 옵션 ID와 전화번호가 주어진 경우
+            rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndBaseUser_Id(rushEventId, phoneNumber, pageable);
+        }
+
+        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        for (RushParticipants rushParticipant : rushParticipantsPage) {
+            String userId = rushParticipant.getBaseUser().getId();
+            int userChoice = rushParticipant.getOptionId();
+            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
+            rushEventParticipantResponseDtoList.add(
+                    RushEventParticipantResponseDto.of(rushParticipant, rank)
+            );
+        }
+
+        Boolean isLastPage = !rushParticipantsPage.hasNext();
+        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, rushParticipantsRepository.count());
     }
 }
