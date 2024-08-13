@@ -5,10 +5,8 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
@@ -309,19 +307,26 @@ public class AdminService {
     }
 
     @Transactional
-    public ResponseDto deleteRushEvent(Long rushEventId){
+    public ResponseDto deleteRushEvent(Long rushEventId) {
         RushEvent rushEvent = rushEventRepository.findById(rushEventId).orElseThrow(() -> new CustomException(CustomErrorCode.NO_RUSH_EVENT));
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDateTime = rushEvent.getStartDateTime();
         LocalDateTime endDateTime = rushEvent.getEndDateTime();
 
-        if(now.isAfter(startDateTime) && now.isBefore(endDateTime))
+        if (now.isAfter(startDateTime) && now.isBefore(endDateTime))
             throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE);
         rushEventRepository.delete(rushEvent);
         return ResponseDto.of("요청에 성공하였습니다.");
     }
 
+    public AdminRushEventOptionResponseDto getRushEventOptions(Long rushEventId) {
+        return AdminRushEventOptionResponseDto.of(
+                rushEventRepository.findById(rushEventId).orElseThrow(
+                        () -> new CustomException(CustomErrorCode.NO_RUSH_EVENT)
+                )
+        );
+    }
 
     public List<LotteryEventExpectationResponseDto> getLotteryEventExpectations(Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
