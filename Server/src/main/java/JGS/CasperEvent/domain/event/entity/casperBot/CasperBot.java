@@ -40,4 +40,16 @@ public class CasperBot extends BaseEntity {
         this.name = requestDto.getName();
         this.expectation = requestDto.getExpectation();
     }
+
+    public CasperBot deleteExpectation() {
+        if (!this.expectation.isEmpty()) {
+            this.expectation = "삭제된 기대평입니다.";
+        }
+
+        return this;
+    }
+
+    public boolean isDeleted() {
+        return this.expectation.equals("삭제된 기대평입니다.");
+    }
 }
