@@ -77,7 +77,7 @@ public class AdminController {
 
     // 선착순 이벤트 생성
     @PostMapping("/event/rush")
-    public ResponseEntity<RushEventResponseDto> createRushEvent(
+    public ResponseEntity<AdminRushEventResponseDto> createRushEvent(
             @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
             @RequestPart(value = "prizeImg") MultipartFile prizeImg,
             @RequestPart(value = "leftOptionImg") MultipartFile leftOptionImg,
@@ -111,12 +111,10 @@ public class AdminController {
     // 선착순 이벤트 수정
     @PutMapping("/event/rush")
     public ResponseEntity<List<AdminRushEventResponseDto>> updateRushEvent(
-            @RequestPart(name = "json") List<RushEventRequestDto> rushEventListRequestDto,
-            @RequestPart(name = "images") List<MultipartFile> images
-    ) {
+            @RequestBody List<RushEventRequestDto> rushEventListRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(adminService.updateRushEvents(rushEventListRequestDto, images));
+                .body(adminService.updateRushEvents(rushEventListRequestDto));
     }
 
     // 추첨 이벤트 삭제

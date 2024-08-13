@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.enums.Position;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -36,5 +37,14 @@ public class RushOption extends BaseEntity {
         this.resultSubText = resultSubText;
         this.imageUrl = imageUrl;
         this.position = position;
+    }
+
+    public RushOption updateRushOption(RushEventOptionRequestDto requestDto) {
+        this.mainText = requestDto.getMainText();
+        this.subText = requestDto.getSubText();
+        this.resultMainText = requestDto.getResultMainText();
+        this.resultSubText = requestDto.getResultSubText();
+        this.imageUrl = requestDto.getImageUrl();
+        return this;
     }
 }

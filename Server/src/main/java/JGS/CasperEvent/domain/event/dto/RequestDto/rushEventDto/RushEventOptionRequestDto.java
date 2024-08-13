@@ -13,4 +13,5 @@ public class RushEventOptionRequestDto {
     private String subText;
     private String resultMainText;
     private String resultSubText;
+    private String imageUrl;
 }
