@@ -160,7 +160,7 @@ public class AdminController {
     }
 
     // 추첨 이벤트 특정 기대평을 삭제
-    @PatchMapping("/event/lottery/expecations/{casperId}")
+    @PatchMapping("/event/lottery/expectations/{casperId}")
     public ResponseEntity<Void> deleteLotteryEventExpectation(@PathVariable("casperId") Long casperId) {
         adminService.deleteLotteryEventExpectation(casperId);
 
