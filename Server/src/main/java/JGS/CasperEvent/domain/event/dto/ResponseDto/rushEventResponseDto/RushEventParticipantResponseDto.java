@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record RushEventParticipantResponseDto(Long id, String phoneNumber,
-                                              int balanceGameChoice, LocalDate createdDate, LocalTime createTime,
+                                              int balanceGameChoice, LocalDate createdDate, LocalTime createdTime,
                                               Long rank) {
     public static RushEventParticipantResponseDto of(RushParticipants rushParticipants, Long rank){
         return new RushEventParticipantResponseDto(
