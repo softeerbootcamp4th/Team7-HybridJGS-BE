@@ -16,6 +16,7 @@ import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
@@ -23,6 +24,7 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepos
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
+import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
@@ -58,6 +60,7 @@ public class AdminService {
     private final RushOptionRepository rushOptionRepository;
     private final S3Service s3Service;
     private final CasperBotRepository casperBotRepository;
+    private final LotteryWinnerRepository lotteryWinnerRepository;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
@@ -314,6 +317,24 @@ public class AdminService {
         }
 
         return lotteryEventList.get(0);
+    }
+
+    @Transactional
+    public ResponseDto pickWinners() {
+        if(lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
+        LotteryEvent lotteryEvent = getCurrentLotteryEvent();
+
+        int winnerCount = lotteryEvent.getWinnerCount();
+
+        Pageable pageable = PageRequest.of(0, winnerCount);
+
+        //todo 당첨자 추첨 알고리즘 변경해야함
+        Page<LotteryParticipants> lotteryWinners = lotteryParticipantsRepository.findAll(pageable);
+        for (LotteryParticipants lotteryWinner : lotteryWinners) {
+            lotteryWinnerRepository.save(new LotteryWinners(lotteryWinner));
+        }
+
+        return new ResponseDto("추첨이 완료되었습니다.");
     }
 
     @Transactional
