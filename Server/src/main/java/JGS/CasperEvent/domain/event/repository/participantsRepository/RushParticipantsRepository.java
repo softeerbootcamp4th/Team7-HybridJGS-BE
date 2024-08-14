@@ -67,4 +67,11 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
             "AND rp.baseUser.id = :phoneNumber " +
             "ORDER BY rp.id ASC ")
     Page<RushParticipants> findByWinnerByEventIdAndPhoneNumber(@Param("eventId") Long eventId, @Param("phoneNumber") String phoneNumber, Pageable pageable);
+
+    long countByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(long rushEventId, int optionId, String id);
+
+    long countByRushEvent_RushEventId(long rushEventId);
+
+    long countByRushEvent_RushEventIdAndBaseUser_Id(long rushEventId, String phoneNumber);
+
 }
