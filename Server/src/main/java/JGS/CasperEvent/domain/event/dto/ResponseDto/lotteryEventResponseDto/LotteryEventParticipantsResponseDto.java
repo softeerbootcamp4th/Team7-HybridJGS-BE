@@ -3,7 +3,6 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record LotteryEventParticipantsResponseDto(
