@@ -28,7 +28,8 @@ public enum CustomErrorCode {
     EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW("현재 진행 중인 이벤트의 종료 시간을 현재 시간보다 이전으로 설정할 수 없습니다.", 400),
     EVENT_BEFORE_START_TIME("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", 400),
     EVENT_END_TIME_BEFORE_START_TIME("종료 시간은 시작 시간 이후로 설정해야 합니다.", 400),
-    INVALID_RUSH_EVENT_OPTION("밸런스 게임 선택지가 유효하지 않습니다.");
+    INVALID_RUSH_EVENT_OPTION("밸런스 게임 선택지가 유효하지 않습니다."),
+    EVENT_IN_PROGRESS_CANNOT_DELETE("진행중인 이벤트를 삭제할 수 없습니다.", 409);
 
 
 

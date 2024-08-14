@@ -10,6 +10,9 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
+
+
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.http.HttpStatusCode;
 
 import java.util.List;
 
@@ -113,6 +117,14 @@ public class AdminController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.updateRushEvents(rushEventListRequestDto));
+    }
+
+    // 선착순 이벤트 삭제
+    @DeleteMapping("/event/rush/{rushEventId}")
+    public ResponseEntity<ResponseDto> deleteRushEvent(@PathVariable Long rushEventId){
+        return ResponseEntity
+                .status(HttpStatusCode.OK)
+                .body(adminService.deleteRushEvent(rushEventId));
     }
 
     // 추첨 이벤트 삭제
