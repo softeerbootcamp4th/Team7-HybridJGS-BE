@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.http.HttpStatusCode;
 
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class AdminController {
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventOptions(rushEventId));
     }
-
+  
     // 추첨 이벤트 삭제
     @DeleteMapping("/event/lottery")
     public ResponseEntity<Void> deleteLotteryEvent() {
