@@ -8,11 +8,10 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventExpectationResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
-
-
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import jakarta.validation.Valid;
@@ -30,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final LotteryEventRepository lotteryEventRepository;
 
     // 어드민 생성
     @PostMapping("/join")
@@ -123,10 +123,18 @@ public class AdminController {
     @DeleteMapping("/event/rush/{rushEventId}")
     public ResponseEntity<ResponseDto> deleteRushEvent(@PathVariable Long rushEventId){
         return ResponseEntity
-                .status(HttpStatusCode.OK)
+                .status(HttpStatus.OK)
                 .body(adminService.deleteRushEvent(rushEventId));
     }
 
+    // 선착순 이벤트 선택지 조회
+    @GetMapping("/event/rush/{rushEventId}/options")
+    public ResponseEntity<AdminRushEventOptionResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEventOptions(rushEventId));
+    }
+  
     // 추첨 이벤트 삭제
     @DeleteMapping("/event/lottery")
     public ResponseEntity<Void> deleteLotteryEvent() {
