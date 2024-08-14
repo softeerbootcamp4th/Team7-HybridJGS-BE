@@ -37,6 +37,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("https://d3phfzvzx3wm4l.cloudfront.net/");
+        config.addAllowedOrigin("https://d2oxrno1u2ah9j.cloudfront.net/");
         config.addAllowedOrigin("https://hybrid-jgs.shop");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
