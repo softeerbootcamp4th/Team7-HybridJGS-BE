@@ -174,7 +174,7 @@ public class RushEventService {
             RushEvent rushEvent = new RushEvent(
                     startDateTime.plusDays(i),  // 이벤트 시작 날짜
                     endDateTime.plusDays(i),    // 이벤트 종료 날짜
-                    0,                          // 우승자 수 (winnerCount)
+                    315,                          // 우승자 수 (winnerCount)
                     "http://example.com/prize" + (i + 1) + ".jpg",  // 상 이미지 URL
                     "Prize Description " + (i + 1)                  // 상 설명
             );

@@ -13,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface RushParticipantsRepository extends JpaRepository<RushParticipants, Long> {
     boolean existsByRushEvent_RushEventIdAndBaseUser_Id(Long eventId, String userId);
+
     long countByRushEvent_RushEventIdAndOptionId(Long eventId, int optionId);
+
     @Query("SELECT COUNT(rp) + 1 FROM RushParticipants rp " +
             "WHERE rp.rushEvent.rushEventId = :eventId " +
             "AND rp.optionId = :optionId " +
@@ -23,7 +25,9 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
     long findUserRankByEventIdAndUserIdAndOptionId(@Param("eventId") Long eventId,
                                                    @Param("userId") String userId,
                                                    @Param("optionId") int optionId);
+
     long countAllByOptionId(int optionId);
+
     @Query("SELECT rp.optionId FROM RushParticipants rp WHERE rp.baseUser.id = :userId")
     Optional<Integer> getOptionIdByUserId(@Param("userId") String userId);
 
@@ -35,4 +39,32 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
 
     Page<RushParticipants> findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(Long rushEventId, int optionId, String baseUser_id, Pageable pageable);
 
+
+    @Query("SELECT rp FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId " +
+            "AND rp.optionId = :optionId " +
+            "ORDER BY rp.id ASC ")
+    Page<RushParticipants> findWinnerByEventIdAndOptionId(
+            @Param("eventId") Long eventId, @Param("optionId") int optionId, Pageable pageable);
+
+    @Query("SELECT rp FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId " +
+            "AND rp.optionId = :optionId " +
+            "AND rp.baseUser.id = :phoneNumber " +
+            "ORDER BY rp.id ASC ")
+    Page<RushParticipants> findWinnerByEventIdAndOptionIdAndPhoneNumber(
+            @Param("eventId") Long eventId, @Param("optionId") int optionId, @Param("phoneNumber") String phoneNumber, Pageable pageable
+    );
+
+    @Query("SELECT rp FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId " +
+            "ORDER BY rp.id ASC ")
+    Page<RushParticipants> findWinnerByEventId(@Param("eventId") Long eventId, @Param("winnerCount") Pageable pageable);
+
+
+    @Query("SELECT rp FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId " +
+            "AND rp.baseUser.id = :phoneNumber " +
+            "ORDER BY rp.id ASC ")
+    Page<RushParticipants> findByWinnerByEventIdAndPhoneNumber(@Param("eventId") Long eventId, @Param("phoneNumber") String phoneNumber, Pageable pageable);
 }
