@@ -81,8 +81,8 @@ public class AdminService {
         if (lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
-                LocalDateTime.of(lotteryEventRequestDto.getEventStartDate(), lotteryEventRequestDto.getEventStartTime()),
-                LocalDateTime.of(lotteryEventRequestDto.getEventEndDate(), lotteryEventRequestDto.getEventEndTime()),
+                LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime()),
+                LocalDateTime.of(lotteryEventRequestDto.getEndDate(), lotteryEventRequestDto.getEndTime()),
                 lotteryEventRequestDto.getWinnerCount()
         ));
 
@@ -214,8 +214,8 @@ public class AdminService {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newStartDateTime = LocalDateTime.of(lotteryEventRequestDto.getEventStartDate(), lotteryEventRequestDto.getEventStartTime());
-        LocalDateTime newEndDateTime = LocalDateTime.of(lotteryEventRequestDto.getEventEndDate(), lotteryEventRequestDto.getEventEndTime());
+        LocalDateTime newStartDateTime = LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime());
+        LocalDateTime newEndDateTime = LocalDateTime.of(lotteryEventRequestDto.getEndDate(), lotteryEventRequestDto.getEndTime());
 
         // 종료 날짜가 시작 날짜보다 뒤인지 체크
         if (newEndDateTime.isBefore(newStartDateTime)) {
