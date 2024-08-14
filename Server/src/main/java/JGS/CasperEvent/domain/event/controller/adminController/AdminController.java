@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.http.HttpStatusCode;
 
 import java.util.List;
 
@@ -41,12 +40,10 @@ public class AdminController {
 
     // 이미지 업로드
     @PostMapping("/image")
-    public ResponseEntity<ImageUrlResponseDto> postImage(
-            @RequestPart(value = "image") MultipartFile image){
+    public ResponseEntity<ImageUrlResponseDto> postImage(@RequestPart(value = "image") MultipartFile image) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(adminService.postImage(image));
-
     }
 
     // 추첨 이벤트 조회
@@ -110,10 +107,23 @@ public class AdminController {
                 .body(adminService.getRushEventParticipants(rushEventId, size, page, option, phoneNumber));
     }
 
+    // 선착순 이벤트 당첨자 조회
+    @GetMapping("/event/rush/{rushEventId}/winner")
+    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventWinners(
+            @PathVariable("rushEventId") Long rushEventId,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getRushEventWinners(rushEventId, size, page, phoneNumber));
+    }
+
     // 선착순 이벤트 수정
     @PutMapping("/event/rush")
     public ResponseEntity<List<AdminRushEventResponseDto>> updateRushEvent(
             @RequestBody List<RushEventRequestDto> rushEventListRequestDto) {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.updateRushEvents(rushEventListRequestDto));
@@ -121,7 +131,7 @@ public class AdminController {
 
     // 선착순 이벤트 삭제
     @DeleteMapping("/event/rush/{rushEventId}")
-    public ResponseEntity<ResponseDto> deleteRushEvent(@PathVariable Long rushEventId){
+    public ResponseEntity<ResponseDto> deleteRushEvent(@PathVariable Long rushEventId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.deleteRushEvent(rushEventId));

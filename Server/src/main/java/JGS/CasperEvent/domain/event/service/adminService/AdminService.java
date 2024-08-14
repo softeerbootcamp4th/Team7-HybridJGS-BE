@@ -34,6 +34,7 @@ import JGS.CasperEvent.global.response.ResponseDto;
 import JGS.CasperEvent.global.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static JGS.CasperEvent.global.util.RepositoryErrorHandler.findByIdOrElseThrow;
 
 @RequiredArgsConstructor
 @Service
@@ -100,7 +103,7 @@ public class AdminService {
 
         Page<LotteryParticipants> lotteryParticipantsPage = null;
         if (phoneNumber.isEmpty()) lotteryParticipantsPage = lotteryParticipantsRepository.findAll(pageable);
-        else lotteryParticipantsRepository.findByBaseUser_Id(phoneNumber, pageable);
+        else lotteryParticipantsPage = lotteryParticipantsRepository.findByBaseUser_Id(phoneNumber, pageable);
 
         List<LotteryEventParticipantsResponseDto> lotteryEventParticipantsResponseDtoList = new ArrayList<>();
 
@@ -200,7 +203,57 @@ public class AdminService {
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
+        // todo 전체 참여자 아닌 옵션별 참여자로 수정하기
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, rushParticipantsRepository.count());
+    }
+
+    public RushEventParticipantsListResponseDto getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
+        Page<RushParticipants> rushParticipantsPage = null;
+
+        RushEvent rushEvent = findByIdOrElseThrow(rushEventRepository, rushEventId, CustomErrorCode.NO_RUSH_EVENT);
+        int winnerCount = rushEvent.getWinnerCount();
+        Pageable winnerPage = PageRequest.of(0, winnerCount);
+
+        long leftSelect = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(rushEventId, 1);
+        long rightSelect = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(rushEventId, 2);
+
+        boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
+
+        int winnerOptionId;
+        if (leftSelect > rightSelect) winnerOptionId = 1;
+        else if (leftSelect < rightSelect) winnerOptionId = 2;
+        else winnerOptionId = 0;
+
+        if (!isPhoneNumberEmpty && winnerOptionId != 0) {
+            // 전화번호와 유효한 옵션 ID가 있는 경우
+            rushParticipantsPage = rushParticipantsRepository.findWinnerByEventIdAndOptionIdAndPhoneNumber(rushEventId, winnerOptionId, phoneNumber, winnerPage);
+        } else if (isPhoneNumberEmpty && winnerOptionId == 0) {
+            // 전화번호가 비어있고 두 선택지가 동점인 경우
+            rushParticipantsPage = rushParticipantsRepository.findWinnerByEventId(rushEventId, winnerPage);
+        } else if (winnerOptionId != 0) {
+            // 유효한 옵션 ID가 있지만 전화번호는 비어있는 경우
+            rushParticipantsPage = rushParticipantsRepository.findWinnerByEventIdAndOptionId(rushEventId, winnerOptionId, winnerPage);
+        } else {
+            // 두 선택지가 동점이고 전화번호가 주어진 경우
+            rushParticipantsPage = rushParticipantsRepository.findByWinnerByEventIdAndPhoneNumber(rushEventId, phoneNumber, winnerPage);
+        }
+
+        List<RushParticipants> rushParticipantsList = rushParticipantsPage.getContent();
+        rushParticipantsPage = paginateList(rushParticipantsList, page, size);
+
+        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        for (RushParticipants rushParticipant : rushParticipantsPage) {
+            String userId = rushParticipant.getBaseUser().getId();
+            int userChoice = rushParticipant.getOptionId();
+            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
+            rushEventParticipantResponseDtoList.add(
+                    RushEventParticipantResponseDto.of(rushParticipant, rank)
+            );
+        }
+
+        Boolean isLastPage = !rushParticipantsPage.hasNext();
+        long totalParticipants = rushParticipantsList.size();
+        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
     @Transactional
@@ -346,5 +399,14 @@ public class AdminService {
         );
 
         casperBot.deleteExpectation();
+    }
+
+    public static <T> Page<T> paginateList(List<T> list, int page, int size) {
+        int start = Math.min(page * size, list.size());
+        int end = Math.min(start + size, list.size());
+
+        List<T> paginatedList = list.subList(start, end);
+
+        return new PageImpl<>(paginatedList, PageRequest.of(page, size), list.size());
     }
 }
