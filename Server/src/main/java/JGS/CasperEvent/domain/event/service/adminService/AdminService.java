@@ -177,20 +177,26 @@ public class AdminService {
 
         boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
         boolean isOptionIdValid = optionId == 1 || optionId == 2;
+        long count;
 
         if (!isPhoneNumberEmpty && isOptionIdValid) {
             // 전화번호와 유효한 옵션 ID가 있는 경우
             rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(rushEventId, optionId, phoneNumber, pageable);
+            count = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(rushEventId, optionId, phoneNumber);
         } else if (isPhoneNumberEmpty && !isOptionIdValid) {
             // 전화번호가 비어있고 유효하지 않은 옵션 ID가 있는 경우
             rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventId(rushEventId, pageable);
+            count = rushParticipantsRepository.countByRushEvent_RushEventId(rushEventId);
         } else if (isOptionIdValid) {
             // 유효한 옵션 ID가 있지만 전화번호는 비어있는 경우
             rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionId(rushEventId, optionId, pageable);
+            count = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(rushEventId, optionId);
         } else {
             // 유효하지 않은 옵션 ID와 전화번호가 주어진 경우
             rushParticipantsPage = rushParticipantsRepository.findByRushEvent_RushEventIdAndBaseUser_Id(rushEventId, phoneNumber, pageable);
+            count = rushParticipantsRepository.countByRushEvent_RushEventIdAndBaseUser_Id(rushEventId, phoneNumber);
         }
+
 
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
@@ -204,7 +210,7 @@ public class AdminService {
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         // todo 전체 참여자 아닌 옵션별 참여자로 수정하기
-        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, rushParticipantsRepository.count());
+        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
     public RushEventParticipantsListResponseDto getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
