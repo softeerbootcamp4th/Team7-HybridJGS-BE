@@ -328,20 +328,6 @@ public class AdminService {
         );
     }
 
-    @Transactional
-    public ResponseDto deleteRushEvent(Long rushEventId){
-        RushEvent rushEvent = rushEventRepository.findById(rushEventId).orElseThrow(() -> new CustomException(CustomErrorCode.NO_RUSH_EVENT));
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDateTime = rushEvent.getStartDateTime();
-        LocalDateTime endDateTime = rushEvent.getEndDateTime();
-
-        if(now.isAfter(startDateTime) && now.isBefore(endDateTime))
-            throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE);
-        rushEventRepository.delete(rushEvent);
-        return ResponseDto.of("요청에 성공하였습니다.");
-    }
-
     public List<LotteryEventExpectationResponseDto> getLotteryEventExpectations(Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
