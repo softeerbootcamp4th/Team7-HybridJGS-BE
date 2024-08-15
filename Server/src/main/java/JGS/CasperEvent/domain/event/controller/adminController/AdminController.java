@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
@@ -28,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
-    private final LotteryEventRepository lotteryEventRepository;
 
     // 어드민 생성
     @PostMapping("/join")
@@ -179,9 +179,20 @@ public class AdminController {
 
     // 추첨 이벤트 당첨자 추첨
     @PostMapping("/event/lottery/winner")
-    public ResponseEntity<ResponseDto> pickWinners(){
+    public ResponseEntity<ResponseDto> pickLotteryEventWinners() {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(adminService.pickWinners());
+                .body(adminService.pickLotteryEventWinners());
+    }
+
+    // 추첨 이벤트 당첨자 조회
+    @GetMapping("/event/lottery/winner")
+    public ResponseEntity<LotteryEventWinnerListResponseDto> getWinners(
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.getLotteryEventWinners(size, page, phoneNumber));
     }
 }

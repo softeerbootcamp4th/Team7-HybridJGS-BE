@@ -1,14 +1,22 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 public class LotteryWinners {
-    @Id
     private long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long ranking;
+
     private String phoneNumber;
     private int linkClickedCount;
     private int expectation;

@@ -6,10 +6,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -320,7 +317,7 @@ public class AdminService {
     }
 
     @Transactional
-    public ResponseDto pickWinners() {
+    public ResponseDto pickLotteryEventWinners() {
         if(lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
         LotteryEvent lotteryEvent = getCurrentLotteryEvent();
 
@@ -335,6 +332,25 @@ public class AdminService {
         }
 
         return new ResponseDto("추첨이 완료되었습니다.");
+    }
+
+    public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber){
+        Pageable pageable = PageRequest.of(page, size);
+        if(lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
+
+        Page<LotteryWinners> lotteryWinnersPage = null;
+        if (phoneNumber.isEmpty()) lotteryWinnersPage = lotteryWinnerRepository.findAll(pageable);
+        else lotteryWinnersPage = lotteryWinnerRepository.findByPhoneNumber(phoneNumber, pageable);
+
+        List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDto = new ArrayList<>();
+
+        for (LotteryWinners lotteryWinners : lotteryWinnersPage) {
+            lotteryEventWinnerResponseDto.add(
+                    LotteryEventWinnerResponseDto.of(lotteryWinners)
+            );
+        }
+        Boolean isLastPage = !lotteryWinnersPage.hasNext();
+        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, lotteryWinnerRepository.count());
     }
 
     @Transactional
