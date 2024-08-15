@@ -144,7 +144,7 @@ public class AdminController {
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventOptions(rushEventId));
     }
-  
+
     // 추첨 이벤트 삭제
     @DeleteMapping("/event/lottery")
     public ResponseEntity<Void> deleteLotteryEvent() {
@@ -175,5 +175,13 @@ public class AdminController {
         adminService.deleteLotteryEventExpectation(casperId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // 추첨 이벤트 당첨자 추첨
+    @PostMapping("/event/lottery/winner")
+    public ResponseEntity<ResponseDto> pickWinners(){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(adminService.pickWinners());
     }
 }

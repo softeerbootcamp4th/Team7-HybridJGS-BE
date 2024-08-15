@@ -29,7 +29,8 @@ public enum CustomErrorCode {
     EVENT_BEFORE_START_TIME("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", 400),
     EVENT_END_TIME_BEFORE_START_TIME("종료 시간은 시작 시간 이후로 설정해야 합니다.", 400),
     INVALID_RUSH_EVENT_OPTION("밸런스 게임 선택지가 유효하지 않습니다."),
-    EVENT_IN_PROGRESS_CANNOT_DELETE("진행중인 이벤트를 삭제할 수 없습니다.", 409);
+    EVENT_IN_PROGRESS_CANNOT_DELETE("진행중인 이벤트를 삭제할 수 없습니다.", 409),
+    LOTTERY_EVENT_ALREADY_DRAWN("추첨 이벤트의 당첨자가 이미 추첨되었습니다.", 409),;
 
 
 

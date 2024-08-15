@@ -3,7 +3,6 @@ package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record RushEventParticipantResponseDto(Long id, String phoneNumber,
