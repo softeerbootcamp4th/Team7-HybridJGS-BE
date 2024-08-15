@@ -25,6 +25,7 @@ public class CasperBot extends BaseEntity {
     private int sticker;
     private String name;
     private String expectation;
+    private boolean isDeleted;
 
     public CasperBot() {
 
@@ -41,15 +42,7 @@ public class CasperBot extends BaseEntity {
         this.expectation = requestDto.getExpectation();
     }
 
-    public CasperBot deleteExpectation() {
-        if (!this.expectation.isEmpty()) {
-            this.expectation = "삭제된 기대평입니다.";
-        }
-
-        return this;
-    }
-
-    public boolean isDeleted() {
-        return this.expectation.equals("삭제된 기대평입니다.");
+    public void deleteExpectation() {
+        this.isDeleted = true;
     }
 }

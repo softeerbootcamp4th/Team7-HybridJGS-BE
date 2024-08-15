@@ -4,10 +4,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventExpectationResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
@@ -162,8 +159,10 @@ public class AdminController {
 
     // 추첨 이벤트 특정 사용자의 기대평 조회
     @GetMapping("/event/lottery/participants/{participantId}/expectations")
-    public ResponseEntity<List<LotteryEventExpectationResponseDto>> getLotteryEventExpectations(@PathVariable("participantId") Long participantId) {
-        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(participantId);
+    public ResponseEntity<LotteryEventExpectationsResponseDto> getLotteryEventExpectations(@PathVariable("participantId") Long participantId,
+                                                                                                @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                                                                @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        LotteryEventExpectationsResponseDto lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(page, size, participantId);
 
         return ResponseEntity.ok(lotteryEventExpectationResponseDtoList);
     }
