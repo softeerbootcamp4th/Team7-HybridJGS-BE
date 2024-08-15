@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LotteryWinnerRepository extends JpaRepository<LotteryWinners, Long> {
-    @Query("SELECT w FROM LotteryWinners w WHERE w.phoneNumber LIKE %:phoneNumber%")
+    @Query("SELECT w FROM LotteryWinners w WHERE w.phoneNumber LIKE :phoneNumber%")
     Page<LotteryWinners> findByPhoneNumber(@Param("phoneNumber") String phoneNumber, Pageable pageable);
 
-    @Query("SELECT COUNT(w) FROM LotteryWinners w WHERE w.phoneNumber LIKE %:phoneNumber%")
+    @Query("SELECT COUNT(w) FROM LotteryWinners w WHERE w.phoneNumber LIKE :phoneNumber%")
     long countByPhoneNumber(@Param("phoneNumber") String phoneNumber);}
