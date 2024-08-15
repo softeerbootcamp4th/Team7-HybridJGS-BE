@@ -1,28 +1,72 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.service.adminService.AdminService;
+import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
+import JGS.CasperEvent.domain.event.service.redisService.RedisService;
+import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.Role;
+import JGS.CasperEvent.global.jwt.service.UserService;
+import JGS.CasperEvent.global.jwt.util.JwtProvider;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("local")
+@WebMvcTest(LotteryEventController.class)
+@Import(JwtProvider.class)
 public class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private LotteryEventService lotteryEventService;
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private AdminService adminService;
+    @MockBean
+    private RedisService redisService;
+
+    private String phoneNumber;
+    private String accessToken;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        this.phoneNumber = "010-0000-0000";
+
+        // userService 모킹
+        given(userService.verifyUser(any())).willReturn(new BaseUser(this.phoneNumber, Role.USER));
+
+        // 엑세스 토큰 설정
+        this.accessToken = getToken(this.phoneNumber);
+
+        LotteryEventResponseDto lotteryEventResponseDto = new LotteryEventResponseDto(
+                LocalDateTime.now(),
+                LocalDateTime.of(2024, 8, 1, 0, 0, 0),
+                LocalDateTime.of(2024, 8, 31, 0, 0, 0),
+                ChronoUnit.DAYS.between(LocalDateTime.of(2024, 8, 1, 0, 0, 0), LocalDateTime.of(2024, 8, 31, 0, 0, 0))
+        );
+        given(lotteryEventService.getLotteryEvent()).willReturn(lotteryEventResponseDto);
+    }
 
     String getToken(String phoneNumber) throws Exception {
         String requestBody = String.format("""
