@@ -33,11 +33,13 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
 
     Page<RushParticipants> findByRushEvent_RushEventId(Long rushEventId, Pageable pageable);
 
-    Page<RushParticipants> findByRushEvent_RushEventIdAndBaseUser_Id(Long rushEventId, String baseUser_id, Pageable pageable);
+    @Query("SELECT p FROM RushParticipants p WHERE p.rushEvent.rushEventId = :rushEventId AND p.baseUser.id LIKE :baseUserId%")
+    Page<RushParticipants> findByRushEvent_RushEventIdAndBaseUser_Id(@Param("rushEventId") Long rushEventId, @Param("baseUserId") String baseUserId, Pageable pageable);
 
     Page<RushParticipants> findByRushEvent_RushEventIdAndOptionId(Long rushEventId, int optionId, Pageable pageable);
 
-    Page<RushParticipants> findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(Long rushEventId, int optionId, String baseUser_id, Pageable pageable);
+    @Query("SELECT p FROM RushParticipants p WHERE p.rushEvent.rushEventId = :rushEventId AND p.optionId = :optionId AND p.baseUser.id LIKE :baseUserId%")
+    Page<RushParticipants> findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(@Param("rushEventId") Long rushEventId, @Param("optionId") int optionId, @Param("baseUserId") String baseUserId, Pageable pageable);
 
 
     @Query("SELECT rp FROM RushParticipants rp " +
@@ -50,7 +52,7 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
     @Query("SELECT rp FROM RushParticipants rp " +
             "WHERE rp.rushEvent.rushEventId = :eventId " +
             "AND rp.optionId = :optionId " +
-            "AND rp.baseUser.id = :phoneNumber " +
+            "AND rp.baseUser.id LIKE :phoneNumber% " +
             "ORDER BY rp.id ASC ")
     Page<RushParticipants> findWinnerByEventIdAndOptionIdAndPhoneNumber(
             @Param("eventId") Long eventId, @Param("optionId") int optionId, @Param("phoneNumber") String phoneNumber, Pageable pageable
@@ -64,14 +66,15 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
 
     @Query("SELECT rp FROM RushParticipants rp " +
             "WHERE rp.rushEvent.rushEventId = :eventId " +
-            "AND rp.baseUser.id = :phoneNumber " +
+            "AND rp.baseUser.id LIKE :phoneNumber% " +
             "ORDER BY rp.id ASC ")
     Page<RushParticipants> findByWinnerByEventIdAndPhoneNumber(@Param("eventId") Long eventId, @Param("phoneNumber") String phoneNumber, Pageable pageable);
 
-    long countByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(long rushEventId, int optionId, String id);
+    @Query("SELECT COUNT(p) FROM RushParticipants p WHERE p.rushEvent.rushEventId = :rushEventId AND p.optionId = :optionId AND p.baseUser.id LIKE :baseUserId%")
+    long countByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(@Param("rushEventId") Long rushEventId, @Param("optionId") int optionId, @Param("baseUserId") String baseUserId);
 
     long countByRushEvent_RushEventId(long rushEventId);
 
-    long countByRushEvent_RushEventIdAndBaseUser_Id(long rushEventId, String phoneNumber);
-
+    @Query("SELECT COUNT(p) FROM RushParticipants p WHERE p.rushEvent.rushEventId = :rushEventId AND p.baseUser.id LIKE :baseUserId%")
+    long countByRushEvent_RushEventIdAndBaseUser_Id(@Param("rushEventId") Long rushEventId, @Param("baseUserId") String baseUserId);
 }
