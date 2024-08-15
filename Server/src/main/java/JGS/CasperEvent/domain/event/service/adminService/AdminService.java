@@ -215,7 +215,6 @@ public class AdminService {
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
-        // todo 전체 참여자 아닌 옵션별 참여자로 수정하기
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
@@ -345,8 +344,14 @@ public class AdminService {
         if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
 
         Page<LotteryWinners> lotteryWinnersPage = null;
-        if (phoneNumber.isEmpty()) lotteryWinnersPage = lotteryWinnerRepository.findAll(pageable);
-        else lotteryWinnersPage = lotteryWinnerRepository.findByPhoneNumber(phoneNumber, pageable);
+        long count;
+        if (phoneNumber.isEmpty()) {
+            lotteryWinnersPage = lotteryWinnerRepository.findAll(pageable);
+            count = lotteryWinnerRepository.count();
+        } else {
+            lotteryWinnersPage = lotteryWinnerRepository.findByPhoneNumber(phoneNumber, pageable);
+            count = lotteryWinnerRepository.countByPhoneNumber(phoneNumber);
+        }
 
         List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDto = new ArrayList<>();
 
@@ -356,7 +361,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
-        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, lotteryWinnerRepository.count());
+        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
     @Transactional
