@@ -67,7 +67,7 @@ public class RushEventService {
                 totalStartDate,
                 totalEndDate,
                 activePeriod
-                );
+        );
     }
 
     // 응모 여부 조회
@@ -109,24 +109,45 @@ public class RushEventService {
     // 해당 요청은 무조건 응모한 유저일 때만 요청 가능하다고 가정
     @Transactional
     public RushEventResultResponseDto getRushEventResult(BaseUser user) {
-        Long todayEventId = getTodayRushEvent().rushEventId();
+        RushEventResponseDto todayRushEvent = getTodayRushEvent();
 
         // 최종 선택 비율을 조회
         // TODO: 레디스에 캐시
         RushEventRateResponseDto rushEventRateResponseDto = getRushEventRate(user);
+        long leftOption = rushEventRateResponseDto.leftOption();
+        long rightOption = rushEventRateResponseDto.rightOption();
 
-        // 해당 이벤트의 당첨자 수를 가져옴
-        int winnerCount = rushEventRepository.findByRushEventId(todayEventId).getWinnerCount();
+        // 동점인 경우
+        if (leftOption == rightOption) {
+            // 전체 참여자에서 등수 계산하기
+            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.rushEventId(), user.getId());
 
+            // 각 옵션 선택지를 더하여 전체 참여자 수 구하기
+            long totalParticipants = rushEventRateResponseDto.leftOption() + rushEventRateResponseDto.rightOption();
+
+            // 당첨 여부
+            boolean isWinner = rank <= todayRushEvent.winnerCount();
+
+            return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, isWinner);
+        }
+
+        // 해당 유저가 선택한 옵션을 가져옴
         int optionId = rushEventRateResponseDto.optionId();
 
+        long totalParticipants = (optionId == 1 ? leftOption : rightOption);
+
         // eventId, userId, optionId 를 이용하여 해당 유저가 응모한 선택지에서 등수를 가져옴
-        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayEventId, user.getId(), optionId);
+        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayRushEvent.rushEventId(), user.getId(), optionId);
 
-        // 해당 선택지를 선택한 모든 유저 수를 가져옴
-        long totalParticipants = rushParticipantsRepository.countAllByOptionId(optionId);
+        // 해당 유저가 선택한 옵션이 패배한 경우
+        if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {
+            return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, false);
+        }
 
-        return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, winnerCount);
+        // 당첨 여부
+        boolean isWinner = rank <= todayRushEvent.winnerCount();
+
+        return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, isWinner);
     }
 
     @Transactional
@@ -174,7 +195,7 @@ public class RushEventService {
             RushEvent rushEvent = new RushEvent(
                     startDateTime.plusDays(i),  // 이벤트 시작 날짜
                     endDateTime.plusDays(i),    // 이벤트 종료 날짜
-                    315,                          // 우승자 수 (winnerCount)
+                    3,                          // 우승자 수 (winnerCount)
                     "http://example.com/prize" + (i + 1) + ".jpg",  // 상 이미지 URL
                     "Prize Description " + (i + 1)                  // 상 설명
             );
