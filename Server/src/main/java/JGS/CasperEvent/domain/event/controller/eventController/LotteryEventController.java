@@ -34,13 +34,15 @@ public class LotteryEventController {
         this.lotteryEventService = lotteryEventService;
         this.redisService = redisService;
     }
-    // 추첨 이벤트 조회 API  -> 가짜 API
+
+    // 추첨 이벤트 조회 API
     @GetMapping
     public ResponseEntity<LotteryEventResponseDto> getLotteryEvent(){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(lotteryEventService.getLotteryEvent());
     }
+
     // 캐스퍼 봇 생성 API
     @PostMapping("/casperBot")
     public ResponseEntity<CasperBotResponseDto> postCasperBot(
