@@ -102,8 +102,14 @@ public class AdminService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<LotteryParticipants> lotteryParticipantsPage = null;
-        if (phoneNumber.isEmpty()) lotteryParticipantsPage = lotteryParticipantsRepository.findAll(pageable);
-        else lotteryParticipantsPage = lotteryParticipantsRepository.findByBaseUser_Id(phoneNumber, pageable);
+        long count;
+        if (phoneNumber.isEmpty()) {
+            lotteryParticipantsPage = lotteryParticipantsRepository.findAll(pageable);
+            count = lotteryParticipantsRepository.count();
+        } else {
+            lotteryParticipantsPage = lotteryParticipantsRepository.findByBaseUser_Id(phoneNumber, pageable);
+            count = lotteryParticipantsRepository.countByBaseUser_Id(phoneNumber);
+        }
 
         List<LotteryEventParticipantsResponseDto> lotteryEventParticipantsResponseDtoList = new ArrayList<>();
 
@@ -113,7 +119,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryParticipantsPage.hasNext();
-        return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, lotteryParticipantsRepository.count());
+        return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
     public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
@@ -209,7 +215,6 @@ public class AdminService {
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
-        // todo 전체 참여자 아닌 옵션별 참여자로 수정하기
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
@@ -318,7 +323,7 @@ public class AdminService {
 
     @Transactional
     public ResponseDto pickLotteryEventWinners() {
-        if(lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
+        if (lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
         LotteryEvent lotteryEvent = getCurrentLotteryEvent();
 
         int winnerCount = lotteryEvent.getWinnerCount();
@@ -334,13 +339,19 @@ public class AdminService {
         return new ResponseDto("추첨이 완료되었습니다.");
     }
 
-    public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber){
+    public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
-        if(lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
+        if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
 
         Page<LotteryWinners> lotteryWinnersPage = null;
-        if (phoneNumber.isEmpty()) lotteryWinnersPage = lotteryWinnerRepository.findAll(pageable);
-        else lotteryWinnersPage = lotteryWinnerRepository.findByPhoneNumber(phoneNumber, pageable);
+        long count;
+        if (phoneNumber.isEmpty()) {
+            lotteryWinnersPage = lotteryWinnerRepository.findAll(pageable);
+            count = lotteryWinnerRepository.count();
+        } else {
+            lotteryWinnersPage = lotteryWinnerRepository.findByPhoneNumber(phoneNumber, pageable);
+            count = lotteryWinnerRepository.countByPhoneNumber(phoneNumber);
+        }
 
         List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDto = new ArrayList<>();
 
@@ -350,7 +361,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
-        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, lotteryWinnerRepository.count());
+        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
     @Transactional
