@@ -26,6 +26,14 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
                                                    @Param("userId") String userId,
                                                    @Param("optionId") int optionId);
 
+    @Query("SELECT COUNT(rp) + 1 FROM RushParticipants rp " +
+            "WHERE rp.rushEvent.rushEventId = :eventId " +
+            "AND rp.id < (SELECT rp2.id FROM RushParticipants rp2 " +
+            "WHERE rp2.rushEvent.rushEventId = :eventId " +
+            "AND rp2.baseUser.id = :userId)")
+    long findUserRankByEventIdAndUserId(@Param("eventId") Long eventId,
+                                        @Param("userId") String userId);
+
     long countAllByOptionId(int optionId);
 
     @Query("SELECT rp.optionId FROM RushParticipants rp WHERE rp.baseUser.id = :userId")
