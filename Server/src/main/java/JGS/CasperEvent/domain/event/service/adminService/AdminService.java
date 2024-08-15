@@ -36,12 +36,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static JGS.CasperEvent.global.util.RepositoryErrorHandler.findByIdOrElseThrow;
 
@@ -58,6 +60,7 @@ public class AdminService {
     private final S3Service s3Service;
     private final CasperBotRepository casperBotRepository;
     private final LotteryWinnerRepository lotteryWinnerRepository;
+    private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
 
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
@@ -435,15 +438,30 @@ public class AdminService {
         );
     }
 
-    public List<LotteryEventExpectationResponseDto> getLotteryEventExpectations(Long participantId) {
+    public LotteryEventExpectationsResponseDto getLotteryEventExpectations(int page, int size, Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
         );
 
-        List<CasperBot> casperBotList = casperBotRepository.findByPhoneNumber(lotteryParticipant.getBaseUser().getId());
 
-        // 기대평을 작성하지 않은 경우(기대평이 빈 문자열인 경우, 삭제된 경우)는 제외하여 반환합니다.
-        return casperBotList.stream().filter(casperBot -> !casperBot.getExpectation().isEmpty() && !casperBot.isDeleted()).map(LotteryEventExpectationResponseDto::of).toList();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CasperBot> casperBotPage = casperBotRepository.findByPhoneNumberAndActiveExpectations(lotteryParticipant.getBaseUser().getId(), pageable);
+
+        // DTO로 변환합니다.
+        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = casperBotPage.getContent().stream()
+                .map(casperBot -> new LotteryEventExpectationResponseDto(
+                        casperBot.getCasperId(),
+                        casperBot.getExpectation(),
+                        casperBot.getCreatedAt().toLocalDate(),
+                        casperBot.getCreatedAt().toLocalTime()
+                ))
+                .collect(Collectors.toList());
+
+        // 마지막 페이지 여부 계산
+        boolean isLastPage = casperBotPage.isLast();
+
+        // 결과를 반환합니다.
+        return new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, isLastPage, casperBotPage.getTotalElements());
     }
 
     @Transactional
@@ -452,7 +470,47 @@ public class AdminService {
                 () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
         );
 
+        // todo: 전체 설정에서 가져오도록 변경
+        final String LIST_KEY = "recentData";
+
+        // 긍정적인 문구 리스트
+        List<String> positiveMessages = List.of("사랑해 캐스퍼", "캐스퍼 최고!", "캐스퍼와 함께해요!", "캐스퍼 짱!", "캐스퍼는 나의 친구!");
+
+        // 랜덤으로 긍정적인 문구 선택
+        String randomPositiveMessage = positiveMessages.get(new Random().nextInt(positiveMessages.size()));
+
+        // isDeleted = true 로 업데이트
         casperBot.deleteExpectation();
+
+        // Redis에서 모든 데이터를 가져옵니다.
+        List<CasperBotResponseDto> allData = casperBotRedisTemplate.opsForList().range(LIST_KEY, 0, -1);
+
+        if (allData != null) {
+            // 해당하는 CasperBotId의 데이터를 업데이트합니다.
+            List<CasperBotResponseDto> updatedData = allData.stream()
+                    .map(data -> {
+                        if (casperId.equals(data.casperId())) {
+                            return new CasperBotResponseDto(
+                                    data.casperId(),
+                                    data.eyeShape(),
+                                    data.eyePosition(),
+                                    data.mouthShape(),
+                                    data.color(),
+                                    data.sticker(),
+                                    data.name(),
+                                    randomPositiveMessage // 랜덤으로 선택된 긍정적인 문구로 기대평 필드 변경
+                            );
+                        }
+                        return data;
+                    })
+                    .collect(Collectors.toList());
+
+            // Redis에서 현재 리스트를 삭제합니다.
+            casperBotRedisTemplate.delete(LIST_KEY);
+
+            // 업데이트된 리스트를 Redis에 다시 추가합니다.
+            casperBotRedisTemplate.opsForList().leftPushAll(LIST_KEY, updatedData);
+        }
     }
 
     public static <T> Page<T> paginateList(List<T> list, int page, int size) {
