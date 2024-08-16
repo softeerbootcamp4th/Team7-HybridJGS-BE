@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class BaseUser extends BaseEntity {
     @Id
