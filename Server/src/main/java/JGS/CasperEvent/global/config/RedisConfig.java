@@ -1,6 +1,7 @@
 package JGS.CasperEvent.global.config;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, CasperBotResponseDto> redisTemplate(){
+    public RedisTemplate<String, CasperBotResponseDto> CasperBotRedisTemplate(){
         RedisTemplate<String, CasperBotResponseDto> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -37,4 +38,12 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<String, RushEventResponseDto> RushEventRedisTemplate(){
+        RedisTemplate<String, RushEventResponseDto> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
 }

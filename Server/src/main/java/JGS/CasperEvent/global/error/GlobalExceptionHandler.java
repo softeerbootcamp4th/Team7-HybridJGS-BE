@@ -2,6 +2,7 @@ package JGS.CasperEvent.global.error;
 
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,8 +20,8 @@ public class GlobalExceptionHandler  {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handler(CustomException e){
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+                .status(HttpStatus.valueOf(e.getErrorCode().getStatus()))
+                .body(ErrorResponse.of(e.getErrorCode(), e.getMessage()));
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
@@ -33,8 +34,15 @@ public class GlobalExceptionHandler  {
     @ExceptionHandler(UserPrincipalNotFoundException.class)
     public ResponseEntity<ErrorResponse> userPrincipalNotFoundHandler(){
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.of(CustomErrorCode.USER_NOT_FOUND));
+    }
+
+    @ExceptionHandler(TooManyLotteryEventException.class)
+    public ResponseEntity<ErrorResponse> tooManyLotteryEventExceptionHandler(){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(CustomErrorCode.LOTTERY_EVENT_ALREADY_EXISTS));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,7 +59,7 @@ public class GlobalExceptionHandler  {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(CustomErrorCode.INVALID_CASPERBOT_PARAMETER, builder.toString()));
+                .body(ErrorResponse.of(CustomErrorCode.INVALID_PARAMETER, builder.toString()));
     }
 
     @ExceptionHandler(RuntimeException.class)

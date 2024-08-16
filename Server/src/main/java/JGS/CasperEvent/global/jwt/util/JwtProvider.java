@@ -22,7 +22,7 @@ public class JwtProvider {
                 .build();
     }
 
-    public String createToken(Map<String, Object> claims, Date expireDate) {
+    private String createToken(Map<String, Object> claims, Date expireDate) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(expireDate)
@@ -39,8 +39,8 @@ public class JwtProvider {
     }
 
 
-    public Date getExpireDateAccessToken() {
-        long expireTimeMils = 1000L * 60 * 60 * 24 * 365;
+    private Date getExpireDateAccessToken() {
+        long expireTimeMils = 1000L * 60 * 60  * 24 * 365;
         return new Date(System.currentTimeMillis() + expireTimeMils);
     }
 

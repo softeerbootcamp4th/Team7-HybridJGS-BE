@@ -19,3 +19,19 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
+  encryption:
+    key: ${AES_128_ENCRYPTION_KEY}
+  cloud:
+    aws:
+      s3:
+        bucket: ${S3_IMAGE_SERVER}
+        region: ap-northeast-2
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+client:
+  url: ${CLIENT_URL}
+  localUrl: ${LOCAL_CLIENT_URL}
+shortenUrlService:
+  url: ${SPRING_SERVER_URL}

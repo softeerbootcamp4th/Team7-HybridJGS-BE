@@ -22,15 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registration) {
-//        registration.addMapping("/**")
-//                .allowCredentials(true)
-//                .allowedOrigins("http://localhost:5173", "https://d3phfzvzx3wm4l.cloudfront.net/")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowedHeaders("*");
-//    }
-
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
@@ -46,6 +37,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("https://d3phfzvzx3wm4l.cloudfront.net/");
+        config.addAllowedOrigin("https://d2oxrno1u2ah9j.cloudfront.net/");
         config.addAllowedOrigin("https://hybrid-jgs.shop");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");

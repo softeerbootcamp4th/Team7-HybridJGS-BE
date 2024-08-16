@@ -1,7 +1,9 @@
 package JGS.CasperEvent.global.error.exception;
 
 import JGS.CasperEvent.global.enums.CustomErrorCode;
+import lombok.Getter;
 
+@Getter
 public class CustomException extends RuntimeException {
     private final CustomErrorCode errorCode;
 
@@ -10,7 +12,9 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public CustomErrorCode getErrorCode() {
-        return errorCode;
+    public CustomException(CustomErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
+
 }

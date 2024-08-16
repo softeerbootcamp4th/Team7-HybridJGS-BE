@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.participants;
 
+import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.entity.BaseUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -7,12 +8,12 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class LotteryParticipants {
+public class LotteryParticipants extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne // mappedBy 이용하면 둘 다 저장 안해도 됨
     @JoinColumn(name = "base_user_id")
     //todo: 왜이런지 알아보기
     @JsonBackReference
@@ -33,7 +34,7 @@ public class LotteryParticipants {
     }
 
     public void expectationAdded() {
-        if(expectations == 0) expectations++;
+        if (expectations == 0) expectations++;
         appliedCount = Math.min(10, 1 + expectations + linkClickedCount);
     }
 

@@ -1,9 +1,15 @@
-package JGS.CasperEvent.domain.event.dto.RequestDto;
+package JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
+@Builder
+@EqualsAndHashCode
 public class CasperBotRequestDto {
 
     @NotNull(message = "눈 모양 값은 필수 필드입니다.")
@@ -36,36 +42,5 @@ public class CasperBotRequestDto {
 
     private String expectation;
 
-
-    public Integer getEyeShape() {
-        return eyeShape;
-    }
-
-    public Integer getEyePosition() {
-        return eyePosition;
-    }
-
-    public Integer getMouthShape() {
-        return mouthShape;
-    }
-
-    public Integer getColor() {
-        return color;
-    }
-
-    public Integer getSticker() {
-        return sticker;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getExpectation() {
-        return expectation;
-    }
+    private String referralId = "";
 }
