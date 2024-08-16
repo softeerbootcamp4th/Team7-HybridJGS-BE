@@ -22,4 +22,23 @@ public class Base62Utils {
         }
         return result;
     }
+
+    public static String encode(byte[] data) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : data) {
+            int value = b & 0xFF;
+            sb.append(encode(value));
+        }
+        return sb.toString();
+    }
+
+    public static byte[] decodeToBytes(String str) {
+        int length = str.length() / 2;
+        byte[] data = new byte[length];
+        for (int i = 0; i < length; i++) {
+            String part = str.substring(i * 2, i * 2 + 2);
+            data[i] = (byte) decode(part);
+        }
+        return data;
+    }
 }
