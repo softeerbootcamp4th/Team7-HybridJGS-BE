@@ -114,7 +114,7 @@ public class RushEventControllerTest {
                 rushEventRateResponseDto,
                 1,
                 1000,
-                315
+                true
         );
 
         given(rushEventService.getRushEventResult(any())).willReturn(rushEventResultResponseDto);
@@ -248,7 +248,7 @@ public class RushEventControllerTest {
                 .andExpect(jsonPath("$.rightOption").value(1000))
                 .andExpect(jsonPath("$.rank").value(1))
                 .andExpect(jsonPath("$.totalParticipants").value(1000))
-                .andExpect(jsonPath("$.winnerCount").value(315))
+                .andExpect(jsonPath("$.winner").value(true))
                 .andDo(print());
     }
 
