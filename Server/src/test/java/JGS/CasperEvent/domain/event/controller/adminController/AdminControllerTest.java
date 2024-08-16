@@ -4,10 +4,14 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
+import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
@@ -20,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,9 +34,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,17 +64,27 @@ public class AdminControllerTest {
     private String adminId;
     private String password;
     private String accessToken;
+    private BaseUser user;
 
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryEventResponseDto lotteryEventResponseDto;
+    private LotteryParticipants lotteryParticipants;
+    private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
+    private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
 
     @BeforeEach
     void setUp() throws Exception {
         this.adminId = "adminId";
         this.password = "password";
+
         admin = new Admin(adminId, password, Role.ADMIN);
         given(adminService.verifyAdmin(any())).willReturn(admin);
+
+        user = new BaseUser("010-0000-0000", Role.USER);
+        user.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        given(userService.verifyUser(any())).willReturn(user);
         // 엑세스 토큰 설정
         this.accessToken = getToken(adminId, password);
 
@@ -82,6 +102,18 @@ public class AdminControllerTest {
 
         // 추첨 이벤트 응답 DTO
         this.lotteryEventResponseDto = LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
+
+        // 추첨 이벤트 참여자 객체
+        this.lotteryParticipants = new LotteryParticipants(user);
+
+        // 추첨 이벤트 참여자 응답 DTO
+        this.lotteryEventParticipantsResponseDto = LotteryEventParticipantsResponseDto.of(lotteryParticipants);
+
+        // 추첨 이벤트 참여자 리스트 응답 DTO
+        List<LotteryEventParticipantsResponseDto> participants = new ArrayList<>();
+        participants.add(lotteryEventParticipantsResponseDto);
+
+        this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
     }
 
 
@@ -144,6 +176,30 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.eventStartDate").value("2000-09-27T00:00:00"))
                 .andExpect(jsonPath("$.eventEndDate").value("2100-09-27T00:00:00"))
                 .andExpect(jsonPath("$.activePeriod").value("36524"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 참여자 조회 성공 테스트")
+    void getLotteryEventParticipantsSuccessTest() throws Exception {
+        //given
+        given(adminService.getLotteryEventParticipants(anyInt(), anyInt(), anyString()))
+                .willReturn(lotteryEventParticipantsListResponseDto);
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/lottery/participants")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
+                .andExpect(jsonPath("$.participantsList[0].linkClickedCounts").value(0))
+                .andExpect(jsonPath("$.participantsList[0].expectation").value(0))
+                .andExpect(jsonPath("$.participantsList[0].appliedCount").value(1))
+                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.participantsList[0].createdTime").value("00:00:00"))
+                .andExpect(jsonPath("$.isLastPage").value(true))
+                .andExpect(jsonPath("$.totalParticipants").value(1))
                 .andDo(print());
     }
 
