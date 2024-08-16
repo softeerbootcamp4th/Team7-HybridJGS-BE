@@ -33,6 +33,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -174,6 +176,29 @@ public class LotteryEventControllerTest {
                 .andExpect(jsonPath("$.casperBot.name").value("name"))
                 .andExpect(jsonPath("$.casperBot.expectation").value("expectation"))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("최근 100개 캐스퍼 봇 조회 성공 테스트")
+    void getCasperBotsSuccessTest() throws Exception {
+        //given
+        List<CasperBotResponseDto> recentData = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            recentData.add(casperBotResponse);
+        }
+        given(redisService.getRecentData())
+                .willReturn(recentData);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/event/lottery/caspers")
+                .header("Authorization", accessToken)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(100))
+                .andDo(print());
+
     }
 
     String getToken(String phoneNumber) throws Exception {
