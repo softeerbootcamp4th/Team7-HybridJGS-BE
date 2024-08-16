@@ -1,12 +1,16 @@
 package JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
+@Builder
+@EqualsAndHashCode
 public class LotteryEventRequestDto {
 
     @NotNull(message = "이벤트 시작 날짜를 지정하세요.")
