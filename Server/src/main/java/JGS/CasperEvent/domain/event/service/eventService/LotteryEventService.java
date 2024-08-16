@@ -86,7 +86,7 @@ public class LotteryEventService {
             lotteryParticipantsRepository.save(participant);
         }
 
-        if (!casperBotRequestDto.getReferralId().isEmpty()) {
+        if (casperBotRequestDto.getReferralId() != null) {
             String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
             Optional<LotteryParticipants> referralParticipant =
                     lotteryParticipantsRepository.findByBaseUser(
