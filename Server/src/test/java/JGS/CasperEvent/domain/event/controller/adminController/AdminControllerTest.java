@@ -2,7 +2,9 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
@@ -21,20 +23,16 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = AdminController.class)
-//        includeFilters = {
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtUserFilter.class),
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = VerifyAdminFilter.class),
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthorizationFilter.class)
-//})
 @Import(JwtProvider.class)
 public class AdminControllerTest {
     @Autowired
@@ -52,6 +50,8 @@ public class AdminControllerTest {
     private String password;
     private String accessToken;
 
+    private LotteryEvent lotteryEvent;
+
     @BeforeEach
     void setUp() throws Exception {
         this.adminId = "adminId";
@@ -60,6 +60,14 @@ public class AdminControllerTest {
         given(adminService.verifyAdmin(any())).willReturn(admin);
         // 엑세스 토큰 설정
         this.accessToken = getToken(adminId, password);
+
+        // 추첨 이벤트 설정
+        this.lotteryEvent = new LotteryEvent(
+                LocalDateTime.of(2000, 9, 27, 0, 0, 0),
+                LocalDateTime.of(2100, 9, 27, 0, 0, 0),
+                315
+        );
+
     }
 
 
@@ -100,6 +108,29 @@ public class AdminControllerTest {
         //then
         perform.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.imageUrl").value("https://image.url"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 조회 성공 테스트")
+    void getLotteryEventSuccessTest() throws Exception {
+        //given
+        given(adminService.getLotteryEvent()).willReturn(LotteryEventDetailResponseDto.of(lotteryEvent));
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/lottery")
+                .header("Authorization", accessToken)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.startDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.startTime").value("00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2100-09-27"))
+                .andExpect(jsonPath("$.endTime").value("00:00:00"))
+                .andExpect(jsonPath("$.appliedCount").value(0))
+                .andExpect(jsonPath("$.winnerCount").value(315))
+                .andExpect(jsonPath("$.status").value("DURING"))
                 .andDo(print());
     }
 
