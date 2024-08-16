@@ -35,12 +35,7 @@ public class RushEventService {
     @Transactional
     public RushEventListResponseDto getAllRushEvents() {
         // 오늘의 선착순 이벤트 꺼내오기
-        RushEventResponseDto todayEvent = rushEventRedisTemplate.opsForValue().get("todayEvent");
-
-        // 오늘의 선착순 이벤트가 redis에 등록되지 않은 경우
-        if (todayEvent == null) {
-            throw new CustomException("오늘의 선착순 이벤트가 redis에 등록되지 않았습니다.", CustomErrorCode.TODAY_RUSH_EVENT_NOT_FOUND);
-        }
+        RushEventResponseDto todayEvent = getTodayRushEvent();
 
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
@@ -161,7 +156,7 @@ public class RushEventService {
         }
 
         if (rushEventList.size() > 1) {
-            throw new CustomException("선착순 이벤트가 존재하지않습니다.", CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND);
+            throw new CustomException("선착순 이벤트가 2개 이상 존재합니다.", CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND);
         }
 
         return RushEventResponseDto.of(rushEventList.get(0));
@@ -237,15 +232,10 @@ public class RushEventService {
         rushEventRedisTemplate.opsForValue().set("todayEvent", RushEventResponseDto.of(rushEvents.get(2)));
     }
 
-
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
         RushEventResponseDto todayEvent = getTodayRushEvent();
         Set<RushEventOptionResponseDto> options = todayEvent.options();
-
-        if (options.size() != 2) {
-            throw new CustomException("해당 이벤트의 선택지가 2개가 아닙니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT);
-        }
 
         RushEventOptionResponseDto leftOption = options.stream()
                 .filter(option -> option.position() == Position.LEFT)
