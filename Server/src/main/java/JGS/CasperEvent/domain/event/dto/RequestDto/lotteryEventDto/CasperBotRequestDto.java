@@ -3,9 +3,13 @@ package JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@Builder
+@EqualsAndHashCode
 public class CasperBotRequestDto {
 
     @NotNull(message = "눈 모양 값은 필수 필드입니다.")
