@@ -2,16 +2,21 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
@@ -24,8 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,12 +38,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -72,6 +75,12 @@ public class AdminControllerTest {
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
+    private RushEventRequestDto rushEventRequestDto;
+    private RushEventOptionRequestDto leftOptionRequestDto;
+    private RushEventOptionRequestDto rightOptionRequestDto;
+    private AdminRushEventResponseDto adminRushEventResponseDto;
+    private RushEvent rushEvent;
+
 
     @BeforeEach
     void setUp() throws Exception {
@@ -112,8 +121,54 @@ public class AdminControllerTest {
         // 추첨 이벤트 참여자 리스트 응답 DTO
         List<LotteryEventParticipantsResponseDto> participants = new ArrayList<>();
         participants.add(lotteryEventParticipantsResponseDto);
-
         this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
+
+        // 선착순 이벤트 왼쪽 옵션
+        leftOptionRequestDto = RushEventOptionRequestDto.builder()
+                .rushOptionId(1L)
+                .position(Position.LEFT)
+                .mainText("main text 1")
+                .subText("sub text 1")
+                .resultMainText("result main text 1")
+                .resultSubText("result sub text 1")
+                .imageUrl("image url 1").build();
+
+        // 선착순 이벤트 오른쪽 옵션
+        rightOptionRequestDto = RushEventOptionRequestDto.builder()
+                .rushOptionId(1L)
+                .position(Position.RIGHT)
+                .mainText("main text 2")
+                .subText("sub text 2")
+                .resultMainText("result main text 2")
+                .resultSubText("result sub text 2")
+                .imageUrl("image url 2").build();
+
+        // 선착순 이벤트 생성 요청 DTO
+        Set<RushEventOptionRequestDto> options = new HashSet<>();
+        options.add(leftOptionRequestDto);
+        options.add(rightOptionRequestDto);
+
+        this.rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.of(2024, 8, 15))
+                .startTime(LocalTime.of(0, 0, 0))
+                .endTime(LocalTime.of(23, 59, 59))
+                .winnerCount(315)
+                .prizeImageUrl("prize img")
+                .prizeDescription("prize description")
+                .options(options).build();
+
+        // 선착순 이벤트
+        rushEvent = new RushEvent(
+                LocalDateTime.of(2024, 8, 15, 0, 0, 0),
+                LocalDateTime.of(2024, 8, 15, 23, 59, 59),
+                315,
+                "prize image url",
+                "prize description"
+        );
+
+        // 선착순 이벤트 조회 응답 DTO
+        adminRushEventResponseDto = AdminRushEventResponseDto.of(rushEvent);
     }
 
 
@@ -139,7 +194,8 @@ public class AdminControllerTest {
         given(adminService.postImage(any())).willReturn(new ImageUrlResponseDto("https://image.url"));
         MockMultipartFile image = new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes());
         //when
-        ResultActions perform = mockMvc.perform(multipart("/admin/image").file(image).header("Authorization", accessToken).contentType(MediaType.MULTIPART_FORM_DATA));
+        ResultActions perform = mockMvc.perform(multipart("/admin/image").file(image).header("Authorization", accessToken)
+                .contentType(MediaType.MULTIPART_FORM_DATA));
 
         //then
         perform.andExpect(status().isCreated()).andExpect(jsonPath("$.imageUrl").value("https://image.url")).andDo(print());
@@ -201,6 +257,42 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.isLastPage").value(true))
                 .andExpect(jsonPath("$.totalParticipants").value(1))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 생성 성공 이벤트")
+    void createRushEventSuccessTest() throws Exception {
+        //given
+        given(adminService.createRushEvent(any(), any(), any(), any()))
+                .willReturn(adminRushEventResponseDto);
+        String requestDto = objectMapper.writeValueAsString(rushEventRequestDto);
+        //when
+        MockMultipartFile dto = new MockMultipartFile("dto", "dto", "application/json", requestDto.getBytes());
+        MockMultipartFile prizeImage = new MockMultipartFile("prizeImg", "prizeImage.png", "image/png", "<<data>>".getBytes());
+        MockMultipartFile leftOptionImg = new MockMultipartFile("leftOptionImg", "leftOptionImg.png", "image/png", "<<data>>".getBytes());
+        MockMultipartFile rightOptionImg = new MockMultipartFile("rightOptionImg", "rightOptionImg.png", "image/png", "<<data>>".getBytes());
+
+        ResultActions perform = mockMvc.perform(multipart("/admin/event/rush")
+                .file(dto)
+                .file(prizeImage)
+                .file(leftOptionImg)
+                .file(rightOptionImg)
+                .header("Authorization", accessToken)
+                .contentType(MediaType.MULTIPART_FORM_DATA));
+
+        //then
+        perform.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rushEventId").isEmpty())
+                .andExpect(jsonPath("$.eventDate").value("2024-08-15"))
+                .andExpect(jsonPath("$.startTime").value("00:00:00"))
+                .andExpect(jsonPath("$.endTime").value("23:59:59"))
+                .andExpect(jsonPath("$.winnerCount").value(315))
+                .andExpect(jsonPath("$.prizeImageUrl").value("prize image url"))
+                .andExpect(jsonPath("$.prizeDescription").value("prize description"))
+                .andExpect(jsonPath("$.createdAt").isEmpty())
+                .andExpect(jsonPath("$.updatedAt").isEmpty())
+                .andExpect(jsonPath("$.status").value("AFTER"))
+                .andExpect(jsonPath("$.options").isEmpty());
     }
 
     String getToken(String id, String password) throws Exception {
