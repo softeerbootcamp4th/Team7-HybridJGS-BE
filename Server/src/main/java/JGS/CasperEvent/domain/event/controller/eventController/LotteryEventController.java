@@ -69,12 +69,4 @@ public class LotteryEventController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(redisService.getRecentData());
     }
-
-    // 캐스퍼 봇 조회 API
-    @GetMapping("/{casperId}")
-    public ResponseEntity<CasperBotResponseDto> getCasperBot(@PathVariable String casperId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(lotteryEventService.getCasperBot(Long.parseLong(casperId)));
-    }
 }
