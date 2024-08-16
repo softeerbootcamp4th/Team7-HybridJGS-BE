@@ -362,6 +362,11 @@ public class AdminService {
         return new ResponseDto("추첨이 완료되었습니다.");
     }
 
+    public ResponseDto deleteLotteryEventWinners(){
+        lotteryWinnerRepository.deleteAll();
+        return new ResponseDto("당첨자 명단을 삭제했습니다.");
+    }
+
     public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
         if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
