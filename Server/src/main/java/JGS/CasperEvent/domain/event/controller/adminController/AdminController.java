@@ -183,12 +183,21 @@ public class AdminController {
                 .body(adminService.pickLotteryEventWinners());
     }
 
+    // 추첨 이벤트 당첨자 삭제
+    @DeleteMapping("/event/lottery/winner")
+    public ResponseEntity<ResponseDto> deleteLotteryEventWinners(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adminService.deleteLotteryEventWinners());
+    }
+
     // 추첨 이벤트 당첨자 조회
     @GetMapping("/event/lottery/winner")
     public ResponseEntity<LotteryEventWinnerListResponseDto> getWinners(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEventWinners(size, page, phoneNumber));
