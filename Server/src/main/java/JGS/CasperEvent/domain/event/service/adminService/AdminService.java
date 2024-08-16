@@ -331,12 +331,32 @@ public class AdminService {
 
         int winnerCount = lotteryEvent.getWinnerCount();
 
-        Pageable pageable = PageRequest.of(0, winnerCount);
+        List<LotteryParticipants> lotteryParticipants = lotteryParticipantsRepository.findAll();
+        Set<LotteryParticipants> lotteryEventWinners = new HashSet<>();
 
-        //todo 당첨자 추첨 알고리즘 변경해야함
-        Page<LotteryParticipants> lotteryWinners = lotteryParticipantsRepository.findAll(pageable);
-        for (LotteryParticipants lotteryWinner : lotteryWinners) {
-            lotteryWinnerRepository.save(new LotteryWinners(lotteryWinner));
+        int totalWeight;
+        Random random = new Random();
+        while (lotteryEventWinners.size() < winnerCount) {
+            totalWeight = 0;
+            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
+                totalWeight += lotteryParticipant.getAppliedCount();
+            }
+
+            int randomValue = random.nextInt(totalWeight) + 1;
+
+            int cumulativeSum = 0;
+            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
+                cumulativeSum += lotteryParticipant.getAppliedCount();
+                if(randomValue <= cumulativeSum){
+                    lotteryEventWinners.add(lotteryParticipant);
+                    lotteryParticipants.remove(lotteryParticipant);
+                    break;
+                }
+            }
+        }
+
+        for (LotteryParticipants lotteryEventWinner : lotteryEventWinners) {
+            lotteryWinnerRepository.save(new LotteryWinners(lotteryEventWinner));
         }
 
         return new ResponseDto("추첨이 완료되었습니다.");
