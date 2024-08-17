@@ -38,6 +38,11 @@ public class JwtAuthorizationFilter implements Filter {
             "/event/rush/*", "/event/lottery/casperBot"
     };
 
+    private final String[] exceptionUris = new String[]{
+            "/event/rush/today/test"
+    };
+
+
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
 
@@ -48,7 +53,8 @@ public class JwtAuthorizationFilter implements Filter {
 
         String requestUri = httpServletRequest.getRequestURI();
 
-        if (whiteListCheck(requestUri) && !blackListCheck(requestUri)) {
+        // 예외 리스트 체크
+        if (exceptionCheck(requestUri) || (whiteListCheck(requestUri) && !blackListCheck(requestUri))) {
             chain.doFilter(request, response);
             return;
         }
@@ -78,6 +84,10 @@ public class JwtAuthorizationFilter implements Filter {
             log.error("AuthorizationException");
             sendError(httpServletResponse, CustomErrorCode.UNAUTHORIZED);
         }
+    }
+
+    private boolean exceptionCheck(String uri) {
+        return PatternMatchUtils.simpleMatch(exceptionUris, uri);
     }
 
     private boolean whiteListCheck(String uri) {
