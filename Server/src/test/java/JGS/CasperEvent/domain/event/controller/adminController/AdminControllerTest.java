@@ -13,6 +13,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRu
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -211,7 +212,15 @@ public class AdminControllerTest {
         ResultActions perform = mockMvc.perform(get("/admin/event/lottery").header("Authorization", accessToken).contentType(APPLICATION_JSON));
 
         //then
-        perform.andExpect(status().isOk()).andExpect(jsonPath("$.startDate").value("2000-09-27")).andExpect(jsonPath("$.startTime").value("00:00:00")).andExpect(jsonPath("$.endDate").value("2100-09-27")).andExpect(jsonPath("$.endTime").value("00:00:00")).andExpect(jsonPath("$.appliedCount").value(0)).andExpect(jsonPath("$.winnerCount").value(315)).andExpect(jsonPath("$.status").value("DURING")).andDo(print());
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.startDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.startTime").value("00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2100-09-27"))
+                .andExpect(jsonPath("$.endTime").value("00:00:00"))
+                .andExpect(jsonPath("$.appliedCount").value(0))
+                .andExpect(jsonPath("$.winnerCount").value(315))
+                .andExpect(jsonPath("$.status").value("DURING"))
+                .andDo(print());
     }
 
     @Test
@@ -293,6 +302,35 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.updatedAt").isEmpty())
                 .andExpect(jsonPath("$.status").value("AFTER"))
                 .andExpect(jsonPath("$.options").isEmpty());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 전체 조회 성공 테스트")
+    void getRushEventsSuccessTest() throws Exception {
+        //given
+        List<AdminRushEventResponseDto> rushEvents = new ArrayList<>();
+        rushEvents.add(adminRushEventResponseDto);
+        given(adminService.getRushEvents()).willReturn(rushEvents);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/rush")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].rushEventId").isEmpty())
+                .andExpect(jsonPath("$[0].eventDate").value("2024-08-15"))
+                .andExpect(jsonPath("$[0].startTime").value("00:00:00"))
+                .andExpect(jsonPath("$[0].endTime").value("23:59:59"))
+                .andExpect(jsonPath("$[0].winnerCount").value(315))
+                .andExpect(jsonPath("$[0].prizeImageUrl").value("prize image url"))
+                .andExpect(jsonPath("$[0].prizeDescription").value("prize description"))
+                .andExpect(jsonPath("$[0].createdAt").isEmpty())
+                .andExpect(jsonPath("$[0].updatedAt").isEmpty())
+                .andExpect(jsonPath("$[0].status").value("AFTER"))
+                .andExpect(jsonPath("$[0].options").isArray())
+                .andExpect(jsonPath("$[0].options").isEmpty());
     }
 
     String getToken(String id, String password) throws Exception {
