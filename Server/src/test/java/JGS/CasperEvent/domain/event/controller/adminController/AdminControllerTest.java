@@ -15,7 +15,6 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEve
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
-import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
@@ -393,6 +392,38 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
                 .andExpect(jsonPath("$.isLastPage").value(true))
                 .andExpect(jsonPath("$.totalParticipants").value(1))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 수정 성공 테스트")
+    void updateRushEventSuccessTest() throws Exception {
+        //given
+        List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
+        rushEventRequestDtoList.add(rushEventRequestDto);
+
+        List<AdminRushEventResponseDto> adminRushEventResponseDtoList = new ArrayList<>();
+        adminRushEventResponseDtoList.add(adminRushEventResponseDto);
+
+        given(adminService.updateRushEvents(anyList()))
+                .willReturn(adminRushEventResponseDtoList);
+
+        String requestBody = objectMapper.writeValueAsString(rushEventRequestDtoList);
+        //when
+        ResultActions perform = mockMvc.perform(put("/admin/event/rush")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON)
+                .content(requestBody));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].eventDate").value("2024-08-15"))
+                .andExpect(jsonPath("$[0].startTime").value("00:00:00"))
+                .andExpect(jsonPath("$[0].endTime").value("23:59:59"))
+                .andExpect(jsonPath("$[0].winnerCount").value(315))
+                .andExpect(jsonPath("$[0].prizeImageUrl").value("prize image url"))
+                .andExpect(jsonPath("$[0].prizeDescription").value("prize description"))
+                .andExpect(jsonPath("$[0].status").value("AFTER"))
                 .andDo(print());
     }
 
