@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.Optional;
 
@@ -118,6 +120,19 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.CONFLICT, customException.getErrorCode());
         assertEquals("이미 등록된 ID입니다.", customException.getMessage());
+    }
 
+    @Test
+    @DisplayName("이미지 업로드 성공 테스트")
+    void postImageTest_Success() {
+        //given
+        MockMultipartFile image = new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes());
+        given(s3Service.upload(image)).willReturn("www.image.com");
+
+        //when
+        ImageUrlResponseDto imageUrlResponseDto = adminService.postImage(image);
+
+        //then
+        assertThat(imageUrlResponseDto.imageUrl()).isEqualTo("www.image.com");
     }
 }
