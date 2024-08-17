@@ -4,6 +4,8 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -13,6 +15,8 @@ import java.util.Set;
 
 @ToString
 @Getter
+@Builder
+@EqualsAndHashCode
 //todo 검증 항목 추가 필요
 public class RushEventRequestDto {
     @NotNull(message = "선착순 이벤트 아이디는 필수 항목입니다.")

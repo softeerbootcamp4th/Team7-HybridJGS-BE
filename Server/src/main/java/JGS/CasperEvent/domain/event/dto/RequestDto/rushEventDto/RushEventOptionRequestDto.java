@@ -1,11 +1,13 @@
 package JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto;
 
 import JGS.CasperEvent.global.enums.Position;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 @Getter
+@Builder
 public class RushEventOptionRequestDto {
     private Long rushOptionId;
     private Position position;
