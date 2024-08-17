@@ -62,6 +62,7 @@ public class AdminService {
     private final LotteryWinnerRepository lotteryWinnerRepository;
     private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
 
+    // 어드민 인증
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
