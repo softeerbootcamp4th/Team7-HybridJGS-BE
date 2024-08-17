@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -168,6 +169,25 @@ class LotteryEventServiceTest {
         //then
         assertEquals(CustomErrorCode.CASPERBOT_NOT_FOUND, exception.getErrorCode());
         assertEquals("캐스퍼 봇이 없음", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 성공")
+    void getLotteryEventTest_Success() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        LotteryEventResponseDto lotteryEventResponseDto = lotteryEventService.getLotteryEvent();
+
+        //then
+        assertThat(lotteryEventResponseDto.serverDateTime()).isNotNull();
+        assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
+        assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
+        assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
+
     }
 
     @Test
