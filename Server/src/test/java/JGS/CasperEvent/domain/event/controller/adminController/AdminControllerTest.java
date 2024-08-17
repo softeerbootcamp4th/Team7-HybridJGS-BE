@@ -613,6 +613,20 @@ public class AdminControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 특정 기대평 삭제 성공 테스트")
+    void deleteLotteryEventExpectationSuccessTest() throws Exception {
+        //given
+
+        //when
+        ResultActions perform = mockMvc.perform(patch("/admin/event/lottery/expectations/1")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isNoContent())
+                .andDo(print());
+    }
 
     String getToken(String id, String password) throws Exception {
         String requestBody = String.format("""
