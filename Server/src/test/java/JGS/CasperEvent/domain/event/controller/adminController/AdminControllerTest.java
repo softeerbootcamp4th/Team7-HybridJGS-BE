@@ -1,19 +1,18 @@
 package JGS.CasperEvent.domain.event.controller.adminController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
@@ -74,6 +73,8 @@ public class AdminControllerTest {
     private String accessToken;
     private BaseUser user;
 
+    private CasperBotRequestDto casperBotRequestDto;
+    private CasperBot casperBot;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryEventResponseDto lotteryEventResponseDto;
@@ -81,6 +82,10 @@ public class AdminControllerTest {
     private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
     private LotteryEventDetailResponseDto lotteryEventDetailResponseDto;
+    private LotteryEventExpectationsResponseDto lotteryEventExpectationsResponseDto;
+    private LotteryEventExpectationResponseDto lotteryEventExpectationResponseDto;
+
+
     private RushEventRequestDto rushEventRequestDto;
     private RushEventOptionRequestDto leftOptionRequestDto;
     private RushEventOptionRequestDto rightOptionRequestDto;
@@ -136,6 +141,30 @@ public class AdminControllerTest {
 
         // 추첨 이벤트 상세 응답 DTO
         lotteryEventDetailResponseDto = LotteryEventDetailResponseDto.of(lotteryEvent);
+
+        // 캐스퍼 봇
+        casperBotRequestDto = CasperBotRequestDto.builder()
+                .eyeShape(0)
+                .eyePosition(0)
+                .mouthShape(0)
+                .color(0)
+                .sticker(0)
+                .name("name")
+                .expectation("expectation")
+                .referralId("QEszP1K8IqcapUHAVwikXA==").build();
+
+        casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
+        casperBot.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        casperBot.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        // 추첨 이벤트 기대평 응답 DTO
+        lotteryEventExpectationResponseDto = LotteryEventExpectationResponseDto.of(casperBot);
+
+        // 추첨 이벤트 기대평 리스트 응답 DTO
+        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = new ArrayList<>();
+        lotteryEventExpectationResponseDtoList.add(lotteryEventExpectationResponseDto);
+        lotteryEventExpectationsResponseDto = new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, true, 1);
+
 
         // 선착순 이벤트 왼쪽 옵션
         leftOptionRequestDto = RushEventOptionRequestDto.builder()
@@ -348,20 +377,20 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.prizeImageUrl").value("prize image url"))
                 .andExpect(jsonPath("$.prizeDescription").value("prize description"))
                 .andExpect(jsonPath("$.status").value("AFTER"))
-                .andExpect(jsonPath("$.options[0].optionId").value(1))
-                .andExpect(jsonPath("$.options[0].mainText").value("main text 1"))
-                .andExpect(jsonPath("$.options[0].subText").value("sub text 1"))
-                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 1"))
-                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 1"))
-                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 1"))
-                .andExpect(jsonPath("$.options[0].position").value("LEFT"))
-                .andExpect(jsonPath("$.options[1].optionId").value(2))
-                .andExpect(jsonPath("$.options[1].mainText").value("main text 2"))
-                .andExpect(jsonPath("$.options[1].subText").value("sub text 2"))
-                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 2"))
-                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 2"))
-                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 2"))
-                .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
+                .andExpect(jsonPath("$.options[0].optionId").value(2))
+                .andExpect(jsonPath("$.options[0].mainText").value("main text 2"))
+                .andExpect(jsonPath("$.options[0].subText").value("sub text 2"))
+                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 2"))
+                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 2"))
+                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 2"))
+                .andExpect(jsonPath("$.options[0].position").value("RIGHT"))
+                .andExpect(jsonPath("$.options[1].optionId").value(1))
+                .andExpect(jsonPath("$.options[1].mainText").value("main text 1"))
+                .andExpect(jsonPath("$.options[1].subText").value("sub text 1"))
+                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 1"))
+                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 1"))
+                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 1"))
+                .andExpect(jsonPath("$.options[1].position").value("LEFT"))
                 .andDo(print());
     }
 
@@ -504,21 +533,20 @@ public class AdminControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.options[0].optionId").value(1))
-                .andExpect(jsonPath("$.options[0].mainText").value("main text 1"))
-                .andExpect(jsonPath("$.options[0].subText").value("sub text 1"))
-                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 1"))
-                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 1"))
-                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 1"))
-                .andExpect(jsonPath("$.options[0].position").value("LEFT"))
-
-                .andExpect(jsonPath("$.options[1].optionId").value(2))
-                .andExpect(jsonPath("$.options[1].mainText").value("main text 2"))
-                .andExpect(jsonPath("$.options[1].subText").value("sub text 2"))
-                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 2"))
-                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 2"))
-                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 2"))
-                .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
+                .andExpect(jsonPath("$.options[0].optionId").value(2))
+                .andExpect(jsonPath("$.options[0].mainText").value("main text 2"))
+                .andExpect(jsonPath("$.options[0].subText").value("sub text 2"))
+                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 2"))
+                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 2"))
+                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 2"))
+                .andExpect(jsonPath("$.options[0].position").value("RIGHT"))
+                .andExpect(jsonPath("$.options[1].optionId").value(1))
+                .andExpect(jsonPath("$.options[1].mainText").value("main text 1"))
+                .andExpect(jsonPath("$.options[1].subText").value("sub text 1"))
+                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 1"))
+                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 1"))
+                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 1"))
+                .andExpect(jsonPath("$.options[1].position").value("LEFT"))
                 .andDo(print());
     }
 
@@ -560,6 +588,28 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.appliedCount").value(0))
                 .andExpect(jsonPath("$.winnerCount").value(315))
                 .andExpect(jsonPath("$.status").value("DURING"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 특정 사용자의 기대평 조회 성공 테스트")
+    void getLotteryEventExpectationsSuccessTest() throws Exception {
+        //given
+        given(adminService.getLotteryEventExpectations(anyInt(), anyInt(), anyLong()))
+                .willReturn(lotteryEventExpectationsResponseDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/lottery/participants/1/expectations")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.expectations[0].expectation").value("expectation"))
+                .andExpect(jsonPath("$.expectations[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.expectations[0].createdTime").value("00:00:00"))
+                .andExpect(jsonPath("$.isLastPage").value(true))
+                .andExpect(jsonPath("$.totalExpectations").value(1))
                 .andDo(print());
     }
 
