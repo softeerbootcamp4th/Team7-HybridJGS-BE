@@ -646,6 +646,24 @@ public class AdminControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 당첨자 삭제 성공 테스트")
+    void deleteLotteryEventWinners() throws Exception {
+        //given
+        given(adminService.deleteLotteryEventWinners())
+                .willReturn(ResponseDto.of("당첨자 명단을 삭제했습니다."));
+
+        //when
+        ResultActions perform = mockMvc.perform(delete("/admin/event/lottery/winner")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("당첨자 명단을 삭제했습니다."))
+                .andDo(print());
+    }
+
     String getToken(String id, String password) throws Exception {
         String requestBody = String.format("""
                 {
