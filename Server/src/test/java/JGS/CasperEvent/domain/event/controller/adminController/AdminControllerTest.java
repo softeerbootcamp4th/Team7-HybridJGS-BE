@@ -487,7 +487,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("선착순 이벤트 선택지 조회")
+    @DisplayName("선착순 이벤트 선택지 조회 성공 테스트")
     void getRushEventOptionsSuccessTest() throws Exception {
         //given
         AdminRushEventOptionResponseDto adminRushEventOptionResponseDto = AdminRushEventOptionResponseDto.of(rushEvent);
@@ -517,6 +517,23 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("추첨 이벤트 삭제 성공 테스트")
+    void deleteLotteryEventSuccessTest() throws Exception {
+        //given
+
+        //when
+        ResultActions perform = mockMvc.perform(delete("/admin/event/lottery")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+
 
     String getToken(String id, String password) throws Exception {
         String requestBody = String.format("""
