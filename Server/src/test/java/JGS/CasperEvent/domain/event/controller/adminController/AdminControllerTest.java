@@ -10,11 +10,14 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Position;
@@ -81,6 +84,9 @@ public class AdminControllerTest {
     private RushEventOptionRequestDto rightOptionRequestDto;
     private AdminRushEventResponseDto adminRushEventResponseDto;
     private RushEvent rushEvent;
+    private RushParticipants rushParticipants;
+    private RushEventParticipantResponseDto rushEventParticipantResponseDto;
+    private RushEventParticipantsListResponseDto rushEventParticipantsListResponseDto;
 
 
     @BeforeEach
@@ -170,6 +176,19 @@ public class AdminControllerTest {
 
         // 선착순 이벤트 조회 응답 DTO
         adminRushEventResponseDto = AdminRushEventResponseDto.of(rushEvent);
+
+        // 선착순 이벤트 참여자 엔티티
+        rushParticipants = new RushParticipants(user, rushEvent, 1);
+        rushParticipants.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipants.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        // 선착순 이벤트 참여자 응답 DTO
+        rushEventParticipantResponseDto = RushEventParticipantResponseDto.of(rushParticipants, 1L);
+
+        // 선착순 이벤트 참여자 리스트 조회 응답 DTO
+        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        rushEventParticipantResponseDtoList.add(rushEventParticipantResponseDto);
+        rushEventParticipantsListResponseDto = new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, true, 1);
     }
 
 
@@ -331,6 +350,50 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$[0].status").value("AFTER"))
                 .andExpect(jsonPath("$[0].options").isArray())
                 .andExpect(jsonPath("$[0].options").isEmpty());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 참여자 조회 성공 테스트")
+    void getRushEventParticipantsSuccessTest() throws Exception {
+        //given
+        given(adminService.getRushEventParticipants(anyLong(), anyInt(), anyInt(), anyInt(), anyString()))
+                .willReturn(rushEventParticipantsListResponseDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/rush/1/participants")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.participantsList[0].rank").value(1))
+                .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
+                .andExpect(jsonPath("$.isLastPage").value(true))
+                .andExpect(jsonPath("$.totalParticipants").value(1))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 당첨자 조회 성공 테스트")
+    void getRushEventWinnersSuccessTest() throws Exception {
+        //given
+        given(adminService.getRushEventWinners(anyLong(), anyInt(), anyInt(), anyString()))
+                .willReturn(rushEventParticipantsListResponseDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/rush/1/winner")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.participantsList[0].rank").value(1))
+                .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
+                .andExpect(jsonPath("$.isLastPage").value(true))
+                .andExpect(jsonPath("$.totalParticipants").value(1))
+                .andDo(print());
     }
 
     String getToken(String id, String password) throws Exception {
