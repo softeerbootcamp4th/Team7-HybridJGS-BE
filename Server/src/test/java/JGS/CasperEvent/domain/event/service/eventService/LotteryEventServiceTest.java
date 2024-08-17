@@ -154,7 +154,7 @@ class LotteryEventServiceTest {
     }
 
     @Test
-    @DisplayName("캐스퍼 봇 조회 실패 테스트")
+    @DisplayName("캐스퍼 봇 조회 테스트 - 실패")
     void getCasperBotTest_Failure() {
         //given
         given(casperBotRepository.findById(2L))
@@ -170,4 +170,19 @@ class LotteryEventServiceTest {
         assertEquals("캐스퍼 봇이 없음", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (진행중인 이벤트 없음)")
+    void getLotteryEventTest_Success() {
+        //given
+        given(lotteryEventRepository.findAll()).willReturn(new ArrayList<>());
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                lotteryEventService.getLotteryEvent()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.NO_LOTTERY_EVENT, exception.getErrorCode());
+        assertEquals("현재 진행중인 lotteryEvent가 존재하지 않습니다.", exception.getMessage());
+    }
 }
