@@ -80,6 +80,7 @@ public class AdminControllerTest {
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
+    private LotteryEventDetailResponseDto lotteryEventDetailResponseDto;
     private RushEventRequestDto rushEventRequestDto;
     private RushEventOptionRequestDto leftOptionRequestDto;
     private RushEventOptionRequestDto rightOptionRequestDto;
@@ -132,6 +133,9 @@ public class AdminControllerTest {
         List<LotteryEventParticipantsResponseDto> participants = new ArrayList<>();
         participants.add(lotteryEventParticipantsResponseDto);
         this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
+
+        // 추첨 이벤트 상세 응답 DTO
+        lotteryEventDetailResponseDto = LotteryEventDetailResponseDto.of(lotteryEvent);
 
         // 선착순 이벤트 왼쪽 옵션
         leftOptionRequestDto = RushEventOptionRequestDto.builder()
@@ -533,6 +537,31 @@ public class AdminControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 수정 성공 테스트")
+    void updateLotteryEventSuccessTest() throws Exception {
+        //given
+        given(adminService.updateLotteryEvent(lotteryEventRequestDto))
+                .willReturn(lotteryEventDetailResponseDto);
+        String requestBody = objectMapper.writeValueAsString(lotteryEventRequestDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(put("/admin/event/lottery")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON)
+                .content(requestBody));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.startDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.startTime").value("00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2100-09-27"))
+                .andExpect(jsonPath("$.endTime").value("00:00:00"))
+                .andExpect(jsonPath("$.appliedCount").value(0))
+                .andExpect(jsonPath("$.winnerCount").value(315))
+                .andExpect(jsonPath("$.status").value("DURING"))
+                .andDo(print());
+    }
 
 
     String getToken(String id, String password) throws Exception {
