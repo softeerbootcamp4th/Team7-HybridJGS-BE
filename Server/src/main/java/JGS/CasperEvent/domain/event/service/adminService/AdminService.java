@@ -67,6 +67,7 @@ public class AdminService {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
 
+    // 어드민 생성
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
         String adminId = adminRequestDto.getAdminId();
         //Todo: 비밀번호 암호화 필요
