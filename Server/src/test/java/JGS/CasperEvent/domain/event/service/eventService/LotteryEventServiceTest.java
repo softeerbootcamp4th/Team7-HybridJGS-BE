@@ -172,7 +172,7 @@ class LotteryEventServiceTest {
 
     @Test
     @DisplayName("추첨 이벤트 조회 테스트 - 실패 (진행중인 이벤트 없음)")
-    void getLotteryEventTest_Success() {
+    void getLotteryEventTest_Failure_NoLotteryEvent() {
         //given
         given(lotteryEventRepository.findAll()).willReturn(new ArrayList<>());
 
@@ -184,5 +184,25 @@ class LotteryEventServiceTest {
         //then
         assertEquals(CustomErrorCode.NO_LOTTERY_EVENT, exception.getErrorCode());
         assertEquals("현재 진행중인 lotteryEvent가 존재하지 않습니다.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패(2개 이상의 이벤트 존재)")
+    void getLotteryEventTest_Failure_TooManyLotteryEvent() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                lotteryEventService.getLotteryEvent()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, exception.getErrorCode());
+        assertEquals("현재 진행중인 lotteryEvent가 2개 이상입니다.", exception.getMessage());
+
     }
 }
