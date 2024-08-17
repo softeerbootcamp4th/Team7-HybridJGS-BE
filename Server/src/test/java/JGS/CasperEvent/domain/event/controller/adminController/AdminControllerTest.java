@@ -628,6 +628,24 @@ public class AdminControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 당첨자 추첨 성공 테스트")
+    void pickLotteryEventWinnerSuccessTest() throws Exception {
+        //given
+        given(adminService.pickLotteryEventWinners())
+                .willReturn(ResponseDto.of("추첨이 완료되었습니다."));
+
+        //when
+        ResultActions perform = mockMvc.perform(post("/admin/event/lottery/winner")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.message").value("추첨이 완료되었습니다."))
+                .andDo(print());
+    }
+
     String getToken(String id, String password) throws Exception {
         String requestBody = String.format("""
                 {
