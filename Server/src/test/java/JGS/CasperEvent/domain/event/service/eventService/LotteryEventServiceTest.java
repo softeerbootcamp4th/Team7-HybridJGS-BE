@@ -11,7 +11,9 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepos
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
+import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +35,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -147,6 +151,23 @@ class LotteryEventServiceTest {
         assertThat(casperBot.sticker()).isEqualTo(0);
         assertThat(casperBot.name()).isEqualTo("name");
         assertThat(casperBot.expectation()).isEqualTo("expectation");
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 조회 실패 테스트")
+    void getCasperBotTest_Failure() {
+        //given
+        given(casperBotRepository.findById(2L))
+                .willThrow(new CustomException("캐스퍼 봇이 없음", CustomErrorCode.CASPERBOT_NOT_FOUND));
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                lotteryEventService.getCasperBot(2L)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.CASPERBOT_NOT_FOUND, exception.getErrorCode());
+        assertEquals("캐스퍼 봇이 없음", exception.getMessage());
     }
 
 }
