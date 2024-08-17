@@ -9,12 +9,14 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
@@ -83,6 +85,8 @@ public class AdminControllerTest {
     private RushEventOptionRequestDto rightOptionRequestDto;
     private AdminRushEventResponseDto adminRushEventResponseDto;
     private RushEvent rushEvent;
+    private RushOption leftOption;
+    private RushOption rightOption;
     private RushParticipants rushParticipants;
     private RushEventParticipantResponseDto rushEventParticipantResponseDto;
     private RushEventParticipantsListResponseDto rushEventParticipantsListResponseDto;
@@ -149,6 +153,7 @@ public class AdminControllerTest {
                 .resultSubText("result sub text 2")
                 .imageUrl("image url 2").build();
 
+
         // 선착순 이벤트 생성 요청 DTO
         Set<RushEventOptionRequestDto> options = new HashSet<>();
         options.add(leftOptionRequestDto);
@@ -172,6 +177,29 @@ public class AdminControllerTest {
                 "prize image url",
                 "prize description"
         );
+
+        leftOption = RushOption.builder()
+                .optionId(1L)
+                .rushEvent(rushEvent)
+                .mainText("main text 1")
+                .subText("sub text 1")
+                .resultMainText("result main text 1")
+                .resultSubText("result sub text 1")
+                .imageUrl("image url 1")
+                .position(Position.LEFT).build();
+
+        rightOption = RushOption.builder()
+                .optionId(2L)
+                .rushEvent(rushEvent)
+                .mainText("main text 2")
+                .subText("sub text 2")
+                .resultMainText("result main text 2")
+                .resultSubText("result sub text 2")
+                .imageUrl("image url 2")
+                .position(Position.RIGHT).build();
+
+
+        rushEvent.addOption(leftOption, rightOption);
 
         // 선착순 이벤트 조회 응답 DTO
         adminRushEventResponseDto = AdminRushEventResponseDto.of(rushEvent);
@@ -309,17 +337,28 @@ public class AdminControllerTest {
 
         //then
         perform.andExpect(status().isCreated())
-                .andExpect(jsonPath("$.rushEventId").isEmpty())
                 .andExpect(jsonPath("$.eventDate").value("2024-08-15"))
                 .andExpect(jsonPath("$.startTime").value("00:00:00"))
                 .andExpect(jsonPath("$.endTime").value("23:59:59"))
                 .andExpect(jsonPath("$.winnerCount").value(315))
                 .andExpect(jsonPath("$.prizeImageUrl").value("prize image url"))
                 .andExpect(jsonPath("$.prizeDescription").value("prize description"))
-                .andExpect(jsonPath("$.createdAt").isEmpty())
-                .andExpect(jsonPath("$.updatedAt").isEmpty())
                 .andExpect(jsonPath("$.status").value("AFTER"))
-                .andExpect(jsonPath("$.options").isEmpty());
+                .andExpect(jsonPath("$.options[0].optionId").value(1))
+                .andExpect(jsonPath("$.options[0].mainText").value("main text 1"))
+                .andExpect(jsonPath("$.options[0].subText").value("sub text 1"))
+                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 1"))
+                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 1"))
+                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 1"))
+                .andExpect(jsonPath("$.options[0].position").value("LEFT"))
+                .andExpect(jsonPath("$.options[1].optionId").value(2))
+                .andExpect(jsonPath("$.options[1].mainText").value("main text 2"))
+                .andExpect(jsonPath("$.options[1].subText").value("sub text 2"))
+                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 2"))
+                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 2"))
+                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 2"))
+                .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
+                .andDo(print());
     }
 
     @Test
@@ -348,7 +387,7 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$[0].updatedAt").isEmpty())
                 .andExpect(jsonPath("$[0].status").value("AFTER"))
                 .andExpect(jsonPath("$[0].options").isArray())
-                .andExpect(jsonPath("$[0].options").isEmpty());
+                .andDo(print());
     }
 
     @Test
@@ -365,9 +404,11 @@ public class AdminControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
-                .andExpect(jsonPath("$.participantsList[0].rank").value(1))
                 .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
+                .andExpect(jsonPath("$.participantsList[0].balanceGameChoice").value(1))
+                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.participantsList[0].createdTime").value("00:00:00"))
+                .andExpect(jsonPath("$.participantsList[0].rank").value(1))
                 .andExpect(jsonPath("$.isLastPage").value(true))
                 .andExpect(jsonPath("$.totalParticipants").value(1))
                 .andDo(print());
@@ -442,6 +483,38 @@ public class AdminControllerTest {
         //then
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 선택지 조회")
+    void getRushEventOptionsSuccessTest() throws Exception {
+        //given
+        AdminRushEventOptionResponseDto adminRushEventOptionResponseDto = AdminRushEventOptionResponseDto.of(rushEvent);
+        given(adminService.getRushEventOptions(1L))
+                .willReturn(adminRushEventOptionResponseDto);
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/rush/1/options")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.options[0].optionId").value(1))
+                .andExpect(jsonPath("$.options[0].mainText").value("main text 1"))
+                .andExpect(jsonPath("$.options[0].subText").value("sub text 1"))
+                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 1"))
+                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 1"))
+                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 1"))
+                .andExpect(jsonPath("$.options[0].position").value("LEFT"))
+
+                .andExpect(jsonPath("$.options[1].optionId").value(2))
+                .andExpect(jsonPath("$.options[1].mainText").value("main text 2"))
+                .andExpect(jsonPath("$.options[1].subText").value("sub text 2"))
+                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 2"))
+                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 2"))
+                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 2"))
+                .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
                 .andDo(print());
     }
 
