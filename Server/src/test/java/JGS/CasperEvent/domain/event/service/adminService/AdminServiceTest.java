@@ -10,7 +10,9 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionReposit
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Role;
+import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.response.ResponseDto;
 import JGS.CasperEvent.global.service.S3Service;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,5 +97,27 @@ class AdminServiceTest {
 
         //then
         assertThat(responseDto.message()).isEqualTo("관리자 생성 성공");
+    }
+
+    @Test
+    @DisplayName("어드민 생성 테스트 - 실패 (중복 아이디 존재)")
+    void postAdminTest_Failure_DuplicatedId() {
+        //given
+        AdminRequestDto adminRequestDto = AdminRequestDto.builder()
+                .adminId("adminId")
+                .password("password")
+                .build();
+
+        given(adminRepository.findById("adminId")).willReturn(Optional.ofNullable(admin));
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.postAdmin(adminRequestDto)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.CONFLICT, customException.getErrorCode());
+        assertEquals("이미 등록된 ID입니다.", customException.getMessage());
+
     }
 }
