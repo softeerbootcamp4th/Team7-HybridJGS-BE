@@ -7,16 +7,14 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -48,6 +46,8 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -84,6 +84,9 @@ public class AdminControllerTest {
     private LotteryEventDetailResponseDto lotteryEventDetailResponseDto;
     private LotteryEventExpectationsResponseDto lotteryEventExpectationsResponseDto;
     private LotteryEventExpectationResponseDto lotteryEventExpectationResponseDto;
+    private LotteryEventWinnerListResponseDto lotteryEventWinnerListResponseDto;
+    private LotteryEventWinnerResponseDto lotteryEventWinnerResponseDto;
+    private LotteryWinners lotteryWinners;
 
 
     private RushEventRequestDto rushEventRequestDto;
@@ -129,7 +132,10 @@ public class AdminControllerTest {
         this.lotteryEventResponseDto = LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
 
         // 추첨 이벤트 참여자 객체
-        this.lotteryParticipants = new LotteryParticipants(user);
+        LotteryParticipants realLotteryParticipants = new LotteryParticipants(user);
+        this.lotteryParticipants = spy(realLotteryParticipants);
+        doReturn(1L).when(lotteryParticipants).getId();
+
 
         // 추첨 이벤트 참여자 응답 DTO
         this.lotteryEventParticipantsResponseDto = LotteryEventParticipantsResponseDto.of(lotteryParticipants);
@@ -156,6 +162,20 @@ public class AdminControllerTest {
         casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
         casperBot.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         casperBot.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        // 추첨 이벤트 당첨자 엔티티
+        lotteryWinners = spy(new LotteryWinners(lotteryParticipants));
+        doReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0)).when(lotteryWinners).getCreatedAt();
+        doReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0)).when(lotteryWinners).getUpdatedAt();
+
+
+        // 추첨 이벤트 당첨자 응답 DTO
+        lotteryEventWinnerResponseDto = LotteryEventWinnerResponseDto.of(lotteryWinners);
+
+        // 추첨 이벤트 당첨자 리스트 응답 DTO
+        List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDtoList = new ArrayList<>();
+        lotteryEventWinnerResponseDtoList.add(lotteryEventWinnerResponseDto);
+        lotteryEventWinnerListResponseDto = new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDtoList, true, 1);
 
         // 추첨 이벤트 기대평 응답 DTO
         lotteryEventExpectationResponseDto = LotteryEventExpectationResponseDto.of(casperBot);
@@ -661,6 +681,33 @@ public class AdminControllerTest {
         //then
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("당첨자 명단을 삭제했습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 당첨자 조회 성공 테스트")
+    void getWinnersSuccessTest() throws Exception {
+        //given
+        given(adminService.getLotteryEventWinners(anyInt(), anyInt(), anyString()))
+                .willReturn(lotteryEventWinnerListResponseDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/admin/event/lottery/winner")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.participantsList[0].id").value(1))
+                .andExpect(jsonPath("$.participantsList[0].phoneNumber").value("010-0000-0000"))
+                .andExpect(jsonPath("$.participantsList[0].linkClickedCounts").value(0))
+                .andExpect(jsonPath("$.participantsList[0].expectation").value(0))
+                .andExpect(jsonPath("$.participantsList[0].appliedCount").value(1))
+                .andExpect(jsonPath("$.participantsList[0].ranking").value(0))
+                .andExpect(jsonPath("$.participantsList[0].createdDate").value("2000-09-27"))
+                .andExpect(jsonPath("$.participantsList[0].createdTime").value("00:00:00"))
+                .andExpect(jsonPath("$.isLastPage").value(true))
+                .andExpect(jsonPath("$.totalParticipants").value(1))
                 .andDo(print());
     }
 
