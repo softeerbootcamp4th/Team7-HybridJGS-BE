@@ -2,8 +2,10 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
@@ -22,13 +24,16 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +54,13 @@ class LotteryEventServiceTest {
     @InjectMocks
     LotteryEventService lotteryEventService;
 
+    private BaseUser user;
+
     private LotteryEvent lotteryEvent;
+    private LotteryParticipants lotteryParticipants;
+    private CasperBotRequestDto casperBotRequestDto;
+    private CasperBot casperBot;
+    private CasperBotResponseDto casperBotResponseDto;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -57,6 +68,8 @@ class LotteryEventServiceTest {
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
         ReflectionTestUtils.setField(lotteryEventService, "secretKey", secretKey);
 
+        // BaseUser 엔티티
+        user = new BaseUser("010-0000-0000", Role.USER);
 
         // 추첨 이벤트 엔티티
         lotteryEvent = new LotteryEvent(
@@ -65,18 +78,11 @@ class LotteryEventServiceTest {
                 363
         );
 
-        // 추첨 이벤트 조회
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
-    }
+        // 추첨 이벤트 참여자 엔티티
+        lotteryParticipants = new LotteryParticipants(user);
 
-    @Test
-    @DisplayName("캐스퍼 봇 등록 테스트 - 성공")
-    void postCasperBot_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        //given
-        BaseUser user = new BaseUser("010-0000-0000", Role.USER);
-        CasperBotRequestDto casperBotRequestDto = CasperBotRequestDto.builder()
+        // 캐스퍼 봇 생성 요청 DTO
+        casperBotRequestDto = CasperBotRequestDto.builder()
                 .eyeShape(0)
                 .eyePosition(0)
                 .mouthShape(0)
@@ -86,9 +92,21 @@ class LotteryEventServiceTest {
                 .expectation("expectation")
                 .referralId("QEszP1K8IqcapUHAVwikXA==").build();
 
-        CasperBot casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
+        // 캐스퍼 봇 엔티티
+        casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
 
+        // 캐스퍼 봇 응답 DTO
+        casperBotResponseDto = CasperBotResponseDto.of(casperBot);
+    }
+
+    @Test
+    @DisplayName("캐스퍼 봇 등록 테스트 - 성공")
+    void postCasperBot_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        //given
         given(casperBotRepository.save(casperBot)).willReturn(casperBot);
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
 
         //when
         CasperBotResponseDto casperBotResponseDto = lotteryEventService.postCasperBot(user, casperBotRequestDto);
@@ -101,6 +119,34 @@ class LotteryEventServiceTest {
         assertThat(casperBotResponseDto.sticker()).isEqualTo(0);
         assertThat(casperBotResponseDto.name()).isEqualTo("name");
         assertThat(casperBotResponseDto.expectation()).isEqualTo("expectation");
+    }
+
+    @Test
+    @DisplayName("응모 내역 조회 테스트 - 성공")
+    void getLotteryParticipants_Success() throws UserPrincipalNotFoundException {
+        //given
+        given(lotteryParticipantsRepository.findByBaseUser(user))
+                .willReturn(Optional.ofNullable(lotteryParticipants));
+        given(casperBotRepository.findById(any())).willReturn(Optional.ofNullable(casperBot));
+
+        //when
+        LotteryParticipantResponseDto lotteryParticipantResponseDto = lotteryEventService.getLotteryParticipant(user);
+        CasperBotResponseDto casperBot = lotteryParticipantResponseDto.casperBot();
+
+        //then
+        assertThat(lotteryParticipantResponseDto).isNotNull();
+        assertThat(lotteryParticipantResponseDto.linkClickedCount()).isEqualTo(0);
+        assertThat(lotteryParticipantResponseDto.expectations()).isEqualTo(0);
+        assertThat(lotteryParticipantResponseDto.appliedCount()).isEqualTo(1);
+
+        assertThat(lotteryParticipantResponseDto.casperBot()).isNotNull();
+        assertThat(casperBot.eyeShape()).isEqualTo(0);
+        assertThat(casperBot.eyePosition()).isEqualTo(0);
+        assertThat(casperBot.mouthShape()).isEqualTo(0);
+        assertThat(casperBot.color()).isEqualTo(0);
+        assertThat(casperBot.sticker()).isEqualTo(0);
+        assertThat(casperBot.name()).isEqualTo("name");
+        assertThat(casperBot.expectation()).isEqualTo("expectation");
     }
 
 }
