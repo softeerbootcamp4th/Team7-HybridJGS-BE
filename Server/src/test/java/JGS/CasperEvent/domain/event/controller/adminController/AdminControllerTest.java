@@ -427,6 +427,24 @@ public class AdminControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 삭제 성공 테스트")
+    void deleteRushEventSuccessTest() throws Exception {
+        //given
+        ResponseDto responseDto = new ResponseDto("요청에 성공하였습니다.");
+        given(adminService.deleteRushEvent(1L)).willReturn(responseDto);
+
+        //when
+        ResultActions perform = mockMvc.perform(delete("/admin/event/rush/1")
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                .andDo(print());
+    }
+
     String getToken(String id, String password) throws Exception {
         String requestBody = String.format("""
                 {
