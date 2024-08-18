@@ -17,7 +17,6 @@ import java.net.URL;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -65,6 +64,21 @@ class S3ServiceTest {
 
         //then
         assertThat("파일이 유효하지 않습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("이미지 업로드 테스트 - 실패 (원본 파일 확장자 없음)")
+    void uploadTest_Failure_ImageNameEmpty() {
+        //given
+        image = new MockMultipartFile("image", "image", "png", "<<data>>".getBytes());
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.upload(image)
+        );
+
+        //then
+        assertThat("파일에 확장자가 존재하지 않습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
 }
