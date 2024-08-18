@@ -1278,7 +1278,7 @@ class AdminServiceTest {
         rushEventRequestDto = RushEventRequestDto.builder()
                 .rushEventId(1L)
                 .eventDate(LocalDate.now())
-                .startTime(LocalTime.of(0,0))
+                .startTime(LocalTime.of(0, 0))
                 .endTime(LocalTime.of(23, 59))
                 .winnerCount(100)
                 .prizeImageUrl("http://example.com/image.jpg")
@@ -1324,4 +1324,63 @@ class AdminServiceTest {
         assertEquals(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW, customException.getErrorCode());
         assertEquals("현재 진행 중인 이벤트의 종료 시간을 현재 시간보다 이전으로 설정할 수 없습니다.", customException.getMessage());
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 실패 (이벤트 시작 전인 경우)")
+    void updateRushEventTest_Failure_StartBeforeNow() {
+        //given
+        Set<RushEventOptionRequestDto> options = new HashSet<>();
+        options.add(leftOptionRequestDto);
+        options.add(rightOptionRequestDto);
+
+        rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.of(2100, 1, 1))
+                .startTime(LocalTime.of(0, 0))
+                .endTime(LocalTime.of(23, 59))
+                .winnerCount(100)
+                .prizeImageUrl("http://example.com/image.jpg")
+                .prizeDescription("This is a detailed description of the prize.")
+                .options(options)
+                .build();
+
+        rushEvent = new RushEvent(
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime()),
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime()),
+                rushEventRequestDto.getWinnerCount(),
+                "http://example.com/image.jpg",
+                rushEventRequestDto.getPrizeDescription()
+        );
+
+        rushEvent.addOption(leftOption, rightOption);
+        List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
+
+        rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.of(1945,8,15))
+                .startTime(LocalTime.of(0, 0))
+                .endTime(LocalTime.now().minusSeconds(5))
+                .winnerCount(100)
+                .prizeImageUrl("http://example.com/image.jpg")
+                .prizeDescription("This is a detailed description of the prize.")
+                .options(options)
+                .build();
+
+        rushEventRequestDtoList.add(rushEventRequestDto);
+
+        List<RushEvent> rushEventList = new ArrayList<>();
+        rushEventList.add(rushEvent);
+
+        given(rushEventRepository.findByRushEventId(1L)).willReturn(rushEvent);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.updateRushEvents(rushEventRequestDtoList)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.EVENT_BEFORE_START_TIME, customException.getErrorCode());
+        assertEquals("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", customException.getMessage());
+    }
+
 }
