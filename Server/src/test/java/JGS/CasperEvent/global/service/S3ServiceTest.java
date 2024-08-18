@@ -11,7 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -20,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 class S3ServiceTest {
@@ -94,6 +98,22 @@ class S3ServiceTest {
 
         //then
         assertThat("유효하지 않은 확장자입니다.").isEqualTo(amazonS3Exception.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("이미지 업로드 테스트 - 실패 (IOException 발생)")
+    void uploadTest_Failure_IOException() throws IOException {
+        //given
+        image = spy(new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes()));
+        doThrow(new IOException())
+                .when(image).getInputStream();
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.upload(image)
+        );
+
+        //then
+        assertThat("io exception on image upload").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
 }
