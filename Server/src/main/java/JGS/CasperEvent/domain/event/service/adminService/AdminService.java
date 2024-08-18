@@ -511,6 +511,7 @@ public class AdminService {
         return new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, isLastPage, casperBotPage.getTotalElements());
     }
 
+    // 부적절한 기대평 삭제
     @Transactional
     public void deleteLotteryEventExpectation(Long casperId) {
         CasperBot casperBot = casperBotRepository.findById(casperId).orElseThrow(

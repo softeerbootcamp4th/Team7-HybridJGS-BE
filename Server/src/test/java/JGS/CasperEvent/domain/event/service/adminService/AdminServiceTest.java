@@ -42,6 +42,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDate;
@@ -52,9 +54,9 @@ import java.util.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -77,6 +79,11 @@ class AdminServiceTest {
     private CasperBotRepository casperBotRepository;
     @Mock
     private LotteryWinnerRepository lotteryWinnerRepository;
+    @Mock
+    private RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
+    @Mock
+    private ListOperations<String, CasperBotResponseDto> listOperations;
+
 
     private RushEvent rushEvent;
     private RushOption leftOption;
@@ -216,10 +223,10 @@ class AdminServiceTest {
                 .expectation("expectation")
                 .referralId("QEszP1K8IqcapUHAVwikXA==").build();
 
-        casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
-        casperBot.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        casperBot.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-
+        casperBot = spy(new CasperBot(casperBotRequestDto, "010-0000-0000"));
+        lenient().when(casperBot.getCasperId()).thenReturn(1L);
+        lenient().when(casperBot.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(casperBot.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
     }
 
     @Test
@@ -1568,5 +1575,24 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.USER_NOT_FOUND, customException.getErrorCode());
         assertEquals("응모하지 않은 사용자입니다.", customException.getMessage());
+    }
+
+    @Test
+    @DisplayName("부적절한 기대평 삭제 테스트 - 성공")
+    void deleteLotteryEventExpectationTest_Success() {
+        //given
+        List<CasperBotResponseDto> casperBotResponseDtoList = new ArrayList<>();
+        casperBotResponseDtoList.add(CasperBotResponseDto.of(casperBot));
+
+        given(casperBotRepository.findById(1L)).willReturn(Optional.ofNullable(casperBot));
+        given(casperBotRedisTemplate.opsForList()).willReturn(listOperations);
+        given(casperBotRedisTemplate.opsForList().range(anyString(), eq(0L), eq(-1L)))
+                .willReturn(casperBotResponseDtoList);
+
+        //when
+        adminService.deleteLotteryEventExpectation(1L);
+
+        //then
+
     }
 }
