@@ -332,6 +332,7 @@ public class AdminService {
         return lotteryEventList.get(0);
     }
 
+    // 추첨 이벤트 당첨자 추첨
     @Transactional
     public ResponseDto pickLotteryEventWinners() {
         if (lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
@@ -340,6 +341,13 @@ public class AdminService {
         int winnerCount = lotteryEvent.getWinnerCount();
 
         List<LotteryParticipants> lotteryParticipants = lotteryParticipantsRepository.findAll();
+
+        if(winnerCount >= lotteryParticipants.size()){
+            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
+                lotteryWinnerRepository.save(new LotteryWinners(lotteryParticipant));
+            }
+            return new ResponseDto("추첨이 완료되었습니다.");
+        }
         Set<LotteryParticipants> lotteryEventWinners = new HashSet<>();
 
         int totalWeight;
