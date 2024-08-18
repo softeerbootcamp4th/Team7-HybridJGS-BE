@@ -1411,4 +1411,45 @@ class AdminServiceTest {
         assertEquals(CustomErrorCode.NO_RUSH_EVENT, customException.getErrorCode());
         assertEquals("선착순 이벤트를 찾을 수 없습니다.", customException.getMessage());
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 삭제 테스트 - 실패 (진행중인 이벤트일 경우)")
+    void deleteRushEventTest_Failure_EventInProgress() {
+        //given
+        Set<RushEventOptionRequestDto> options = new HashSet<>();
+        options.add(leftOptionRequestDto);
+        options.add(rightOptionRequestDto);
+
+        rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.now())
+                .startTime(LocalTime.of(0, 0))
+                .endTime(LocalTime.of(23, 59))
+                .winnerCount(100)
+                .prizeImageUrl("http://example.com/image.jpg")
+                .prizeDescription("This is a detailed description of the prize.")
+                .options(options)
+                .build();
+
+        rushEvent = new RushEvent(
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime()),
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime()),
+                rushEventRequestDto.getWinnerCount(),
+                "http://example.com/image.jpg",
+                rushEventRequestDto.getPrizeDescription()
+        );
+
+        given(rushEventRepository.findById(1L)).willReturn(Optional.ofNullable(rushEvent));
+
+        //when
+        CustomException customException = assertThrows(CustomException.class,
+                () -> adminService.deleteRushEvent(1L)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE, customException.getErrorCode());
+        assertEquals("진행중인 이벤트를 삭제할 수 없습니다.", customException.getMessage());
+
+
+    }
 }
