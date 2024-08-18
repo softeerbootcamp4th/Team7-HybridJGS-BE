@@ -475,6 +475,7 @@ public class AdminService {
         return ResponseDto.of("요청에 성공하였습니다.");
     }
 
+    // 선착순 이벤트 선택지 조회
     public AdminRushEventOptionResponseDto getRushEventOptions(Long rushEventId) {
         return AdminRushEventOptionResponseDto.of(
                 rushEventRepository.findById(rushEventId).orElseThrow(

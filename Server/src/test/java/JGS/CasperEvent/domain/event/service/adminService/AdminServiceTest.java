@@ -1449,7 +1449,44 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE, customException.getErrorCode());
         assertEquals("진행중인 이벤트를 삭제할 수 없습니다.", customException.getMessage());
+    }
 
+    @Test
+    @DisplayName("선착순 이벤트 선택지 조회 테스트 - 성공")
+    void getRushEventOptionsTest_Success() {
+        //given
+        rushEvent.addOption(leftOption, rightOption);
+        given(rushEventRepository.findById(1L)).willReturn(Optional.ofNullable(rushEvent));
+
+        //when
+        AdminRushEventOptionResponseDto rushEventOptions = adminService.getRushEventOptions(1L);
+
+        //then
+        Set<RushEventOptionResponseDto> options = rushEventOptions.options();
+
+        boolean firstOptionFound = false;
+        boolean secondOptionFound = false;
+
+        for (RushEventOptionResponseDto option : options) {
+            if (option.mainText().equals("Main Text 2") &&
+                    option.subText().equals("Sub Text 2") &&
+                    option.resultMainText().equals("Result Main Text 2") &&
+                    option.resultSubText().equals("Result Sub Text 2") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.RIGHT)) {
+                firstOptionFound = true;
+            } else if (option.mainText().equals("Main Text 1") &&
+                    option.subText().equals("Sub Text 1") &&
+                    option.resultMainText().equals("Result Main Text 1") &&
+                    option.resultSubText().equals("Result Sub Text 1") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.LEFT)) {
+                secondOptionFound = true;
+            }
+        }
+
+        assertThat(firstOptionFound).isTrue();
+        assertThat(secondOptionFound).isTrue();
 
     }
 }
