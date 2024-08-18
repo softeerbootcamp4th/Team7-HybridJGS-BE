@@ -34,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -49,8 +48,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -252,6 +251,34 @@ class AdminServiceTest {
 
         //when
         LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "");
+        LotteryEventParticipantsResponseDto retrievedParticipant = lotteryEventParticipantsListResponseDto.participantsList().get(0);
+
+        //then
+        assertThat(lotteryEventParticipantsListResponseDto.isLastPage()).isTrue();
+        assertThat(lotteryEventParticipantsListResponseDto.totalParticipants()).isEqualTo(1);
+
+        assertThat(retrievedParticipant.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(retrievedParticipant.linkClickedCounts()).isEqualTo(0);
+        assertThat(retrievedParticipant.expectation()).isEqualTo(0);
+        assertThat(retrievedParticipant.appliedCount()).isEqualTo(1);
+        assertThat(retrievedParticipant.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(retrievedParticipant.createdTime()).isEqualTo(LocalTime.of(0, 0, 0));
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 참여자 조회 성공 테스트 (전화번호가 있을 때)")
+    void getLotteryEventParticipantsTest_Success_withPhoneNumber() {
+        //given
+        List<LotteryParticipants> lotteryParticipantsList = new ArrayList<>();
+        lotteryParticipantsList.add(lotteryParticipants);
+        Page<LotteryParticipants> lotteryParticipantsPage = new PageImpl<>(lotteryParticipantsList);
+
+
+        given(lotteryParticipantsRepository.findByBaseUser_Id(eq("010-0000-0000"), any(Pageable.class))).willReturn(lotteryParticipantsPage);
+        given(lotteryParticipantsRepository.countByBaseUser_Id("010-0000-0000")).willReturn(1L);
+
+        //when
+        LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "010-0000-0000");
         LotteryEventParticipantsResponseDto retrievedParticipant = lotteryEventParticipantsListResponseDto.participantsList().get(0);
 
         //then
