@@ -1116,8 +1116,8 @@ class AdminServiceTest {
     }
 
     @Test
-    @DisplayName("테스트")
-    void testName() {
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 성공")
+    void updateRushEventTest_Success() {
         //given
         rushEvent.addOption(leftOption, rightOption);
         List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
@@ -1168,5 +1168,44 @@ class AdminServiceTest {
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 실패 (종료 시간이 시작 시간보다 앞서는 경우)")
+    void testName() {
+        //given
+        rushEvent.addOption(leftOption, rightOption);
+        List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
+
+        Set<RushEventOptionRequestDto> options = new HashSet<>();
+        options.add(leftOptionRequestDto);
+        options.add(rightOptionRequestDto);
+
+        rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.of(2024, 8, 15))
+                .startTime(LocalTime.of(23, 59))
+                .endTime(LocalTime.of(0, 0))
+                .winnerCount(100)
+                .prizeImageUrl("http://example.com/image.jpg")
+                .prizeDescription("This is a detailed description of the prize.")
+                .options(options)
+                .build();
+
+        rushEventRequestDtoList.add(rushEventRequestDto);
+
+        List<RushEvent> rushEventList = new ArrayList<>();
+        rushEventList.add(rushEvent);
+
+        given(rushEventRepository.findByRushEventId(1L)).willReturn(rushEvent);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.updateRushEvents(rushEventRequestDtoList)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME, customException.getErrorCode());
+        assertEquals("종료 시간은 시작 시간 이후로 설정해야 합니다.", customException.getMessage());
     }
 }
