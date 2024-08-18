@@ -52,7 +52,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static JGS.CasperEvent.global.util.RepositoryErrorHandler.findByIdOrElseThrow;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -794,8 +793,8 @@ class AdminServiceTest {
     }
 
     @Test
-    @DisplayName("선착순 이벤트 업데이트 테스트 - 성공")
-    void testName() {
+    @DisplayName("추첨 이벤트 업데이트 테스트 - 성공")
+    void updateLotteryEventTest_Success() {
         //given
         List<LotteryEvent> lotteryEventList = new ArrayList<>();
         lotteryEventList.add(lotteryEvent);
@@ -814,5 +813,28 @@ class AdminServiceTest {
         assertThat(lotteryEventDetailResponseDto.status()).isEqualTo(EventStatus.DURING);
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 실패 (종료 날짜가 시작 날짜보다 앞서는 경우)")
+    void updateLotteryEventTest_Failure_EndBeforeStart() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
 
+        lotteryEventRequestDto = LotteryEventRequestDto.builder()
+                .startDate(LocalDate.of(2100, 9, 27))
+                .startTime(LocalTime.of(0, 0))
+                .endDate(LocalDate.of(2000, 9, 27))
+                .endTime(LocalTime.of(0, 0))
+                .winnerCount(315)
+                .build();
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.updateLotteryEvent(lotteryEventRequestDto)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME, customException.getErrorCode());
+        assertEquals("종료 시간은 시작 시간 이후로 설정해야 합니다.", customException.getMessage());
+    }
 }
