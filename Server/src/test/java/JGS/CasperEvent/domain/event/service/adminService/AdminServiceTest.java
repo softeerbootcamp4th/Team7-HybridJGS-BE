@@ -1,16 +1,15 @@
 package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
@@ -90,12 +89,13 @@ class AdminServiceTest {
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryParticipants lotteryParticipants;
+    private CasperBotRequestDto casperBotRequestDto;
+    private CasperBot casperBot;
 
     private RushEventRequestDto rushEventRequestDto;
     private RushEventOptionRequestDto leftOptionRequestDto;
     private RushEventOptionRequestDto rightOptionRequestDto;
-    private RushParticipants rushParticipant1;
-    private RushParticipants rushParticipant2;
+    private RushParticipants rushParticipant;
 
     @InjectMocks
     AdminService adminService;
@@ -201,13 +201,25 @@ class AdminServiceTest {
         );
 
         // 선착순 이벤트 참여자
-        rushParticipant1 = new RushParticipants(user1, rushEvent, 1);
-        rushParticipant1.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        rushParticipant1.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipant = new RushParticipants(user1, rushEvent, 1);
+        rushParticipant.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipant.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
-        rushParticipant2 = new RushParticipants(user1, rushEvent, 2);
-        rushParticipant2.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        rushParticipant2.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        // 캐스퍼 봇 생성
+        casperBotRequestDto = CasperBotRequestDto.builder()
+                .eyeShape(0)
+                .eyePosition(0)
+                .mouthShape(0)
+                .color(0)
+                .sticker(0)
+                .name("name")
+                .expectation("expectation")
+                .referralId("QEszP1K8IqcapUHAVwikXA==").build();
+
+        casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
+        casperBot.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        casperBot.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
     }
 
     @Test
@@ -557,7 +569,7 @@ class AdminServiceTest {
     void getRushEventParticipantsTest_Success_withPhoneNumberAndOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(eq(1L), eq(1), eq("010-0000-0000"), any(Pageable.class)))
@@ -589,7 +601,7 @@ class AdminServiceTest {
     void getRushEventParticipantsTest_Success_withoutPhoneNumberAndOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushParticipantsRepository.findByRushEvent_RushEventId(eq(1L), any(Pageable.class)))
@@ -620,7 +632,7 @@ class AdminServiceTest {
     void getRushEventParticipantsTest_Success_withoutPhoneNumberWithOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionId(eq(1L), eq(1), any(Pageable.class)))
@@ -651,7 +663,7 @@ class AdminServiceTest {
     void getRushEventParticipantsTest_Success_witPhoneNumberAndWithoutOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushParticipantsRepository.findByRushEvent_RushEventIdAndBaseUser_Id(eq(1L), eq("010-0000-0000"), any(Pageable.class)))
@@ -682,7 +694,7 @@ class AdminServiceTest {
     void getRushEventWinnersTest_Success_withPhoneNumberAndOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
@@ -717,7 +729,7 @@ class AdminServiceTest {
     void getRushEventWinnersTest_Success_withoutPhoneNumberAndOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
@@ -752,7 +764,7 @@ class AdminServiceTest {
     void getRushEventWinnersTest_Success_withoutPhoneNumberAndWithOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
@@ -787,7 +799,7 @@ class AdminServiceTest {
     void getRushEventWinnersTest_Success_withPhoneNumberAndWithoutOptionId() {
         //given
         List<RushParticipants> rushParticipantsList = new ArrayList<>();
-        rushParticipantsList.add(rushParticipant1);
+        rushParticipantsList.add(rushParticipant);
         Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
 
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
@@ -1504,5 +1516,40 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.NO_RUSH_EVENT, customException.getErrorCode());
         assertEquals("선착순 이벤트를 찾을 수 없습니다.", customException.getMessage());
+    }
+
+    @Test
+    @DisplayName("기대평 조회 테스트 - 성공")
+    void getLotteryEventExpectationsTest_Success() {
+        //given
+        given(lotteryParticipantsRepository.findById(1L)).willReturn(Optional.ofNullable(lotteryParticipants));
+
+        List<CasperBot> casperBotList = new ArrayList<>();
+        casperBotList.add(casperBot);
+        Page<CasperBot> casperBotPage = new PageImpl<>(casperBotList);
+
+        given(casperBotRepository.findByPhoneNumberAndActiveExpectations(eq("010-0000-0000"), any(Pageable.class)))
+                .willReturn(casperBotPage);
+
+        //when
+        LotteryEventExpectationsResponseDto lotteryEventExpectations = adminService.getLotteryEventExpectations(0, 1, 1L);
+
+        //then
+        List<LotteryEventExpectationResponseDto> expectations = lotteryEventExpectations.expectations();
+
+        boolean expectationFound = false;
+
+        for (LotteryEventExpectationResponseDto exp : expectations) {
+            if (exp.expectation().equals("expectation") &&
+                    exp.createdDate().equals(LocalDate.of(2000, 9, 27)) &&
+                    exp.createdTime().equals(LocalTime.of(0, 0))) {
+                expectationFound = true;
+                break;
+            }
+        }
+
+        assertThat(expectationFound).isTrue();
+        assertThat(lotteryEventExpectations.isLastPage()).isTrue();
+        assertThat(lotteryEventExpectations.totalExpectations()).isEqualTo(1);
     }
 }

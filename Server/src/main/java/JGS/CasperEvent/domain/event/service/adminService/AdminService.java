@@ -484,6 +484,7 @@ public class AdminService {
         );
     }
 
+    // 기대평 조회
     public LotteryEventExpectationsResponseDto getLotteryEventExpectations(int page, int size, Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
