@@ -966,6 +966,31 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("추첨 이벤트 당첨자 추첨 테스트 - 성공")
+    void pickLotteryEventWinners_Success() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        List<LotteryParticipants> lotteryParticipantsList = new ArrayList<>();
+
+        for (int i = 0; i < 400; i++) {
+            BaseUser user = new BaseUser(String.format("010-0000-%04d", i), Role.USER);
+            LotteryParticipants lotteryParticipants = new LotteryParticipants(user);
+            lotteryParticipantsList.add(lotteryParticipants);
+        }
+
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(lotteryWinnerRepository.count()).willReturn(0L);
+        given(lotteryParticipantsRepository.findAll()).willReturn(lotteryParticipantsList);
+
+        //when
+        ResponseDto responseDto = adminService.pickLotteryEventWinners();
+
+        //then
+        assertThat(responseDto.message()).isEqualTo("추첨이 완료되었습니다.");
+    }
+
+    @Test
     @DisplayName("추첨 이벤트 당첨자 추첨 테스트 - 성공 (당첨인원보다 신청인원이 적을 경우)")
     void pickLotteryEventWinners_Success_ParticipantsIsLessThanWinners() {
         //given
