@@ -460,6 +460,7 @@ public class AdminService {
         return rushEventResponseDtoList;
     }
 
+    // 선착순 이벤트 삭제
     @Transactional
     public ResponseDto deleteRushEvent(Long rushEventId) {
         RushEvent rushEvent = rushEventRepository.findById(rushEventId).orElseThrow(() -> new CustomException(CustomErrorCode.NO_RUSH_EVENT));

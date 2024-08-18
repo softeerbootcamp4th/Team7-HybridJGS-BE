@@ -1383,4 +1383,16 @@ class AdminServiceTest {
         assertEquals("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", customException.getMessage());
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 삭제 테스트 - 성공")
+    void deleteRushEventTest_Success() {
+        //given
+        given(rushEventRepository.findById(1L)).willReturn(Optional.ofNullable(rushEvent));
+
+        //when
+        ResponseDto responseDto = adminService.deleteRushEvent(1L);
+
+        //then
+        assertThat(responseDto.message()).isEqualTo("요청에 성공하였습니다.");
+    }
 }
