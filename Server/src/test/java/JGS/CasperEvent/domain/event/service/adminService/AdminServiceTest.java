@@ -1489,4 +1489,20 @@ class AdminServiceTest {
         assertThat(secondOptionFound).isTrue();
 
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 선택지 조회 테스트 - 실패 (이벤트 조회 실패)")
+    void getRushEventOptionsTest_Failure_NoRushEvent() {
+        //given
+        given(rushEventRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        CustomException customException = assertThrows(CustomException.class,
+                () -> adminService.getRushEventOptions(1L)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.NO_RUSH_EVENT, customException.getErrorCode());
+        assertEquals("선착순 이벤트를 찾을 수 없습니다.", customException.getMessage());
+    }
 }
