@@ -88,7 +88,7 @@ public class AdminService {
 
     // 추첨 이벤트 생성
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
-        if (lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
+        if (lotteryEventRepository.count() >= 1) throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
                 LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime()),

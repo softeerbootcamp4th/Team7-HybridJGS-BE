@@ -176,4 +176,20 @@ class AdminServiceTest {
         assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
         assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
     }
+
+    @Test
+    @DisplayName("추첨 이벤트 생성 테스트 - 실패 (데이터베이스에 추첨 이벤트가 존재할 때)")
+    void createLotteryEventTest_Failure_TooManyLotteryEvent() {
+        //given
+        given(lotteryEventRepository.count()).willReturn(1L);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.createLotteryEvent(lotteryEventRequestDto)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, customException.getErrorCode());
+        assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", customException.getMessage());
+    }
 }
