@@ -1026,4 +1026,17 @@ class AdminServiceTest {
         assertEquals(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN, customException.getErrorCode());
         assertEquals("추첨 이벤트의 당첨자가 이미 추첨되었습니다.", customException.getMessage());
     }
+
+    @Test
+    @DisplayName("당첨자 명단 삭제 테스트 - 성공")
+    void deleteLotteryEventWinnersTest_Success() {
+        //given
+
+        //when
+        ResponseDto responseDto = adminService.deleteLotteryEventWinners();
+
+        //then
+        assertThat(responseDto.message()).isEqualTo("당첨자 명단을 삭제했습니다.");
+
+    }
 }
