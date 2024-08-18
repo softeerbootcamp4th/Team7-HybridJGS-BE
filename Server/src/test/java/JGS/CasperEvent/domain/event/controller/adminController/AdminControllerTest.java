@@ -46,8 +46,8 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -109,9 +109,9 @@ public class AdminControllerTest {
         admin = new Admin(adminId, password, Role.ADMIN);
         given(adminService.verifyAdmin(any())).willReturn(admin);
 
-        user = new BaseUser("010-0000-0000", Role.USER);
-        user.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        user.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user = spy(new BaseUser("010-0000-0000", Role.USER));
+        lenient().when(user.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(user.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         given(userService.verifyUser(any())).willReturn(user);
         // 엑세스 토큰 설정
         this.accessToken = getToken(adminId, password);
@@ -159,9 +159,9 @@ public class AdminControllerTest {
                 .expectation("expectation")
                 .referralId("QEszP1K8IqcapUHAVwikXA==").build();
 
-        casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
-        casperBot.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        casperBot.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        casperBot = spy(new CasperBot(casperBotRequestDto, "010-0000-0000"));
+        lenient().when(casperBot.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(casperBot.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 추첨 이벤트 당첨자 엔티티
         lotteryWinners = spy(new LotteryWinners(lotteryParticipants));
@@ -258,9 +258,9 @@ public class AdminControllerTest {
         adminRushEventResponseDto = AdminRushEventResponseDto.of(rushEvent);
 
         // 선착순 이벤트 참여자 엔티티
-        rushParticipants = new RushParticipants(user, rushEvent, 1);
-        rushParticipants.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        rushParticipants.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipants = spy(new RushParticipants(user, rushEvent, 1));
+        lenient().when(rushParticipants.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(rushParticipants.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 선착순 이벤트 참여자 응답 DTO
         rushEventParticipantResponseDto = RushEventParticipantResponseDto.of(rushParticipants, 1L);
@@ -397,20 +397,21 @@ public class AdminControllerTest {
                 .andExpect(jsonPath("$.prizeImageUrl").value("prize image url"))
                 .andExpect(jsonPath("$.prizeDescription").value("prize description"))
                 .andExpect(jsonPath("$.status").value("AFTER"))
-                .andExpect(jsonPath("$.options[0].optionId").value(2))
-                .andExpect(jsonPath("$.options[0].mainText").value("main text 2"))
-                .andExpect(jsonPath("$.options[0].subText").value("sub text 2"))
-                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 2"))
-                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 2"))
-                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 2"))
-                .andExpect(jsonPath("$.options[0].position").value("RIGHT"))
-                .andExpect(jsonPath("$.options[1].optionId").value(1))
-                .andExpect(jsonPath("$.options[1].mainText").value("main text 1"))
-                .andExpect(jsonPath("$.options[1].subText").value("sub text 1"))
-                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 1"))
-                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 1"))
-                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 1"))
-                .andExpect(jsonPath("$.options[1].position").value("LEFT"))
+                .andExpect(jsonPath("$.options[0].optionId").value(1))
+                .andExpect(jsonPath("$.options[0].mainText").value("main text 1"))
+                .andExpect(jsonPath("$.options[0].subText").value("sub text 1"))
+                .andExpect(jsonPath("$.options[0].resultMainText").value("result main text 1"))
+                .andExpect(jsonPath("$.options[0].resultSubText").value("result sub text 1"))
+                .andExpect(jsonPath("$.options[0].imageUrl").value("image url 1"))
+                .andExpect(jsonPath("$.options[0].position").value("LEFT"))
+                .andExpect(jsonPath("$.options[1].optionId").value(2))
+                .andExpect(jsonPath("$.options[1].mainText").value("main text 2"))
+                .andExpect(jsonPath("$.options[1].subText").value("sub text 2"))
+                .andExpect(jsonPath("$.options[1].resultMainText").value("result main text 2"))
+                .andExpect(jsonPath("$.options[1].resultSubText").value("result sub text 2"))
+                .andExpect(jsonPath("$.options[1].imageUrl").value("image url 2"))
+                .andExpect(jsonPath("$.options[1].position").value("RIGHT"))
+
                 .andDo(print());
     }
 
