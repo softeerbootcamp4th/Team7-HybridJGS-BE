@@ -1098,4 +1098,20 @@ class AdminServiceTest {
 
         assertThat(lotteryEventWinners.totalParticipants()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("추첨 이벤트 당첨자 조회 테스트 - 실패 (아직 추첨하지 않음)")
+    void getLotteryEventWinnersTest_Failure_NotDrawn() {
+        //given
+        given(lotteryWinnerRepository.count()).willReturn(0L);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.getLotteryEventWinners(1, 0, "")
+        );
+
+        //then
+        assertEquals(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN, customException.getErrorCode());
+        assertEquals("추첨 이벤트가 아직 추첨되지 않았습니다.", customException.getMessage());
+    }
 }
