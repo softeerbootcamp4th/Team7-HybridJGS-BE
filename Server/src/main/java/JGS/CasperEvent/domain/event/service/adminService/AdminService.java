@@ -184,6 +184,7 @@ public class AdminService {
         return rushEventResponseDtoList;
     }
 
+    // 선착순 이벤트 참여자 조회
     public RushEventParticipantsListResponseDto getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 

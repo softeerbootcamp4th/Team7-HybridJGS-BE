@@ -11,11 +11,14 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventOptionResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -55,8 +58,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -86,7 +87,8 @@ class AdminServiceTest {
     private RushOption rightOption;
 
     private Admin admin;
-    private BaseUser user;
+    private BaseUser user1;
+    private BaseUser user2;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryParticipants lotteryParticipants;
@@ -94,6 +96,8 @@ class AdminServiceTest {
     private RushEventRequestDto rushEventRequestDto;
     private RushEventOptionRequestDto leftOptionRequestDto;
     private RushEventOptionRequestDto rightOptionRequestDto;
+    private RushParticipants rushParticipant1;
+    private RushParticipants rushParticipant2;
 
     @InjectMocks
     AdminService adminService;
@@ -104,9 +108,14 @@ class AdminServiceTest {
         admin = new Admin("adminId", "password", Role.ADMIN);
 
         // 유저 객체
-        user = new BaseUser("010-0000-0000", Role.USER);
-        user.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        user.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user1 = new BaseUser("010-0000-0000", Role.USER);
+        user1.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user1.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        user2 = new BaseUser("010-9999-9999", Role.USER);
+        user2.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user2.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
         // 추첨 이벤트 생성 요청 DTO
         lotteryEventRequestDto = LotteryEventRequestDto.builder()
                 .startDate(LocalDate.of(2000, 9, 27))
@@ -124,7 +133,7 @@ class AdminServiceTest {
         );
 
         // 추첨 이벤트 참여자 엔티티
-        lotteryParticipants = new LotteryParticipants(user);
+        lotteryParticipants = new LotteryParticipants(user1);
 
 
         // 선착순 이벤트 옵션 요청 DTO
@@ -193,6 +202,15 @@ class AdminServiceTest {
         );
 
         rushEvent.addOption(leftOption, rightOption);
+
+        // 선착순 이벤트 참여자
+        rushParticipant1 = new RushParticipants(user1, rushEvent, 1);
+        rushParticipant1.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipant1.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        rushParticipant2 = new RushParticipants(user1, rushEvent, 2);
+        rushParticipant2.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipant2.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
     }
 
     @Test
@@ -498,4 +516,35 @@ class AdminServiceTest {
         assertThat(secondOptionFound).isTrue();
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 참여자 조회 테스트 - 성공 (전화번호가 존재하고 결과가 동점이 아닌 경우")
+    void testName() {
+        //given
+        List<RushParticipants> rushParticipantsList = new ArrayList<>();
+        rushParticipantsList.add(rushParticipant1);
+        Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
+
+        given(rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(eq(1L), eq(1), eq("010-0000-0000"), any(Pageable.class)))
+                .willReturn(rushParticipantsPage);
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionIdAndBaseUser_Id(1L, 1, "010-0000-0000"))
+                .willReturn(1L);
+
+        //when
+        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "010-0000-0000");
+
+        //then
+        assertThat(rushEventParticipants.isLastPage()).isTrue();
+        assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
+
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+
+        RushEventParticipantResponseDto participant = participantsList.get(0);
+
+        assertThat(participant.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(participant.balanceGameChoice()).isEqualTo(1);
+        assertThat(participant.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(participant.createdTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(participant.rank()).isEqualTo(0);
+
+    }
 }
