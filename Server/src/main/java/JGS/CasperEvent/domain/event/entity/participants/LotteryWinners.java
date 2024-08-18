@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 public class LotteryWinners {
-    private long id;
+    private Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
