@@ -1552,4 +1552,21 @@ class AdminServiceTest {
         assertThat(lotteryEventExpectations.isLastPage()).isTrue();
         assertThat(lotteryEventExpectations.totalExpectations()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("기대평 조회 테스트 - 실패 (참여자 조회 실패)")
+    void getLotteryEventExpectationsTest_Failure_UserNotFound() {
+        //given
+        given(lotteryParticipantsRepository.findById(1L))
+                .willReturn(Optional.empty());
+
+        //when
+        CustomException customException = assertThrows(CustomException.class,
+                () -> adminService.getLotteryEventExpectations(0, 1, 1L)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.USER_NOT_FOUND, customException.getErrorCode());
+        assertEquals("응모하지 않은 사용자입니다.", customException.getMessage());
+    }
 }
