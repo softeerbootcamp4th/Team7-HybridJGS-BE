@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,8 +18,7 @@ import java.net.URL;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -30,6 +28,7 @@ class S3ServiceTest {
     @Mock
     private AmazonS3 amazonS3;
 
+    private String bucketName;
     private MockMultipartFile image;
 
     @InjectMocks
@@ -37,7 +36,8 @@ class S3ServiceTest {
 
     @BeforeEach
     void setUp(){
-        ReflectionTestUtils.setField(s3Service, "bucketName", "s3Bucket");
+        bucketName = "s3Bucket";
+        ReflectionTestUtils.setField(s3Service, "bucketName", bucketName);
     }
 
     @Test
@@ -46,7 +46,7 @@ class S3ServiceTest {
         //given
         URL url = new URL("http", "www.example.com", "/image.jpg");
         image = new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes());
-        given(amazonS3.getUrl(eq("s3Bucket"), anyString()))
+        given(amazonS3.getUrl(eq(bucketName), anyString()))
                 .willReturn(url);
         //when
         String imageUrl = s3Service.upload(image);
@@ -114,6 +114,22 @@ class S3ServiceTest {
 
         //then
         assertThat("io exception on image upload").isEqualTo(amazonS3Exception.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("이미지 업로드 테스트 - 실패 (버킷 업로드 실패)")
+    void uploadTest_Failure_BucketException() throws Exception {
+        //given
+        image = new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes());
+        doThrow(new RuntimeException()).when(amazonS3).putObject(any());
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.upload(image)
+        );
+
+        //then
+        assertThat("이미지 업로드에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
 }
