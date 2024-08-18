@@ -81,10 +81,12 @@ public class AdminService {
         return ResponseDto.of("관리자 생성 성공");
     }
 
+    // 이미지 업로드
     public ImageUrlResponseDto postImage(MultipartFile image) {
         return new ImageUrlResponseDto(s3Service.upload(image));
     }
 
+    // 추첨 이벤트 생성
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         if (lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
 

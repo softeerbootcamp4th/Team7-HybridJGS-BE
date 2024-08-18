@@ -1,8 +1,11 @@
 package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -25,6 +28,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -58,11 +64,29 @@ class AdminServiceTest {
     AdminService adminService;
 
     private Admin admin;
+    private LotteryEvent lotteryEvent;
+    private LotteryEventRequestDto lotteryEventRequestDto;
 
     @BeforeEach
     void setUp() {
         // 어드민 객체
         admin = new Admin("adminId", "password", Role.ADMIN);
+
+        // 추첨 이벤트 생성 요청 DTO
+        lotteryEventRequestDto = LotteryEventRequestDto.builder()
+                .startDate(LocalDate.of(2000, 9, 27))
+                .startTime(LocalTime.of(0, 0))
+                .endDate(LocalDate.of(2100, 9, 27))
+                .endTime(LocalTime.of(0, 0))
+                .winnerCount(315)
+                .build();
+
+        // 추첨 이벤트 엔티티
+        lotteryEvent = new LotteryEvent(
+                LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime()),
+                LocalDateTime.of(lotteryEventRequestDto.getEndDate(), lotteryEventRequestDto.getEndTime()),
+                lotteryEventRequestDto.getWinnerCount()
+        );
     }
 
     @Test
@@ -134,5 +158,22 @@ class AdminServiceTest {
 
         //then
         assertThat(imageUrlResponseDto.imageUrl()).isEqualTo("www.image.com");
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 생성 테스트 - 성공")
+    void createLotteryEventTest_Success() {
+        //given
+        given(lotteryEventRepository.count()).willReturn(0L);
+        given(lotteryEventRepository.save(lotteryEvent)).willReturn(lotteryEvent);
+
+        //when
+        LotteryEventResponseDto lotteryEventResponseDto = adminService.createLotteryEvent(lotteryEventRequestDto);
+
+        //then
+        assertThat(lotteryEventResponseDto.serverDateTime()).isEqualTo("2024-08-18T13:36:18.155541");
+        assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
+        assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
+        assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
     }
 }
