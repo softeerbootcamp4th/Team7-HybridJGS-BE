@@ -39,6 +39,7 @@ public class UrlService {
     // 단축 url 생성
     public ShortenUrlResponseDto generateShortUrl(BaseUser user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String encryptedUserId = AESUtils.encrypt(user.getId(), secretKey);
+        System.out.println("encryptedUserId = " + encryptedUserId);
 
         String originalUrl = clientUrl + "?" + "referralId=" + encryptedUserId;
         String originalLocalUrl = localClientUrl + "?" + "referralId=" + encryptedUserId;
@@ -59,6 +60,7 @@ public class UrlService {
         return new ShortenUrlResponseDto(shortenUrl, shortenLocalUrl);
     }
 
+    // 원본 url 조회 테스트
     public String getOriginalUrl(String encodedId){
         Long urlId = Base62Utils.decode(encodedId);
         Url url = urlRepository.findById(urlId).orElseThrow(NoSuchElementException::new);

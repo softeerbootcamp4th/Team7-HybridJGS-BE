@@ -23,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,5 +69,19 @@ class UrlServiceTest {
         assertThat(shortenUrlResponseDto.shortenLocalUrl()).isEqualTo("baseUrl/link/B");
     }
 
+    @Test
+    @DisplayName("원본 url 조회 테스트 - 성공")
+    void getOriginalUrlTest_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        //given
+        Url url = new Url(AESUtils.encrypt(user.getId(), secretKey));
+        given(urlRepository.findById(any())).willReturn(Optional.of(url));
+
+        //when
+        String originalUrl = urlService.getOriginalUrl("B");
+
+        //then
+        assertThat(originalUrl).isEqualTo("GH379iuBZdNRV9uGEk1KWg==");
+
+    }
 
 }
