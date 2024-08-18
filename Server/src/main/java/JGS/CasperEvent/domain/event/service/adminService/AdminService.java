@@ -27,8 +27,6 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
-import JGS.CasperEvent.global.error.exception.TooManyRushEventException;
 import JGS.CasperEvent.global.response.ResponseDto;
 import JGS.CasperEvent.global.service.S3Service;
 import lombok.RequiredArgsConstructor;
