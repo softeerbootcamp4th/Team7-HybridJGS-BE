@@ -87,12 +87,10 @@ class AdminServiceTest {
 
     private RushEvent rushEvent;
     private RushOption leftOption;
-    @Mock
     private RushOption rightOption;
 
     private Admin admin;
-    private BaseUser user1;
-    private BaseUser user2;
+    private BaseUser user;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryParticipants lotteryParticipants;
@@ -113,14 +111,9 @@ class AdminServiceTest {
         admin = new Admin("adminId", "password", Role.ADMIN);
 
         // 유저 객체
-        user1 = new BaseUser("010-0000-0000", Role.USER);
-        user1.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        user1.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-
-        user2 = new BaseUser("010-9999-9999", Role.USER);
-        user2.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        user2.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-
+        user = spy(new BaseUser("010-0000-0000", Role.USER));
+        lenient().when(user.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(user.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         // 추첨 이벤트 생성 요청 DTO
         lotteryEventRequestDto = LotteryEventRequestDto.builder()
                 .startDate(LocalDate.of(2000, 9, 27))
@@ -138,9 +131,9 @@ class AdminServiceTest {
         );
 
         // 추첨 이벤트 참여자 엔티티
-        lotteryParticipants = new LotteryParticipants(user1);
-        lotteryParticipants.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        lotteryParticipants.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lotteryParticipants = spy(new LotteryParticipants(user));
+        lenient().when(lotteryParticipants.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(lotteryParticipants.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 선착순 이벤트 옵션 요청 DTO
         leftOptionRequestDto = RushEventOptionRequestDto.builder()
@@ -208,25 +201,61 @@ class AdminServiceTest {
         );
 
         // 선착순 이벤트 참여자
-        rushParticipant = new RushParticipants(user1, rushEvent, 1);
-        rushParticipant.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        rushParticipant.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        rushParticipant = spy(new RushParticipants(user, rushEvent, 1));
+        lenient().when(rushParticipant.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lenient().when(rushParticipant.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
 
         // 캐스퍼 봇 생성
         casperBotRequestDto = CasperBotRequestDto.builder()
-                .eyeShape(0)
-                .eyePosition(0)
-                .mouthShape(0)
-                .color(0)
-                .sticker(0)
-                .name("name")
-                .expectation("expectation")
-                .referralId("QEszP1K8IqcapUHAVwikXA==").build();
+                        .
 
-        casperBot = spy(new CasperBot(casperBotRequestDto, "010-0000-0000"));
-        lenient().when(casperBot.getCasperId()).thenReturn(1L);
-        lenient().when(casperBot.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-        lenient().when(casperBot.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+                eyeShape(0)
+                        .
+
+                eyePosition(0)
+                        .
+
+                mouthShape(0)
+                        .
+
+                color(0)
+                        .
+
+                sticker(0)
+                        .
+
+                name("name")
+                        .
+
+                expectation("expectation")
+                        .
+
+                referralId("QEszP1K8IqcapUHAVwikXA==").
+
+                build();
+
+        casperBot =
+
+                spy(new CasperBot(casperBotRequestDto, "010-0000-0000"));
+
+        lenient().
+
+                when(casperBot.getCasperId()).
+
+                thenReturn(1L);
+
+        lenient().
+
+                when(casperBot.getCreatedAt()).
+
+                thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
+        lenient().
+
+                when(casperBot.getUpdatedAt()).
+
+                thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
     }
 
     @Test
