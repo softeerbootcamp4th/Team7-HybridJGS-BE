@@ -337,6 +337,26 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (데이터베이스에 추첨 이벤트가 2개 이상 존재)")
+    void getCurrentLotteryEvent_Success() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll())
+                .willReturn(lotteryEventList);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.getLotteryEvent()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, customException.getErrorCode());
+        assertEquals("현재 진행중인 lotteryEvent가 2개 이상입니다.", customException.getMessage());
+    }
+
+    @Test
     @DisplayName("추첨 이벤트 참여자 조회 성공 테스트 (전화번호가 없을 때)")
     void getLotteryEventParticipantsTest_Success_withoutPhoneNumber() {
         //given
@@ -926,4 +946,5 @@ class AdminServiceTest {
         assertEquals(CustomErrorCode.EVENT_BEFORE_START_TIME, customException.getErrorCode());
         assertEquals("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", customException.getMessage());
     }
+
 }

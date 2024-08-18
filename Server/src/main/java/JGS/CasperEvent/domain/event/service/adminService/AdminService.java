@@ -317,6 +317,7 @@ public class AdminService {
         return LotteryEventDetailResponseDto.of(currentLotteryEvent);
     }
 
+    // 추첨 이벤트 조회
     private LotteryEvent getCurrentLotteryEvent() {
         List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
 
