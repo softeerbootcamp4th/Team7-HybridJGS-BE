@@ -36,6 +36,7 @@ public class UrlService {
     private final SecretKey secretKey;
 
     //todo: 테스트 끝나면 수정필요
+    // 단축 url 생성
     public ShortenUrlResponseDto generateShortUrl(BaseUser user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String encryptedUserId = AESUtils.encrypt(user.getId(), secretKey);
 
