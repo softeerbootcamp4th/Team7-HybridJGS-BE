@@ -337,8 +337,26 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (데이터베이스에 추첨 이벤트가 없을 때)")
+    void getLotteryEvent_Failure_NoLotteryEvent() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        given(lotteryEventRepository.findAll())
+                .willReturn(lotteryEventList);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.getLotteryEvent()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.NO_LOTTERY_EVENT, customException.getErrorCode());
+        assertEquals("현재 진행중인 lotteryEvent가 존재하지 않습니다.", customException.getMessage());
+    }
+
+    @Test
     @DisplayName("추첨 이벤트 조회 테스트 - 실패 (데이터베이스에 추첨 이벤트가 2개 이상 존재)")
-    void getCurrentLotteryEvent_Success() {
+    void getLotteryEvent_Failure_TooManyLotteryEvent() {
         //given
         List<LotteryEvent> lotteryEventList = new ArrayList<>();
         lotteryEventList.add(lotteryEvent);
