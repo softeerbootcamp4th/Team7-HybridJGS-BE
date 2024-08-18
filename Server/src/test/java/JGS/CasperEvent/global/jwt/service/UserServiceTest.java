@@ -27,11 +27,28 @@ class UserServiceTest {
 
     @Test
     @DisplayName("유저 식별 테스트 - 성공 (가입한 유저)")
-    void testName() {
+    void verifyUserTest_Success() {
         //given
         UserLoginDto userLoginDto = new UserLoginDto("010-0000-0000");
         BaseUser user = new BaseUser("010-0000-0000", Role.USER);
         given(userRepository.findById("010-0000-0000")).willReturn(Optional.of(user));
+
+        //when
+        BaseUser verifiedUser = userService.verifyUser(userLoginDto);
+
+        //then
+        assertThat(verifiedUser.getId()).isEqualTo("010-0000-0000");
+        assertThat(verifiedUser.getRole()).isEqualTo(Role.USER);
+    }
+
+    @Test
+    @DisplayName("유저 식별 테스트 - 성공 (가입하지 않은 유저)")
+    void testName() {
+        //given
+        UserLoginDto userLoginDto = new UserLoginDto("010-0000-0000");
+        BaseUser user = new BaseUser("010-0000-0000", Role.USER);
+        given(userRepository.findById("010-0000-0000")).willReturn(Optional.empty());
+        given(userRepository.save(user)).willReturn(user);
 
         //when
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
