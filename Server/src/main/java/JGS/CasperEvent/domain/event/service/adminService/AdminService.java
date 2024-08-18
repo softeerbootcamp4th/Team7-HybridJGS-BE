@@ -282,6 +282,7 @@ public class AdminService {
         lotteryEventRepository.deleteById(currentLotteryEvent.getLotteryEventId());
     }
 
+    // 선착순 이벤트 업데이트
     @Transactional
     public LotteryEventDetailResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();

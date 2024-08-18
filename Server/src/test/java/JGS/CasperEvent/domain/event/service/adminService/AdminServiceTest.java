@@ -791,8 +791,28 @@ class AdminServiceTest {
 
         //when
         adminService.deleteLotteryEvent();
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 성공")
+    void testName() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        LotteryEventDetailResponseDto lotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
 
         //then
-
+        assertThat(lotteryEventDetailResponseDto.startDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(lotteryEventDetailResponseDto.startTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventDetailResponseDto.endDate()).isEqualTo(LocalDate.of(2100, 9, 27));
+        assertThat(lotteryEventDetailResponseDto.endTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventDetailResponseDto.appliedCount()).isEqualTo(0);
+        assertThat(lotteryEventDetailResponseDto.winnerCount()).isEqualTo(315);
+        assertThat(lotteryEventDetailResponseDto.status()).isEqualTo(EventStatus.DURING);
     }
+
+
 }
