@@ -9,15 +9,13 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventOptionResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
@@ -134,7 +132,8 @@ class AdminServiceTest {
 
         // 추첨 이벤트 참여자 엔티티
         lotteryParticipants = new LotteryParticipants(user1);
-
+        lotteryParticipants.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        lotteryParticipants.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 선착순 이벤트 옵션 요청 DTO
         leftOptionRequestDto = RushEventOptionRequestDto.builder()
@@ -1037,6 +1036,35 @@ class AdminServiceTest {
 
         //then
         assertThat(responseDto.message()).isEqualTo("당첨자 명단을 삭제했습니다.");
+    }
 
+    @Test
+    @DisplayName("당첨자 명단 조회 테스트 - 성공")
+    void testName() {
+        //given
+        List<LotteryWinners> lotteryWinnersList = new ArrayList<>();
+        lotteryWinnersList.add(new LotteryWinners(lotteryParticipants));
+        Page<LotteryWinners> lotteryWinnersPage = new PageImpl<>(lotteryWinnersList);
+
+        given(lotteryWinnerRepository.count()).willReturn(315L);
+        given(lotteryWinnerRepository.findAll(any(Pageable.class)))
+                .willReturn(lotteryWinnersPage);
+
+        //when
+        LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "");
+
+        //then
+        LotteryEventWinnerResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
+        assertThat(actualWinner.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(actualWinner.linkClickedCounts()).isEqualTo(0);
+        assertThat(actualWinner.expectation()).isEqualTo(0);
+        assertThat(actualWinner.appliedCount()).isEqualTo(1);
+        assertThat(actualWinner.ranking()).isEqualTo(0);
+        assertThat(actualWinner.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(actualWinner.createdTime()).isEqualTo(LocalTime.of(0, 0));
+
+        assertThat(lotteryEventWinners.isLastPage()).isTrue();
+
+        assertThat(lotteryEventWinners.totalParticipants()).isEqualTo(315);
     }
 }

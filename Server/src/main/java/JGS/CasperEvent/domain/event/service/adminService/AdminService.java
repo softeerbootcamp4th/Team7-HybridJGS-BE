@@ -384,6 +384,7 @@ public class AdminService {
         return new ResponseDto("당첨자 명단을 삭제했습니다.");
     }
 
+    // 추첨 이벤트 당첨자 명단 조회
     public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
         if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
