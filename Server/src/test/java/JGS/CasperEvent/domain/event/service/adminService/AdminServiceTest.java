@@ -887,4 +887,43 @@ class AdminServiceTest {
         assertEquals(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW, customException.getErrorCode());
         assertEquals("현재 진행 중인 이벤트의 종료 시간을 현재 시간보다 이전으로 설정할 수 없습니다.", customException.getMessage());
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 업데이트 테스트 - 실패 (이벤트가 시작 전일 때, 시작 날짜가 현재 시간보다 앞서는 경우)")
+    void updateLotteryEventTest_Failure_StartBeforeNow() {
+        //given
+        lotteryEventRequestDto = LotteryEventRequestDto.builder()
+                .startDate(LocalDate.of(2100, 9, 27))
+                .startTime(LocalTime.of(0, 0))
+                .endDate(LocalDate.of(2200, 9, 27))
+                .endTime(LocalTime.of(0, 0))
+                .winnerCount(315)
+                .build();
+
+        lotteryEvent = new LotteryEvent(
+                LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime()),
+                LocalDateTime.of(lotteryEventRequestDto.getEndDate(), lotteryEventRequestDto.getEndTime()),
+                lotteryEventRequestDto.getWinnerCount()
+        );
+
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        lotteryEventRequestDto = LotteryEventRequestDto.builder()
+                .startDate(LocalDate.of(2000, 9, 27))
+                .startTime(LocalTime.of(0, 0))
+                .endDate(LocalDate.of(2200, 9, 27))
+                .endTime(LocalTime.of(0, 0))
+                .winnerCount(315)
+                .build();
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.updateLotteryEvent(lotteryEventRequestDto)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.EVENT_BEFORE_START_TIME, customException.getErrorCode());
+        assertEquals("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", customException.getMessage());
+    }
 }
