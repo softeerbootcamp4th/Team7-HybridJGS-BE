@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.service.adminService;
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -15,6 +16,7 @@ import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryPar
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
+import JGS.CasperEvent.global.enums.EventStatus;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -31,6 +33,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -191,5 +195,26 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, customException.getErrorCode());
         assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", customException.getMessage());
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 조회 성공 테스트")
+    void getLotteryEventTest_Success() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        LotteryEventDetailResponseDto lotteryEventDetailResponseDto = adminService.getLotteryEvent();
+
+        //then
+        assertThat(lotteryEventDetailResponseDto.startDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(lotteryEventDetailResponseDto.startTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventDetailResponseDto.endDate()).isEqualTo(LocalDate.of(2100, 9, 27));
+        assertThat(lotteryEventDetailResponseDto.endTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventDetailResponseDto.appliedCount()).isEqualTo(0);
+        assertThat(lotteryEventDetailResponseDto.winnerCount()).isEqualTo(315);
+        assertThat(lotteryEventDetailResponseDto.status()).isEqualTo(EventStatus.DURING);
     }
 }

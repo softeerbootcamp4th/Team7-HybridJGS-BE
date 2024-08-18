@@ -99,6 +99,7 @@ public class AdminService {
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
+    // 추첨 이벤트 조회
     public LotteryEventDetailResponseDto getLotteryEvent() {
         return LotteryEventDetailResponseDto.of(
                 getCurrentLotteryEvent()
