@@ -132,12 +132,10 @@ public class AdminService {
 
     public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
         if (rushEventRepository.count() >= 6) throw new TooManyRushEventException();
-
         String prizeImgSrc = s3Service.upload(prizeImg);
         String leftOptionImgSrc = s3Service.upload(leftOptionImg);
         String rightOptionImgSrc = s3Service.upload(rightOptionImg);
 
-        // Img s3 저장
         RushEvent rushEvent = rushEventRepository.save(
                 new RushEvent(
                         LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime()),
@@ -171,7 +169,6 @@ public class AdminService {
         ));
 
         rushEvent.addOption(leftRushOption, rightRushOption);
-
         return AdminRushEventResponseDto.of(rushEvent);
     }
 
@@ -352,7 +349,7 @@ public class AdminService {
             int cumulativeSum = 0;
             for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
                 cumulativeSum += lotteryParticipant.getAppliedCount();
-                if(randomValue <= cumulativeSum){
+                if (randomValue <= cumulativeSum) {
                     lotteryEventWinners.add(lotteryParticipant);
                     lotteryParticipants.remove(lotteryParticipant);
                     break;
@@ -367,7 +364,7 @@ public class AdminService {
         return new ResponseDto("추첨이 완료되었습니다.");
     }
 
-    public ResponseDto deleteLotteryEventWinners(){
+    public ResponseDto deleteLotteryEventWinners() {
         lotteryWinnerRepository.deleteAll();
         return new ResponseDto("당첨자 명단을 삭제했습니다.");
     }

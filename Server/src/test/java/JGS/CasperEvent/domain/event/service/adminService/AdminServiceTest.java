@@ -2,13 +2,19 @@ package JGS.CasperEvent.domain.event.service.adminService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
@@ -21,6 +27,7 @@ import JGS.CasperEvent.domain.event.repository.participantsRepository.RushPartic
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.EventStatus;
+import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -40,9 +47,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -73,15 +80,23 @@ class AdminServiceTest {
     @Mock
     private LotteryWinnerRepository lotteryWinnerRepository;
 
-    @InjectMocks
-    AdminService adminService;
+    private RushEvent rushEvent;
+    private RushOption leftOption;
+    @Mock
+    private RushOption rightOption;
 
     private Admin admin;
-
     private BaseUser user;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
     private LotteryParticipants lotteryParticipants;
+
+    private RushEventRequestDto rushEventRequestDto;
+    private RushEventOptionRequestDto leftOptionRequestDto;
+    private RushEventOptionRequestDto rightOptionRequestDto;
+
+    @InjectMocks
+    AdminService adminService;
 
     @BeforeEach
     void setUp() {
@@ -110,6 +125,72 @@ class AdminServiceTest {
 
         // 추첨 이벤트 참여자 엔티티
         lotteryParticipants = new LotteryParticipants(user);
+
+
+        // 선착순 이벤트 옵션 요청 DTO
+        leftOptionRequestDto = RushEventOptionRequestDto.builder()
+                .rushOptionId(1L)
+                .position(Position.LEFT)
+                .mainText("Main Text 1")
+                .subText("Sub Text 1")
+                .resultMainText("Result Main Text 1")
+                .resultSubText("Result Sub Text 1")
+                .imageUrl("http://example.com/leftImage.jpg").build();
+
+        rightOptionRequestDto = RushEventOptionRequestDto.builder()
+                .rushOptionId(1L)
+                .position(Position.RIGHT)
+                .mainText("Main Text 2")
+                .subText("Sub Text 2")
+                .resultMainText("Result Main Text 2")
+                .resultSubText("Result Sub Text 2")
+                .imageUrl("http://example.com/rightImage.jpg").build();
+
+        Set<RushEventOptionRequestDto> options = new HashSet<>();
+        options.add(leftOptionRequestDto);
+        options.add(rightOptionRequestDto);
+
+        // 선착순 이벤트 요청 DTO
+        rushEventRequestDto = RushEventRequestDto.builder()
+                .rushEventId(1L)
+                .eventDate(LocalDate.of(2024, 8, 15))
+                .startTime(LocalTime.of(0, 0))
+                .endTime(LocalTime.of(23, 59))
+                .winnerCount(100)
+                .prizeImageUrl("http://example.com/image.jpg")
+                .prizeDescription("This is a detailed description of the prize.")
+                .options(options)
+                .build();
+
+        // 선착순 이벤트 객체
+        rushEvent = new RushEvent(
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime()),
+                LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime()),
+                rushEventRequestDto.getWinnerCount(),
+                "http://example.com/image.jpg",
+                rushEventRequestDto.getPrizeDescription()
+        );
+
+        // 선착순 이벤트 선택지 객체
+        leftOption = new RushOption(
+                rushEvent,
+                leftOptionRequestDto.getMainText(),
+                leftOptionRequestDto.getSubText(),
+                leftOptionRequestDto.getResultMainText(),
+                leftOptionRequestDto.getResultSubText(),
+                "http://example.com/image.jpg",
+                Position.LEFT
+        );
+
+        rightOption = new RushOption(
+                rushEvent,
+                rightOptionRequestDto.getMainText(),
+                rightOptionRequestDto.getSubText(),
+                rightOptionRequestDto.getResultMainText(),
+                rightOptionRequestDto.getResultSubText(),
+                "http://example.com/image.jpg",
+                Position.RIGHT
+        );
     }
 
     @Test
@@ -292,4 +373,61 @@ class AdminServiceTest {
         assertThat(retrievedParticipant.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(retrievedParticipant.createdTime()).isEqualTo(LocalTime.of(0, 0, 0));
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 생성 테스트 - 성공")
+    void createRushEventTest_Success() {
+        //given
+        MockMultipartFile prizeImg = new MockMultipartFile("prizeImg", "prizeImage.png", "png", "<<data>>".getBytes());
+        MockMultipartFile leftOptionImg = new MockMultipartFile("leftOptionImg", "leftOptionImage.png", "png", "<<data>>".getBytes());
+        MockMultipartFile rightOptionImg = new MockMultipartFile("rightOptionImg", "rightOptionImage.png", "png", "<<data>>".getBytes());
+
+
+        given(rushEventRepository.count()).willReturn(1L);
+        given(rushEventRepository.save(rushEvent)).willReturn(rushEvent);
+        given(rushOptionRepository.save(leftOption)).willReturn(leftOption);
+        given(rushOptionRepository.save(rightOption)).willReturn(rightOption);
+
+        given(s3Service.upload(any())).willReturn("http://example.com/image.jpg");
+
+
+        //when
+        AdminRushEventResponseDto adminRushEventResponseDto = adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg);
+
+        //then
+        assertThat(adminRushEventResponseDto.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(adminRushEventResponseDto.startTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(adminRushEventResponseDto.endTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(adminRushEventResponseDto.winnerCount()).isEqualTo(100);
+        assertThat(adminRushEventResponseDto.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(adminRushEventResponseDto.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(adminRushEventResponseDto.status()).isEqualTo(EventStatus.AFTER);
+
+        Set<RushEventOptionResponseDto> options = adminRushEventResponseDto.options();
+
+        boolean firstOptionFound = false;
+        boolean secondOptionFound = false;
+
+        for (RushEventOptionResponseDto option : options) {
+            if (option.mainText().equals("Main Text 2") &&
+                    option.subText().equals("Sub Text 2") &&
+                    option.resultMainText().equals("Result Main Text 2") &&
+                    option.resultSubText().equals("Result Sub Text 2") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.RIGHT)) {
+                firstOptionFound = true;
+            } else if (option.mainText().equals("Main Text 1") &&
+                    option.subText().equals("Sub Text 1") &&
+                    option.resultMainText().equals("Result Main Text 1") &&
+                    option.resultSubText().equals("Result Sub Text 1") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.LEFT)) {
+                secondOptionFound = true;
+            }
+        }
+
+        assertThat(firstOptionFound).isTrue();
+        assertThat(secondOptionFound).isTrue();
+    }
+
 }
