@@ -1011,4 +1011,19 @@ class AdminServiceTest {
         assertThat(responseDto.message()).isEqualTo("추첨이 완료되었습니다.");
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 당첨자 추첨 테스트 - 실패 (이미 추첨이 완료된 경우)")
+    void pickLotteryEventWinnersTest_Failure_AlreadyDrown() {
+        //given
+        given(lotteryWinnerRepository.count()).willReturn(315L);
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.pickLotteryEventWinners()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN, customException.getErrorCode());
+        assertEquals("추첨 이벤트의 당첨자가 이미 추첨되었습니다.", customException.getMessage());
+    }
 }
