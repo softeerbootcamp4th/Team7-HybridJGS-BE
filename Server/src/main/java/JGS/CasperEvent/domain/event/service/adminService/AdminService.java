@@ -227,6 +227,7 @@ public class AdminService {
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
+    // 선착순 이벤트 당첨자 조회
     public RushEventParticipantsListResponseDto getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
         Page<RushParticipants> rushParticipantsPage = null;
 
@@ -239,10 +240,8 @@ public class AdminService {
 
         boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
 
-        int winnerOptionId;
-        if (leftSelect > rightSelect) winnerOptionId = 1;
-        else if (leftSelect < rightSelect) winnerOptionId = 2;
-        else winnerOptionId = 0;
+        int winnerOptionId = (leftSelect > rightSelect) ? 1 : (leftSelect < rightSelect) ? 2 : 0;
+
 
         if (!isPhoneNumberEmpty && winnerOptionId != 0) {
             // 전화번호와 유효한 옵션 ID가 있는 경우
@@ -276,6 +275,7 @@ public class AdminService {
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
+    // 선착순 이벤트 삭제
     @Transactional
     public void deleteLotteryEvent() {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();

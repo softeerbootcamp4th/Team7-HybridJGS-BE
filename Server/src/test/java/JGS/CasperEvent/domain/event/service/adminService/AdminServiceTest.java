@@ -780,4 +780,19 @@ class AdminServiceTest {
         assertThat(participant.createdTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(participant.rank()).isEqualTo(0);
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 삭제 - 성공")
+    void deleteLotteryEvent_Success() {
+        //given
+        List<LotteryEvent> lotteryEventList = new ArrayList<>();
+        lotteryEventList.add(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        adminService.deleteLotteryEvent();
+
+        //then
+
+    }
 }
