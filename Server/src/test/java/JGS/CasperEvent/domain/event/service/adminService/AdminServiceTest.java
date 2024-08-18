@@ -143,7 +143,7 @@ class AdminServiceTest {
                 .subText("Sub Text 1")
                 .resultMainText("Result Main Text 1")
                 .resultSubText("Result Sub Text 1")
-                .imageUrl("http://example.com/leftImage.jpg").build();
+                .imageUrl("http://example.com/image.jpg").build();
 
         rightOptionRequestDto = RushEventOptionRequestDto.builder()
                 .rushOptionId(1L)
@@ -152,7 +152,7 @@ class AdminServiceTest {
                 .subText("Sub Text 2")
                 .resultMainText("Result Main Text 2")
                 .resultSubText("Result Sub Text 2")
-                .imageUrl("http://example.com/rightImage.jpg").build();
+                .imageUrl("http://example.com/image.jpg").build();
 
         Set<RushEventOptionRequestDto> options = new HashSet<>();
         options.add(leftOptionRequestDto);
@@ -1113,5 +1113,60 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN, customException.getErrorCode());
         assertEquals("추첨 이벤트가 아직 추첨되지 않았습니다.", customException.getMessage());
+    }
+
+    @Test
+    @DisplayName("테스트")
+    void testName() {
+        //given
+        rushEvent.addOption(leftOption, rightOption);
+        List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
+        rushEventRequestDtoList.add(rushEventRequestDto);
+
+        List<RushEvent> rushEventList = new ArrayList<>();
+        rushEventList.add(rushEvent);
+
+        given(rushEventRepository.findByRushEventId(1L)).willReturn(rushEvent);
+        given(rushEventRepository.findAll()).willReturn(rushEventList);
+
+        //when
+        List<AdminRushEventResponseDto> rushEventResponseDtoList = adminService.updateRushEvents(rushEventRequestDtoList);
+
+        //then
+
+        AdminRushEventResponseDto actualRushEvent = rushEventResponseDtoList.iterator().next();
+        assertThat(actualRushEvent.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(actualRushEvent.startTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(actualRushEvent.endTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(actualRushEvent.winnerCount()).isEqualTo(100);
+        assertThat(actualRushEvent.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(actualRushEvent.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(actualRushEvent.status()).isEqualTo(EventStatus.AFTER);
+
+        Set<RushEventOptionResponseDto> options = actualRushEvent.options();
+
+        boolean firstOptionFound = false;
+        boolean secondOptionFound = false;
+
+        for (RushEventOptionResponseDto option : options) {
+            if (option.mainText().equals("Main Text 2") &&
+                    option.subText().equals("Sub Text 2") &&
+                    option.resultMainText().equals("Result Main Text 2") &&
+                    option.resultSubText().equals("Result Sub Text 2") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.RIGHT)) {
+                firstOptionFound = true;
+            } else if (option.mainText().equals("Main Text 1") &&
+                    option.subText().equals("Sub Text 1") &&
+                    option.resultMainText().equals("Result Main Text 1") &&
+                    option.resultSubText().equals("Result Sub Text 1") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.LEFT)) {
+                secondOptionFound = true;
+            }
+        }
+
+        assertThat(firstOptionFound).isTrue();
+        assertThat(secondOptionFound).isTrue();
     }
 }

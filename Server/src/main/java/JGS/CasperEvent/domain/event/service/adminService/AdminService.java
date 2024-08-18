@@ -410,6 +410,7 @@ public class AdminService {
         return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
+    // 선착순 이벤트 업데이트
     @Transactional
     public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
