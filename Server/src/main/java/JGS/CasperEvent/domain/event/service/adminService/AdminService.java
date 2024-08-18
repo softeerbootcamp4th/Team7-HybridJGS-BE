@@ -131,7 +131,7 @@ public class AdminService {
     }
 
     public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
-        if (rushEventRepository.count() >= 6) throw new TooManyRushEventException();
+        if (rushEventRepository.count() >= 6) throw new CustomException(CustomErrorCode.TOO_MANY_RUSH_EVENT);
         String prizeImgSrc = s3Service.upload(prizeImg);
         String leftOptionImgSrc = s3Service.upload(leftOptionImg);
         String rightOptionImgSrc = s3Service.upload(rightOptionImg);

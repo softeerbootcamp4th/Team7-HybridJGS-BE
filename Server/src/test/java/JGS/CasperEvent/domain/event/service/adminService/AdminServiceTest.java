@@ -215,7 +215,7 @@ class AdminServiceTest {
 
     @Test
     @DisplayName("어드민 생성 테스트 - 성공")
-    void testName() {
+    void postAdminTest_Success() {
         //given
         AdminRequestDto adminRequestDto = AdminRequestDto.builder()
                 .adminId("adminId")
@@ -428,6 +428,25 @@ class AdminServiceTest {
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 생성 테스트 - 실패 (데이터베이스에 이미 6개의 선착순 이벤트가 존재할 때)")
+    void createRushEventTest_Failure_TooManyRushEvent() {
+        //given
+        given(rushEventRepository.count()).willReturn(6L);
+        MockMultipartFile prizeImg = new MockMultipartFile("prizeImg", "prizeImage.png", "png", "<<data>>".getBytes());
+        MockMultipartFile leftOptionImg = new MockMultipartFile("leftOptionImg", "leftOptionImage.png", "png", "<<data>>".getBytes());
+        MockMultipartFile rightOptionImg = new MockMultipartFile("rightOptionImg", "rightOptionImage.png", "png", "<<data>>".getBytes());
+
+        //when
+        CustomException customException = assertThrows(CustomException.class, () ->
+                adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.TOO_MANY_RUSH_EVENT, customException.getErrorCode());
+        assertEquals("현재 진행중인 선착순 이벤트가 6개 이상입니다.", customException.getMessage());
     }
 
 }
