@@ -191,6 +191,8 @@ class AdminServiceTest {
                 "http://example.com/image.jpg",
                 Position.RIGHT
         );
+
+        rushEvent.addOption(leftOption, rightOption);
     }
 
     @Test
@@ -447,6 +449,53 @@ class AdminServiceTest {
         //then
         assertEquals(CustomErrorCode.TOO_MANY_RUSH_EVENT, customException.getErrorCode());
         assertEquals("현재 진행중인 선착순 이벤트가 6개 이상입니다.", customException.getMessage());
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 조회 테스트 - 성공")
+    void getRushEventsTest_Success() {
+        //given
+        List<RushEvent> rushEventList = new ArrayList<>();
+        rushEventList.add(rushEvent);
+        given(rushEventRepository.findAll()).willReturn(rushEventList);
+
+        //when
+        List<AdminRushEventResponseDto> rushEvents = adminService.getRushEvents();
+
+        //then
+        AdminRushEventResponseDto firstEvent = rushEvents.get(0);
+        assertThat(firstEvent.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(firstEvent.startTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(firstEvent.endTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(firstEvent.winnerCount()).isEqualTo(100);
+        assertThat(firstEvent.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(firstEvent.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(firstEvent.status()).isEqualTo(EventStatus.AFTER);
+
+        Set<RushEventOptionResponseDto> options = firstEvent.options();
+
+        boolean firstOptionFound = false;
+        boolean secondOptionFound = false;
+        for (RushEventOptionResponseDto option : options) {
+            if (option.mainText().equals("Main Text 1") &&
+                    option.subText().equals("Sub Text 1") &&
+                    option.resultMainText().equals("Result Main Text 1") &&
+                    option.resultSubText().equals("Result Sub Text 1") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.LEFT)) {
+                firstOptionFound = true;
+            } else if (option.mainText().equals("Main Text 2") &&
+                    option.subText().equals("Sub Text 2") &&
+                    option.resultMainText().equals("Result Main Text 2") &&
+                    option.resultSubText().equals("Result Sub Text 2") &&
+                    option.imageUrl().equals("http://example.com/image.jpg") &&
+                    option.position().equals(Position.RIGHT)) {
+                secondOptionFound = true;
+            }
+        }
+
+        assertThat(firstOptionFound).isTrue();
+        assertThat(secondOptionFound).isTrue();
     }
 
 }

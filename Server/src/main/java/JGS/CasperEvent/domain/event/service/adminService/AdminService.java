@@ -106,6 +106,7 @@ public class AdminService {
         );
     }
 
+    // 추첨 이벤트 참여자 조회
     public LotteryEventParticipantsListResponseDto getLotteryEventParticipants(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -130,6 +131,7 @@ public class AdminService {
         return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
+    // 선착순 이벤트 생성
     public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
         if (rushEventRepository.count() >= 6) throw new CustomException(CustomErrorCode.TOO_MANY_RUSH_EVENT);
         String prizeImgSrc = s3Service.upload(prizeImg);
@@ -172,6 +174,7 @@ public class AdminService {
         return AdminRushEventResponseDto.of(rushEvent);
     }
 
+    // 선착순 이벤트 조회
     public List<AdminRushEventResponseDto> getRushEvents() {
         List<RushEvent> rushEvents = rushEventRepository.findAll();
         List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
