@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,6 +71,24 @@ class UrlControllerTest {
         perform.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.shortenUrl").value("shortenUrl1"))
                 .andExpect(jsonPath("$.shortenLocalUrl").value("shortenUrl2"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("공유 링크 접속 테스트 - 성공")
+    void redirectOriginalUrl_Success() throws Exception {
+        //given
+        String encodedId = "encodedId";
+        given(urlService.getOriginalUrl(encodedId))
+                .willReturn(null);
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/link/" + encodedId)
+                .header("Authorization", accessToken)
+                .contentType(APPLICATION_JSON));
+
+        //then
+        perform.andExpect(status().isFound())
                 .andDo(print());
     }
 

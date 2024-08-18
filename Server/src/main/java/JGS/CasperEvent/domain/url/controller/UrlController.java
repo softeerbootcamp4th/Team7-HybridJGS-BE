@@ -35,6 +35,7 @@ public class UrlController {
                 .body(urlService.generateShortUrl(user));
     }
 
+    // 공유링크 접속
     @GetMapping("/{encodedId}")
     public ResponseEntity<Void> redirectOriginalUrl(@PathVariable String encodedId){
         return ResponseEntity
