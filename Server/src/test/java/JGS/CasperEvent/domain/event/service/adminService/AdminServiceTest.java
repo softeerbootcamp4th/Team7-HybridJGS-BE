@@ -1357,7 +1357,7 @@ class AdminServiceTest {
 
         rushEventRequestDto = RushEventRequestDto.builder()
                 .rushEventId(1L)
-                .eventDate(LocalDate.of(1945,8,15))
+                .eventDate(LocalDate.of(1945, 8, 15))
                 .startTime(LocalTime.of(0, 0))
                 .endTime(LocalTime.now().minusSeconds(5))
                 .winnerCount(100)
@@ -1394,5 +1394,21 @@ class AdminServiceTest {
 
         //then
         assertThat(responseDto.message()).isEqualTo("요청에 성공하였습니다.");
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 삭제 테스트 - 실패 (아이디와 일치하는 이벤트가 없는 경우)")
+    void deleteRushEventTest_Failure_NoLotteryEvent() {
+        //given
+        given(rushEventRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        CustomException customException = assertThrows(CustomException.class,
+                () -> adminService.deleteRushEvent(1L)
+        );
+
+        //then
+        assertEquals(CustomErrorCode.NO_RUSH_EVENT, customException.getErrorCode());
+        assertEquals("선착순 이벤트를 찾을 수 없습니다.", customException.getMessage());
     }
 }
