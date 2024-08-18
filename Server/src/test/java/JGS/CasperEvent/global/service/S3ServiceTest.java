@@ -68,7 +68,7 @@ class S3ServiceTest {
 
     @Test
     @DisplayName("이미지 업로드 테스트 - 실패 (원본 파일 확장자 없음)")
-    void uploadTest_Failure_ImageNameEmpty() {
+    void uploadTest_Failure_ImageExtensionEmpty() {
         //given
         image = new MockMultipartFile("image", "image", "png", "<<data>>".getBytes());
 
@@ -79,6 +79,21 @@ class S3ServiceTest {
 
         //then
         assertThat("파일에 확장자가 존재하지 않습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("이미지 업로드 테스트 - 실패 (지원하지 않는 확장자)")
+    void uploadTest_Failure_ImageNameEmpty() {
+        //given
+        image = new MockMultipartFile("image", "image.html", "png", "<<data>>".getBytes());
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.upload(image)
+        );
+
+        //then
+        assertThat("유효하지 않은 확장자입니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
 }
