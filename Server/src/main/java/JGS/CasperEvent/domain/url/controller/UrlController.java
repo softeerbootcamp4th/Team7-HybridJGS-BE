@@ -26,6 +26,7 @@ public class UrlController {
         this.urlService = urlService;
     }
 
+    // 공유링크 생성
     @PostMapping
     public ResponseEntity<ShortenUrlResponseDto> generateShortUrl(HttpServletRequest request) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         BaseUser user = (BaseUser) request.getAttribute("user");
