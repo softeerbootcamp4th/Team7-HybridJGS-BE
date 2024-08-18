@@ -1039,8 +1039,8 @@ class AdminServiceTest {
     }
 
     @Test
-    @DisplayName("당첨자 명단 조회 테스트 - 성공")
-    void testName() {
+    @DisplayName("당첨자 명단 조회 테스트 - 성공 (전화번호가 주어지지 않은 경우)")
+    void getLotteryEventWinnersTest_Success_WithoutPhoneNumber() {
         //given
         List<LotteryWinners> lotteryWinnersList = new ArrayList<>();
         lotteryWinnersList.add(new LotteryWinners(lotteryParticipants));
@@ -1066,5 +1066,36 @@ class AdminServiceTest {
         assertThat(lotteryEventWinners.isLastPage()).isTrue();
 
         assertThat(lotteryEventWinners.totalParticipants()).isEqualTo(315);
+    }
+
+    @Test
+    @DisplayName("당첨자 명단 조회 테스트 - 성공 (전화번호가 주어진 경우)")
+    void getLotteryEventWinnersTest_Success_WithPhoneNumber() {
+        //given
+        List<LotteryWinners> lotteryWinnersList = new ArrayList<>();
+        lotteryWinnersList.add(new LotteryWinners(lotteryParticipants));
+        Page<LotteryWinners> lotteryWinnersPage = new PageImpl<>(lotteryWinnersList);
+
+        given(lotteryWinnerRepository.count()).willReturn(315L);
+        given(lotteryWinnerRepository.findByPhoneNumber(eq("010-0000-0000"), any(Pageable.class)))
+                .willReturn(lotteryWinnersPage);
+        given(lotteryWinnerRepository.countByPhoneNumber("010-0000-0000")).willReturn(1L);
+
+        //when
+        LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "010-0000-0000");
+
+        //then
+        LotteryEventWinnerResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
+        assertThat(actualWinner.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(actualWinner.linkClickedCounts()).isEqualTo(0);
+        assertThat(actualWinner.expectation()).isEqualTo(0);
+        assertThat(actualWinner.appliedCount()).isEqualTo(1);
+        assertThat(actualWinner.ranking()).isEqualTo(0);
+        assertThat(actualWinner.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(actualWinner.createdTime()).isEqualTo(LocalTime.of(0, 0));
+
+        assertThat(lotteryEventWinners.isLastPage()).isTrue();
+
+        assertThat(lotteryEventWinners.totalParticipants()).isEqualTo(1);
     }
 }
