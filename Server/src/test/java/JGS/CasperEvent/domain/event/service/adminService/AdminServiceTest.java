@@ -4,9 +4,12 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventDetailResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.AdminRepository;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -15,6 +18,7 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionReposit
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.EventStatus;
 import JGS.CasperEvent.global.enums.Role;
@@ -28,6 +32,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDate;
@@ -40,7 +48,9 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -68,14 +78,21 @@ class AdminServiceTest {
     AdminService adminService;
 
     private Admin admin;
+
+    private BaseUser user;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
+    private LotteryParticipants lotteryParticipants;
 
     @BeforeEach
     void setUp() {
         // 어드민 객체
         admin = new Admin("adminId", "password", Role.ADMIN);
 
+        // 유저 객체
+        user = new BaseUser("010-0000-0000", Role.USER);
+        user.setCreatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+        user.setUpdatedAt(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         // 추첨 이벤트 생성 요청 DTO
         lotteryEventRequestDto = LotteryEventRequestDto.builder()
                 .startDate(LocalDate.of(2000, 9, 27))
@@ -91,6 +108,9 @@ class AdminServiceTest {
                 LocalDateTime.of(lotteryEventRequestDto.getEndDate(), lotteryEventRequestDto.getEndTime()),
                 lotteryEventRequestDto.getWinnerCount()
         );
+
+        // 추첨 이벤트 참여자 엔티티
+        lotteryParticipants = new LotteryParticipants(user);
     }
 
     @Test
@@ -175,7 +195,7 @@ class AdminServiceTest {
         LotteryEventResponseDto lotteryEventResponseDto = adminService.createLotteryEvent(lotteryEventRequestDto);
 
         //then
-        assertThat(lotteryEventResponseDto.serverDateTime()).isEqualTo("2024-08-18T13:36:18.155541");
+        assertThat(lotteryEventResponseDto.serverDateTime()).isNotNull();
         assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
         assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
         assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
@@ -216,5 +236,33 @@ class AdminServiceTest {
         assertThat(lotteryEventDetailResponseDto.appliedCount()).isEqualTo(0);
         assertThat(lotteryEventDetailResponseDto.winnerCount()).isEqualTo(315);
         assertThat(lotteryEventDetailResponseDto.status()).isEqualTo(EventStatus.DURING);
+    }
+
+    @Test
+    @DisplayName("추첨 이벤트 참여자 조회 성공 테스트 (전화번호가 없을 때)")
+    void getLotteryEventParticipantsTest_Success_withoutPhoneNumber() {
+        //given
+        List<LotteryParticipants> lotteryParticipantsList = new ArrayList<>();
+        lotteryParticipantsList.add(lotteryParticipants);
+        Page<LotteryParticipants> lotteryParticipantsPage = new PageImpl<>(lotteryParticipantsList);
+
+
+        given(lotteryParticipantsRepository.findAll(any(Pageable.class))).willReturn(lotteryParticipantsPage);
+        given(lotteryParticipantsRepository.count()).willReturn(1L);
+
+        //when
+        LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "");
+        LotteryEventParticipantsResponseDto retrievedParticipant = lotteryEventParticipantsListResponseDto.participantsList().get(0);
+
+        //then
+        assertThat(lotteryEventParticipantsListResponseDto.isLastPage()).isTrue();
+        assertThat(lotteryEventParticipantsListResponseDto.totalParticipants()).isEqualTo(1);
+
+        assertThat(retrievedParticipant.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(retrievedParticipant.linkClickedCounts()).isEqualTo(0);
+        assertThat(retrievedParticipant.expectation()).isEqualTo(0);
+        assertThat(retrievedParticipant.appliedCount()).isEqualTo(1);
+        assertThat(retrievedParticipant.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(retrievedParticipant.createdTime()).isEqualTo(LocalTime.of(0, 0, 0));
     }
 }
