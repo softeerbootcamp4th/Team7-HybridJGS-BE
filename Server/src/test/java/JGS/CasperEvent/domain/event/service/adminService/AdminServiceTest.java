@@ -578,4 +578,35 @@ class AdminServiceTest {
         assertThat(participant.createdTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(participant.rank()).isEqualTo(0);
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 참여자 조회 테스트 - 성공 (전화번호가 존재하지 않고 결과가 동점이 아닌 경우")
+    void getRushEventParticipantsTest_Success_withoutPhoneNumberWithOptionId() {
+        //given
+        List<RushParticipants> rushParticipantsList = new ArrayList<>();
+        rushParticipantsList.add(rushParticipant1);
+        Page<RushParticipants> rushParticipantsPage = new PageImpl<>(rushParticipantsList);
+
+        given(rushParticipantsRepository.findByRushEvent_RushEventIdAndOptionId(eq(1L), eq(1), any(Pageable.class)))
+                .willReturn(rushParticipantsPage);
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1))
+                .willReturn(1L);
+
+        //when
+        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "");
+
+        //then
+        assertThat(rushEventParticipants.isLastPage()).isTrue();
+        assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
+
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+
+        RushEventParticipantResponseDto participant = participantsList.get(0);
+
+        assertThat(participant.phoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(participant.balanceGameChoice()).isEqualTo(1);
+        assertThat(participant.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(participant.createdTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(participant.rank()).isEqualTo(0);
+    }
 }
