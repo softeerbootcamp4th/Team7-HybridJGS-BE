@@ -1,6 +1,7 @@
 package JGS.CasperEvent.global.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -47,6 +50,21 @@ class S3ServiceTest {
 
         //then
         assertThat(imageUrl).isEqualTo("http://www.example.com/image.jpg");
+    }
+
+    @Test
+    @DisplayName("이미지 업로드 테스트 - 실패 (이미지 비어있음)")
+    void uploadTest_Failure_ImageEmpty() {
+        //given
+        image = new MockMultipartFile("image", "image.png", "png", new byte[0]);
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.upload(image)
+        );
+
+        //then
+        assertThat("파일이 유효하지 않습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
 }
