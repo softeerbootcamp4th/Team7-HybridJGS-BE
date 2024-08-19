@@ -42,7 +42,6 @@ class RushEventServiceTest {
     private RedisTemplate<String, RushEventResponseDto> rushEventRedisTemplate;
     @Mock
     private RushOptionRepository rushOptionRepository;
-
     @Mock
     private ValueOperations<String, RushEventResponseDto> valueOperations;
 
@@ -375,7 +374,7 @@ class RushEventServiceTest {
         given(rushEventRepository.findByEventDate(today)).willReturn(List.of(rushEvent));
 
         // when
-        RushEventResponseDto result = rushEventService.getTodayRushEvent(today);
+        RushEventResponseDto result = rushEventService.getTodayRushEventFromRDB();
 
         // then
         assertNotNull(result);
@@ -383,7 +382,7 @@ class RushEventServiceTest {
     }
 
     @Test
-    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (Redis에 선착순 이벤트가 없는 경우)")
+    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (RDB에 선착순 이벤트가 없는 경우)")
     void getTodayRushEvent2() {
         // given
         LocalDate today = LocalDate.now();
@@ -391,7 +390,7 @@ class RushEventServiceTest {
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
-                rushEventService.getTodayRushEvent(today)
+                rushEventService.getTodayRushEventFromRDB()
         );
 
         assertEquals(CustomErrorCode.NO_RUSH_EVENT, exception.getErrorCode());
@@ -399,7 +398,7 @@ class RushEventServiceTest {
     }
 
     @Test
-    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (Redis에 선착순 이벤트가 2개 이상인 경우)")
+    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (RDB에 선착순 이벤트가 2개 이상인 경우)")
     void getTodayRushEvent3() {
         // given
         LocalDate today = LocalDate.now();
@@ -411,7 +410,7 @@ class RushEventServiceTest {
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
-                rushEventService.getTodayRushEvent(today)
+                rushEventService.getTodayRushEventFromRDB()
         );
 
         assertEquals(CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND, exception.getErrorCode());
@@ -419,6 +418,7 @@ class RushEventServiceTest {
     }
 
     @Test
+    @DisplayName("선착순 이벤트 테스트 API 테스트")
     void setTodayEventToRedis() {
         // given
         RushEvent rushEvent = new RushEvent();
@@ -438,6 +438,7 @@ class RushEventServiceTest {
     }
 
     @Test
+    @DisplayName("오늘의 선착순 이벤트의 선택지 조회 테스트")
     void getTodayRushEventOptions() {
         // given
         RushEventResponseDto todayEvent = new RushEventResponseDto(
