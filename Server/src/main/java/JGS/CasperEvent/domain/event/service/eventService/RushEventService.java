@@ -184,12 +184,22 @@ public class RushEventService {
         rushEventRepository.deleteAllInBatch();
 
         // 오늘의 날짜를 기준으로 시간 설정
-        LocalDateTime startDateTime = LocalDateTime.now().minusDays(2).withHour(22).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime endDateTime = startDateTime.plusMinutes(10);
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(2).plusSeconds(20).withNano(0);
+        LocalDateTime endDateTime = startDateTime.plusSeconds(20);
+
+        // 각 이벤트에 대응하는 텍스트들
+        String[][] texts = {
+                {"첫 차는 저렴해야 한다", "가성비 좋게 저렴한 차로 시작해서 차근히 업그레이드하고 싶어", "가성비 좋은 도심형 전기차", "캐스퍼 일렉트릭은 전기차 평균보다 30% 저렴해요 첫 차로 캐스퍼 일렉트릭 어떤가요?", "첫 차는 안전해야 한다", "처음 사는 차인 만큼 안전한 차를 사서 오래 타고 싶어", "가성비 좋은 도심형 전기차", "캐스퍼는 작고 귀엽기만 하다고 생각했나요? 이젠 현대 스마트센스 안전옵션까지 지원해요"},
+                {"온라인 쇼핑이 편해서 좋다", "편한게 최고야! 집에서 인터넷으로 쇼핑할래", "현대 유일 온라인 예약", "차 살 때도 온라인 쇼핑을! 오직 온라인에서만 구매할 수 있는 캐스퍼 일렉트릭", "오프라인 쇼핑이 확실해서 좋다", "살 거면 제대로 사야지! 직접 보고 나서 판단할래", "캐스퍼 스튜디오 송파", "캐스퍼 일렉트릭을 원하는 시간에 직접 만나볼 수 있는 무인 전시 스튜디오"},
+                {"텐트 치고 캠핑하기", "캠핑은 텐트가 근보이지!", "V2L로 캠핑 준비 끝", "캠핑장 전기 눈치싸움은 이제 그만! 차에 직접 220V 전원을 연결할 수 있어요", "차 안에서 차박하기", "가벼운 짐으로 차에서 잠드는 낭만이 좋아", "풀 폴딩으로 공간활용", "모든 시트가 완전히 접혀서 나만의 작은 방으로 만들 수 있어요"},
+                {"평생 주차 무료로 하기", "요즘 주차장은 너무 비싸 주차비 걱정은 그만 하고 싶어", "전기차는 주차비 혜택 받아요", "공영주차장 50% 할인 정책으로 주차비 부담을 덜 수 있어요", "평생 주유 무료로 하기", "기름값이 너무 많이 올랐어 주유비가 많이 들어 고민이야", "전기차는 기름값 걱정 없어요", "주유비 부담 없이 마음껏 드라이브를 즐길 수 있어요"},
+                {"무채색 차가 좋다", "검은색, 흰색, 회색! 오래 타려면 무난한 게 최고야", "기본 색감도 다채롭게", "무채색 컬러도 매트부터 메탈릭까지 다양한 질감으로 구성했어요", "컬러풀한 차가 좋다", "무채색은 지루해! 내가 좋아하는 색으로 고를래", "신규 색상 5종 출시", "기존 캐스퍼 색상 라인업에 새로운 5종을 추가! 내 차의 개성을 뽐내봐요"},
+                {"주말에는 바다로 가기", "아까운 주말엔 국내여행이라도 다녀오고 싶어", "충전 한 번에 315km", "엔트리급 전기차의 주행거리 혁신 한 번 충전으로 서울에서 강릉까지 왕복도 거뜬해요", "주말에는 도심 드라이브", "평일에 너무 피곤했으니 오랜만에 동네 드라이브나 할래", "충전 한 번에 315km", "엔트리급 전기차의 주행거리 혁신 한 번 충전으로 서울에서 강릉까지 왕복도 거뜬해요"}
+        };
 
         List<RushEvent> rushEvents = new ArrayList<>();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < texts.length; i++) {
             // 각 이벤트의 날짜를 오늘 기준으로 설정
             RushEvent rushEvent = new RushEvent(
                     startDateTime.plusDays(i),  // 이벤트 시작 날짜
@@ -202,20 +212,20 @@ public class RushEventService {
             // RushOption 생성
             RushOption option1 = new RushOption(
                     rushEvent,
-                    "Option 1 Main Text for Event " + (i + 1),
-                    "Option 1 Sub Text for Event " + (i + 1),
-                    "Option 1 Result Main Text for Event " + (i + 1),
-                    "Option 1 Result Sub Text for Event " + (i + 1),
+                    texts[i][0],  // Option 1 Main Text
+                    texts[i][1],  // Option 1 Sub Text
+                    texts[i][2],  // Option 1 Result Main Text
+                    texts[i][3],  // Option 1 Result Sub Text
                     "http://example.com/option1-image" + (i + 1) + ".jpg",
                     Position.LEFT
             );
 
             RushOption option2 = new RushOption(
                     rushEvent,
-                    "Option 2 Main Text for Event " + (i + 1),
-                    "Option 2 Sub Text for Event " + (i + 1),
-                    "Option 2 Result Main Text for Event " + (i + 1),
-                    "Option 2 Result Sub Text for Event " + (i + 1),
+                    texts[i][4],  // Option 2 Main Text
+                    texts[i][5],  // Option 2 Sub Text
+                    texts[i][6],  // Option 2 Result Main Text
+                    texts[i][7],  // Option 2 Result Sub Text
                     "http://example.com/option2-image" + (i + 1) + ".jpg",
                     Position.RIGHT
             );
@@ -235,6 +245,7 @@ public class RushEventService {
         // 세 번째로 생성된 RushEvent를 Redis에 저장
         rushEventRedisTemplate.opsForValue().set("todayEvent", RushEventResponseDto.of(rushEvents.get(2)));
     }
+
 
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
