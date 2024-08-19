@@ -35,7 +35,7 @@ public class RushEventService {
     @Transactional
     public RushEventListResponseDto getAllRushEvents() {
         // 오늘의 선착순 이벤트 꺼내오기
-        RushEventResponseDto todayEvent = getTodayRushEvent();
+        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
 
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
@@ -67,13 +67,13 @@ public class RushEventService {
 
     // 응모 여부 조회
     public boolean isExists(String userId) {
-        Long todayEventId = getTodayRushEvent().rushEventId();
+        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
         return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, userId);
     }
 
     @Transactional
     public void apply(BaseUser user, int optionId) {
-        Long todayEventId = getTodayRushEvent().rushEventId();
+        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
 
         // 이미 응모한 회원인지 검증
         if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, user.getId())) {
@@ -90,7 +90,7 @@ public class RushEventService {
 
     // 진행중인 게임의 응모 비율 반환
     public RushEventRateResponseDto getRushEventRate(BaseUser user) {
-        Long todayEventId = getTodayRushEvent().rushEventId();
+        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getId());
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
@@ -104,7 +104,7 @@ public class RushEventService {
     // 해당 요청은 무조건 응모한 유저일 때만 요청 가능하다고 가정
     @Transactional
     public RushEventResultResponseDto getRushEventResult(BaseUser user) {
-        RushEventResponseDto todayRushEvent = getTodayRushEvent();
+        RushEventResponseDto todayRushEvent = getTodayRushEventFromRedis();
 
         // 최종 선택 비율을 조회
         // TODO: 레디스에 캐시
@@ -145,9 +145,10 @@ public class RushEventService {
         return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, isWinner);
     }
 
-    @Transactional
     // 오늘의 이벤트를 DB에 꺼내서 반환
-    public RushEventResponseDto getTodayRushEvent(LocalDate today) {
+    public RushEventResponseDto getTodayRushEventFromRDB() {
+        LocalDate today = LocalDate.now();
+
         // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
         List<RushEvent> rushEventList = rushEventRepository.findByEventDate(today);
 
@@ -163,10 +164,13 @@ public class RushEventService {
     }
 
     // 오늘의 이벤트 꺼내오기
-    private RushEventResponseDto getTodayRushEvent() {
+    private RushEventResponseDto getTodayRushEventFromRedis() {
         RushEventResponseDto todayEvent = rushEventRedisTemplate.opsForValue().get("todayEvent");
+
+        // Redis에 오늘의 이벤트가 없으면 DB에서 가져와서 Redis에 저장한 후 반환.
         if (todayEvent == null) {
-            throw new CustomException("오늘의 이벤트가 Redis에 없습니다.", CustomErrorCode.TODAY_RUSH_EVENT_NOT_FOUND);
+            todayEvent = getTodayRushEventFromRDB();
+            rushEventRedisTemplate.opsForValue().set("todayEvent", todayEvent);
         }
 
         return todayEvent;
@@ -234,7 +238,7 @@ public class RushEventService {
 
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
-        RushEventResponseDto todayEvent = getTodayRushEvent();
+        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         RushEventOptionResponseDto leftOption = options.stream()
@@ -255,7 +259,7 @@ public class RushEventService {
 
     public ResultRushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
-        RushEventResponseDto todayEvent = getTodayRushEvent();
+        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         if (options.size() != 2) {

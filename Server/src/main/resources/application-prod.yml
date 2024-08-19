@@ -35,3 +35,12 @@ client:
   localUrl: ${LOCAL_CLIENT_URL}
 shortenUrlService:
   url: ${SPRING_SERVER_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+  metrics:
+    tags:
+      application: ${spring.application.name}

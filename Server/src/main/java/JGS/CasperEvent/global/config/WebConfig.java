@@ -1,6 +1,7 @@
 package JGS.CasperEvent.global.config;
 
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
+import JGS.CasperEvent.global.interceptor.RequestInterceptor;
 import JGS.CasperEvent.global.jwt.filter.JwtAuthorizationFilter;
 import JGS.CasperEvent.global.jwt.filter.JwtUserFilter;
 import JGS.CasperEvent.global.jwt.filter.VerifyAdminFilter;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -93,5 +95,10 @@ public class WebConfig implements WebMvcConfigurer {
         return filterRegistrationBean;
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new RequestInterceptor())
+                .addPathPatterns("/**"); // 모든 경로에 대해 인터셉터 적용
 
+    }
 }
