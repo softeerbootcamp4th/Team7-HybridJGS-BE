@@ -184,8 +184,8 @@ public class RushEventService {
         rushEventRepository.deleteAllInBatch();
 
         // 오늘의 날짜를 기준으로 시간 설정
-        LocalDateTime startDateTime = LocalDateTime.now().minusDays(2).plusMinutes(1).withNano(0);
-        LocalDateTime endDateTime = startDateTime.plusMinutes(1);
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(2).plusSeconds(20).withNano(0);
+        LocalDateTime endDateTime = startDateTime.plusSeconds(20);
 
         // 각 이벤트에 대응하는 텍스트들
         String[][] texts = {
