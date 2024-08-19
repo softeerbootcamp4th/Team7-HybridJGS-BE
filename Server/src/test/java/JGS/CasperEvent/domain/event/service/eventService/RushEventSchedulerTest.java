@@ -46,13 +46,13 @@ class RushEventSchedulerTest {
         );
 
         given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventService.getTodayRushEvent(today)).willReturn(todayEvent);
+        given(rushEventService.getTodayRushEventFromRDB()).willReturn(todayEvent);
 
         // when
         rushEventScheduler.fetchDailyEvents();
 
         // then
-        verify(rushEventService).getTodayRushEvent(today);
+        verify(rushEventService).getTodayRushEventFromRDB();
         verify(rushEventRedisTemplate.opsForValue()).set("todayEvent", todayEvent);
     }
 }
