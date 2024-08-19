@@ -133,9 +133,24 @@ class S3ServiceTest {
     }
 
     @Test
-    @DisplayName("이미지 삭제 성공 테스트")
+    @DisplayName("이미지 삭제 테스트 - 성공")
     void deleteImageFromS3Test_Success() {
         //when
         s3Service.deleteImageFromS3("http://www.example.com/image.jpg");
+    }
+
+    @Test
+    @DisplayName("이미지 삭제 테스트 - 실패 (삭제 실패)")
+    void deleteImageFromS3Test_Failure_Exception() {
+        // given
+        doThrow(new RuntimeException()).when(amazonS3).deleteObject(any());
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.deleteImageFromS3("http://www.example.com/image.jpg")
+        );
+
+        //then
+        assertThat("이미지 삭제에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 }
