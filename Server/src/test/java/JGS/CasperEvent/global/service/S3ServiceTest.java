@@ -153,4 +153,20 @@ class S3ServiceTest {
         //then
         assertThat("이미지 삭제에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
+
+    @Test
+    @DisplayName("이미지 삭제 테스트 - 실패 (잘못된 url 형식)")
+    void deleteImageFromS3Test_Failure_WrongUrl() {
+        // given
+        String url = "www.example.com/image.jpg";
+
+        //when
+        AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                s3Service.deleteImageFromS3(url)
+        );
+
+        //then
+        assertThat("이미지 삭제에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
+    }
+
 }
