@@ -2,7 +2,6 @@ package JGS.CasperEvent.global.error;
 
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -36,13 +35,6 @@ public class GlobalExceptionHandler  {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.of(CustomErrorCode.USER_NOT_FOUND));
-    }
-
-    @ExceptionHandler(TooManyLotteryEventException.class)
-    public ResponseEntity<ErrorResponse> tooManyLotteryEventExceptionHandler(){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.of(CustomErrorCode.LOTTERY_EVENT_ALREADY_EXISTS));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
