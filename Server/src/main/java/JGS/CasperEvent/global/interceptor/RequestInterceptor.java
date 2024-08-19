@@ -28,7 +28,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         String queryString = request.getQueryString();
 
-        log.info("Request [{}{}]", requestURI, queryString);
+        log.info("Request [{}] QueryString [{}]", requestURI, queryString);
 
         // 요청의 헤더에 requestId 추가 (선택 사항)
         response.addHeader(REQUEST_ID, requestId);
