@@ -1,12 +1,14 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@EqualsAndHashCode
 public class LotteryEvent extends BaseEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

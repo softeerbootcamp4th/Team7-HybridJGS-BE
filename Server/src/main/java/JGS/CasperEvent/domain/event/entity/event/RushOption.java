@@ -5,16 +5,15 @@ import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.enums.Position;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = {"rushEvent"})
+@ToString(exclude = {"rushEvent"})
 public class RushOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

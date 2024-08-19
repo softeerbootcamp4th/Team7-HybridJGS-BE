@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
 
-public record RushEventOptionResponseDto(long optionId, String mainText,
+public record RushEventOptionResponseDto(Long optionId, String mainText,
                                          String subText, String resultMainText,
                                          String resultSubText, String imageUrl,
                                          Position position,

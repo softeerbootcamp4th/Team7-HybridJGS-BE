@@ -7,6 +7,7 @@ import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @ToString
+@EqualsAndHashCode
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;

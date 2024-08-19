@@ -27,8 +27,6 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
-import JGS.CasperEvent.global.error.exception.TooManyRushEventException;
 import JGS.CasperEvent.global.response.ResponseDto;
 import JGS.CasperEvent.global.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +60,12 @@ public class AdminService {
     private final LotteryWinnerRepository lotteryWinnerRepository;
     private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
 
+    // 어드민 인증
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
         return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
 
+    // 어드민 생성
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
         String adminId = adminRequestDto.getAdminId();
         //Todo: 비밀번호 암호화 필요
@@ -79,12 +79,14 @@ public class AdminService {
         return ResponseDto.of("관리자 생성 성공");
     }
 
+    // 이미지 업로드
     public ImageUrlResponseDto postImage(MultipartFile image) {
         return new ImageUrlResponseDto(s3Service.upload(image));
     }
 
+    // 추첨 이벤트 생성
     public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
-        if (lotteryEventRepository.count() >= 1) throw new TooManyLotteryEventException();
+        if (lotteryEventRepository.count() >= 1) throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
                 LocalDateTime.of(lotteryEventRequestDto.getStartDate(), lotteryEventRequestDto.getStartTime()),
@@ -95,12 +97,14 @@ public class AdminService {
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
+    // 추첨 이벤트 조회
     public LotteryEventDetailResponseDto getLotteryEvent() {
         return LotteryEventDetailResponseDto.of(
                 getCurrentLotteryEvent()
         );
     }
 
+    // 추첨 이벤트 참여자 조회
     public LotteryEventParticipantsListResponseDto getLotteryEventParticipants(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -125,14 +129,13 @@ public class AdminService {
         return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
+    // 선착순 이벤트 생성
     public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
-        if (rushEventRepository.count() >= 6) throw new TooManyRushEventException();
-
+        if (rushEventRepository.count() >= 6) throw new CustomException(CustomErrorCode.TOO_MANY_RUSH_EVENT);
         String prizeImgSrc = s3Service.upload(prizeImg);
         String leftOptionImgSrc = s3Service.upload(leftOptionImg);
         String rightOptionImgSrc = s3Service.upload(rightOptionImg);
 
-        // Img s3 저장
         RushEvent rushEvent = rushEventRepository.save(
                 new RushEvent(
                         LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime()),
@@ -166,10 +169,10 @@ public class AdminService {
         ));
 
         rushEvent.addOption(leftRushOption, rightRushOption);
-
         return AdminRushEventResponseDto.of(rushEvent);
     }
 
+    // 선착순 이벤트 조회
     public List<AdminRushEventResponseDto> getRushEvents() {
         List<RushEvent> rushEvents = rushEventRepository.findAll();
         List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
@@ -179,6 +182,7 @@ public class AdminService {
         return rushEventResponseDtoList;
     }
 
+    // 선착순 이벤트 참여자 조회
     public RushEventParticipantsListResponseDto getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -221,6 +225,7 @@ public class AdminService {
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
+    // 선착순 이벤트 당첨자 조회
     public RushEventParticipantsListResponseDto getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
         Page<RushParticipants> rushParticipantsPage = null;
 
@@ -233,10 +238,8 @@ public class AdminService {
 
         boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
 
-        int winnerOptionId;
-        if (leftSelect > rightSelect) winnerOptionId = 1;
-        else if (leftSelect < rightSelect) winnerOptionId = 2;
-        else winnerOptionId = 0;
+        int winnerOptionId = (leftSelect > rightSelect) ? 1 : (leftSelect < rightSelect) ? 2 : 0;
+
 
         if (!isPhoneNumberEmpty && winnerOptionId != 0) {
             // 전화번호와 유효한 옵션 ID가 있는 경우
@@ -270,12 +273,14 @@ public class AdminService {
         return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
+    // 선착순 이벤트 삭제
     @Transactional
     public void deleteLotteryEvent() {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
         lotteryEventRepository.deleteById(currentLotteryEvent.getLotteryEventId());
     }
 
+    // 선착순 이벤트 업데이트
     @Transactional
     public LotteryEventDetailResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
@@ -310,6 +315,7 @@ public class AdminService {
         return LotteryEventDetailResponseDto.of(currentLotteryEvent);
     }
 
+    // 추첨 이벤트 조회
     private LotteryEvent getCurrentLotteryEvent() {
         List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
 
@@ -324,6 +330,7 @@ public class AdminService {
         return lotteryEventList.get(0);
     }
 
+    // 추첨 이벤트 당첨자 추첨
     @Transactional
     public ResponseDto pickLotteryEventWinners() {
         if (lotteryWinnerRepository.count() > 1) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_ALREADY_DRAWN);
@@ -332,6 +339,13 @@ public class AdminService {
         int winnerCount = lotteryEvent.getWinnerCount();
 
         List<LotteryParticipants> lotteryParticipants = lotteryParticipantsRepository.findAll();
+
+        if(winnerCount >= lotteryParticipants.size()){
+            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
+                lotteryWinnerRepository.save(new LotteryWinners(lotteryParticipant));
+            }
+            return new ResponseDto("추첨이 완료되었습니다.");
+        }
         Set<LotteryParticipants> lotteryEventWinners = new HashSet<>();
 
         int totalWeight;
@@ -347,7 +361,7 @@ public class AdminService {
             int cumulativeSum = 0;
             for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
                 cumulativeSum += lotteryParticipant.getAppliedCount();
-                if(randomValue <= cumulativeSum){
+                if (randomValue <= cumulativeSum) {
                     lotteryEventWinners.add(lotteryParticipant);
                     lotteryParticipants.remove(lotteryParticipant);
                     break;
@@ -362,11 +376,13 @@ public class AdminService {
         return new ResponseDto("추첨이 완료되었습니다.");
     }
 
-    public ResponseDto deleteLotteryEventWinners(){
+    // 당첨자 명단 삭제
+    public ResponseDto deleteLotteryEventWinners() {
         lotteryWinnerRepository.deleteAll();
         return new ResponseDto("당첨자 명단을 삭제했습니다.");
     }
 
+    // 추첨 이벤트 당첨자 명단 조회
     public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
         if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
@@ -392,6 +408,7 @@ public class AdminService {
         return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
+    // 선착순 이벤트 업데이트
     @Transactional
     public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
@@ -441,6 +458,7 @@ public class AdminService {
         return rushEventResponseDtoList;
     }
 
+    // 선착순 이벤트 삭제
     @Transactional
     public ResponseDto deleteRushEvent(Long rushEventId) {
         RushEvent rushEvent = rushEventRepository.findById(rushEventId).orElseThrow(() -> new CustomException(CustomErrorCode.NO_RUSH_EVENT));
@@ -455,6 +473,7 @@ public class AdminService {
         return ResponseDto.of("요청에 성공하였습니다.");
     }
 
+    // 선착순 이벤트 선택지 조회
     public AdminRushEventOptionResponseDto getRushEventOptions(Long rushEventId) {
         return AdminRushEventOptionResponseDto.of(
                 rushEventRepository.findById(rushEventId).orElseThrow(
@@ -463,6 +482,7 @@ public class AdminService {
         );
     }
 
+    // 기대평 조회
     public LotteryEventExpectationsResponseDto getLotteryEventExpectations(int page, int size, Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
@@ -489,6 +509,7 @@ public class AdminService {
         return new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, isLastPage, casperBotPage.getTotalElements());
     }
 
+    // 부적절한 기대평 삭제
     @Transactional
     public void deleteLotteryEventExpectation(Long casperId) {
         CasperBot casperBot = casperBotRepository.findById(casperId).orElseThrow(

@@ -4,8 +4,10 @@ import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
 import jakarta.persistence.Entity;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Admin extends BaseUser {
     private String password;
 
