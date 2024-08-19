@@ -14,7 +14,6 @@ import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.LotteryEventNotExists;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
 import JGS.CasperEvent.global.util.AESUtils;
 import lombok.RequiredArgsConstructor;
@@ -84,19 +83,19 @@ public class LotteryEventService {
         if (participant == null) {
             participant = new LotteryParticipants(user);
             lotteryParticipantsRepository.save(participant);
-        }
 
-        if (casperBotRequestDto.getReferralId() != null) {
-            String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
-            Optional<LotteryParticipants> referralParticipant =
-                    lotteryParticipantsRepository.findByBaseUser(
-                            userRepository.findById(referralId).orElse(null)
-                    );
-            referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
-        }
+            if (casperBotRequestDto.getReferralId() != null) {
+                String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
+                Optional<LotteryParticipants> referralParticipant =
+                        lotteryParticipantsRepository.findByBaseUser(
+                                userRepository.findById(referralId).orElse(null)
+                        );
+                referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
+            }
 
-        user.updateLotteryParticipants(participant);
-        userRepository.save(user);
+            user.updateLotteryParticipants(participant);
+            userRepository.save(user);
+        }
 
         return participant;
     }
