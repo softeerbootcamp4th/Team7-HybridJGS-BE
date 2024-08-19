@@ -8,13 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -155,7 +159,7 @@ class S3ServiceTest {
     }
 
     @Test
-    @DisplayName("이미지 삭제 테스트 - 실패 (잘못된 url 형식)")
+    @DisplayName("이미지 삭제 테스트 - 실패 (URL 오류)")
     void deleteImageFromS3Test_Failure_WrongUrl() {
         // given
         String url = "www.example.com/image.jpg";
@@ -169,4 +173,23 @@ class S3ServiceTest {
         assertThat("이미지 삭제에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
+    @Test
+    @DisplayName("이미지 삭제 테스트 - 실패 (url 인코딩 실패)")
+    void deleteImageFromS3Test_Failure_UrlEncodingException() throws UnsupportedEncodingException {
+        // given
+        String url = "https://www.example.com/image.jpg";
+
+        try (MockedStatic<URLDecoder> mockedUrlDecoder = Mockito.mockStatic(URLDecoder.class)) {
+            mockedUrlDecoder.when(() -> URLDecoder.decode(Mockito.anyString(), Mockito.anyString()))
+                    .thenThrow(new UnsupportedEncodingException("Unsupported encoding"));
+
+            // when
+            AmazonS3Exception amazonS3Exception = assertThrows(AmazonS3Exception.class, () ->
+                    s3Service.deleteImageFromS3(url)
+            );
+
+            // then
+            assertThat(amazonS3Exception.getErrorMessage()).isEqualTo("이미지 삭제에 실패했습니다.");
+        }
+    }
 }
