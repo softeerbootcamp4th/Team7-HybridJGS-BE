@@ -1,7 +1,6 @@
 package JGS.CasperEvent.global.entity;
 
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
-import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.global.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -20,10 +19,6 @@ public class BaseUser extends BaseEntity {
     @JsonManagedReference
     @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
     private LotteryParticipants lotteryParticipants;
-
-    @JsonManagedReference
-    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
-    private RushParticipants rushParticipants;
 
     public void updateLotteryParticipants(LotteryParticipants lotteryParticipant) {
         this.lotteryParticipants = lotteryParticipant;
