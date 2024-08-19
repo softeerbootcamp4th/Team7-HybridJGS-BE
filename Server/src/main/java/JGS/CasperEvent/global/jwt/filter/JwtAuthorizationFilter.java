@@ -32,7 +32,8 @@ public class JwtAuthorizationFilter implements Filter {
             "/event/rush", "/event/lottery/caspers",
             "/admin/join", "/admin/auth", "/h2", "/h2/*",
             "/swagger-ui/*", "/v3/api-docs", "/v3/api-docs/*",
-            "/event/lottery", "/link/*", "/event/total"
+            "/event/lottery", "/link/*", "/event/total",
+            "/actuator", "/actuator/*"
     };
     private final String[] blackListUris = new String[]{
             "/event/rush/*", "/event/lottery/casperBot"
