@@ -132,4 +132,10 @@ class S3ServiceTest {
         assertThat("이미지 업로드에 실패했습니다.").isEqualTo(amazonS3Exception.getErrorMessage());
     }
 
+    @Test
+    @DisplayName("이미지 삭제 성공 테스트")
+    void deleteImageFromS3Test_Success() {
+        //when
+        s3Service.deleteImageFromS3("http://www.example.com/image.jpg");
+    }
 }
