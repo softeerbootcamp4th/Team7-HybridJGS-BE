@@ -249,7 +249,7 @@ public class RushEventControllerTest {
                 .andExpect(jsonPath("$.rightOption").value(1000))
                 .andExpect(jsonPath("$.rank").value(1))
                 .andExpect(jsonPath("$.totalParticipants").value(1000))
-                .andExpect(jsonPath("$.winner").value(true))
+                .andExpect(jsonPath("$.isWinner").value(true))
                 .andDo(print());
     }
 
