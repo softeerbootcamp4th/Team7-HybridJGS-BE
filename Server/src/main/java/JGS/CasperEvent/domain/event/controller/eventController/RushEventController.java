@@ -73,7 +73,7 @@ public class RushEventController {
     @ApiResponse(responseCode = "204", description = "Successfully set today's event in Redis.")
     @GetMapping("/today/test")
     public ResponseEntity<Void> setTodayEvent() {
-        rushEventService.setTodayEventToRedis();
+        rushEventService.setRushEvents();
         return ResponseEntity.noContent().build();
     }
 
