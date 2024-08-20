@@ -371,6 +371,41 @@ class RushEventServiceTest {
     }
 
     @Test
+    @DisplayName("선착순 이벤트 결과 조회 테스트 (응모하지 않았는데 결과 조회창으로 넘어가서 호출되는 경우)")
+    void getRushEventResult6() {
+        // given
+        BaseUser user = new BaseUser();
+        RushEventResponseDto todayEvent = new RushEventResponseDto(
+                1L,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                315,
+                "image-url",
+                "prize-description",
+                new HashSet<>()
+        );
+
+        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
+        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.empty());
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
+
+        // when & then
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+
+        // then
+        assertNotNull(result);
+        assertNull(result.getOptionId());
+        assertEquals(500, result.getLeftOption());
+        assertEquals(500, result.getRightOption());
+        assertNull(result.getTotalParticipants());
+        assertNull(result.getRank());
+        assertNull(result.getIsWinner());
+    }
+
+
+    @Test
     @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트")
     void getTodayRushEvent() {
         // given
