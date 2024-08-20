@@ -93,7 +93,8 @@ public class LotteryEventControllerTest {
                 .sticker(0)
                 .name("name")
                 .expectation("expectation")
-                .referralId("QEszP1K8IqcapUHAVwikXA==").build();
+                .referralId("QEszP1K8IqcapUHAVwikXA==")
+                .build();
 
         casperBot = new CasperBot(casperBotRequest, "010-0000-0000");
 
