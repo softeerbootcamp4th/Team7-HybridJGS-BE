@@ -228,7 +228,7 @@ class RushEventServiceTest {
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertTrue(result.isWinner());
+        assertTrue(result.getIsWinner());
     }
 
     @Test
@@ -262,7 +262,7 @@ class RushEventServiceTest {
         assertEquals(500, result.getRightOption());
         assertEquals(500, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test
@@ -296,7 +296,7 @@ class RushEventServiceTest {
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
         assertEquals(400, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test
@@ -329,7 +329,7 @@ class RushEventServiceTest {
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertTrue(result.isWinner());
+        assertTrue(result.getIsWinner());
     }
 
     @Test
@@ -362,7 +362,7 @@ class RushEventServiceTest {
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
         assertEquals(400, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test

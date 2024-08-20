@@ -104,16 +104,17 @@ public class RushEventControllerTest {
 
         RushEventRateResponseDto rushEventRateResponseDto = new RushEventRateResponseDto(
                 1,
-                315,
-                1000
+                315L,
+                1000L
         );
 
         given(rushEventService.getRushEventRate(any())).willReturn(rushEventRateResponseDto);
 
         RushEventResultResponseDto rushEventResultResponseDto = new RushEventResultResponseDto(
-                rushEventRateResponseDto,
-                1,
-                1000,
+                315L,
+                1000L,
+                1L,
+                1000L,
                 true
         );
 
