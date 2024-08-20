@@ -60,9 +60,9 @@ public class UrlService {
     }
 
     // 원본 url 조회 테스트
-    public String getOriginalUrl(String encodedId){
+    public String getOriginalUrl(String encodedId) {
         Long urlId = Base62Utils.decode(encodedId);
-        Url url = urlRepository.findById(urlId).orElseThrow(NoSuchElementException::new);
+        Url url = urlRepository.findById(urlId).orElseGet(() -> new Url(clientUrl));
         return url.getOriginalUrl();
     }
 
