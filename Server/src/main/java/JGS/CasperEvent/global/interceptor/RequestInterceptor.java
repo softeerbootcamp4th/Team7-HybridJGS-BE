@@ -38,6 +38,11 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception ex) {
+        // 예외 발생 시 로그 추가
+        if (ex != null) {
+            log.error("Exception [{}]", ex.getMessage());
+        }
+
         log.info("Response {} [{}]", response.getStatus(), handler);
 
         // 요청이 완료된 후 MDC에서 requestId 제거
