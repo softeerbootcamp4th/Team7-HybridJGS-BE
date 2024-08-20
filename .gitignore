@@ -4,3 +4,4 @@
 /.idea/
 /Server/out/
 /Server/src/main/resources/application-local.yml
+/logs/
