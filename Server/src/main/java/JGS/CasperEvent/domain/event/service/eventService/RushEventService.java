@@ -13,7 +13,6 @@ import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.util.RepositoryErrorHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +28,15 @@ import java.util.Set;
 public class RushEventService {
     private final RushEventRepository rushEventRepository;
     private final RushParticipantsRepository rushParticipantsRepository;
-    private final RedisTemplate<String, RushEventResponseDto> rushEventRedisTemplate;
     private final RushOptionRepository rushOptionRepository;
+    private final RushEventCacheService rushEventCacheService;
 
     @Transactional
     public RushEventListResponseDto getAllRushEvents() {
+        LocalDate today = LocalDate.now();
+
         // 오늘의 선착순 이벤트 꺼내오기
-        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
+        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
 
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
@@ -67,13 +68,15 @@ public class RushEventService {
 
     // 응모 여부 조회
     public boolean isExists(String userId) {
-        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
+        LocalDate today = LocalDate.now();
+        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
         return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, userId);
     }
 
     @Transactional
     public void apply(BaseUser user, int optionId) {
-        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
+        LocalDate today = LocalDate.now();
+        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
 
         // 이미 응모한 회원인지 검증
         if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, user.getId())) {
@@ -90,7 +93,8 @@ public class RushEventService {
 
     // 진행중인 게임의 응모 비율 반환
     public RushEventRateResponseDto getRushEventRate(BaseUser user) {
-        Long todayEventId = getTodayRushEventFromRedis().rushEventId();
+        LocalDate today = LocalDate.now();
+        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getId());
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
@@ -104,7 +108,8 @@ public class RushEventService {
     // 응모하지 않은 유저가 요청하는 경우가 존재 -> 응모 비율만 반환하도록 수정
     @Transactional
     public RushEventResultResponseDto getRushEventResult(BaseUser user) {
-        RushEventResponseDto todayRushEvent = getTodayRushEventFromRedis();
+        LocalDate today = LocalDate.now();
+        RushEventResponseDto todayRushEvent = rushEventCacheService.getTodayEvent(today);
         Long todayEventId = todayRushEvent.rushEventId();
 
         // 최종 선택 비율을 조회
@@ -157,39 +162,8 @@ public class RushEventService {
         return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
     }
 
-    // 오늘의 이벤트를 DB에 꺼내서 반환
-    public RushEventResponseDto getTodayRushEventFromRDB() {
-        LocalDate today = LocalDate.now();
-
-        // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
-        List<RushEvent> rushEventList = rushEventRepository.findByEventDate(today);
-
-        if (rushEventList.isEmpty()) {
-            throw new CustomException("선착순 이벤트가 존재하지않습니다.", CustomErrorCode.NO_RUSH_EVENT);
-        }
-
-        if (rushEventList.size() > 1) {
-            throw new CustomException("선착순 이벤트가 2개 이상 존재합니다.", CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND);
-        }
-
-        return RushEventResponseDto.of(rushEventList.get(0));
-    }
-
-    // 오늘의 이벤트 꺼내오기
-    private RushEventResponseDto getTodayRushEventFromRedis() {
-        RushEventResponseDto todayEvent = rushEventRedisTemplate.opsForValue().get("todayEvent");
-
-        // Redis에 오늘의 이벤트가 없으면 DB에서 가져와서 Redis에 저장한 후 반환.
-        if (todayEvent == null) {
-            todayEvent = getTodayRushEventFromRDB();
-            rushEventRedisTemplate.opsForValue().set("todayEvent", todayEvent);
-        }
-
-        return todayEvent;
-    }
-
     @Transactional
-    public void setTodayEventToRedis() {
+    public void setRushEvents() {
         // 테이블 초기화
         rushParticipantsRepository.deleteAllInBatch();
         rushOptionRepository.deleteAllInBatch();
@@ -253,15 +227,13 @@ public class RushEventService {
 
             rushEvents.add(rushEvent);
         }
-
-        // 세 번째로 생성된 RushEvent를 Redis에 저장
-        rushEventRedisTemplate.opsForValue().set("todayEvent", RushEventResponseDto.of(rushEvents.get(2)));
     }
 
 
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
-        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
+        LocalDate today = LocalDate.now();
+        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         RushEventOptionResponseDto leftOption = options.stream()
@@ -282,7 +254,8 @@ public class RushEventService {
 
     public ResultRushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
-        RushEventResponseDto todayEvent = getTodayRushEventFromRedis();
+        LocalDate today = LocalDate.now();
+        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         if (options.size() != 2) {
