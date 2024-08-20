@@ -10,7 +10,7 @@ import JGS.CasperEvent.global.entity.BaseUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+@Tag(name = "추첨 이벤트 API", description = "추첨 이벤트 (Lottery Event) 관련 API 목록입니다.")
 @RestController
 @RequestMapping("/event/lottery")
 public class LotteryEventController {
