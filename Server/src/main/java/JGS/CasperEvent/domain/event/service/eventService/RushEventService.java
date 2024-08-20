@@ -115,6 +115,7 @@ public class RushEventService {
         Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getId());
         if (optionIdOptional.isEmpty()) {
             return new RushEventResultResponseDto(
+                    null,
                     leftOption,
                     rightOption,
                     null,
@@ -122,6 +123,9 @@ public class RushEventService {
                     null
             );
         }
+
+        // optionId 를 꺼냄
+        int optionId = optionIdOptional.get();
 
         // 동점인 경우
         if (leftOption == rightOption) {
@@ -134,10 +138,8 @@ public class RushEventService {
             // 당첨 여부
             boolean isWinner = rank <= todayRushEvent.winnerCount();
 
-            return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, isWinner);
+            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
         }
-
-        int optionId = optionIdOptional.get();
 
         long totalParticipants = (optionId == 1 ? leftOption : rightOption);
 
@@ -146,13 +148,13 @@ public class RushEventService {
 
         // 해당 유저가 선택한 옵션이 패배한 경우
         if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {
-            return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, false);
+            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, false);
         }
 
         // 당첨 여부
         boolean isWinner = rank <= todayRushEvent.winnerCount();
 
-        return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, isWinner);
+        return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
     }
 
     // 오늘의 이벤트를 DB에 꺼내서 반환

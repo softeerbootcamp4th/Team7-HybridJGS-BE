@@ -111,6 +111,7 @@ public class RushEventControllerTest {
         given(rushEventService.getRushEventRate(any())).willReturn(rushEventRateResponseDto);
 
         RushEventResultResponseDto rushEventResultResponseDto = new RushEventResultResponseDto(
+                1,
                 315L,
                 1000L,
                 1L,
@@ -245,6 +246,7 @@ public class RushEventControllerTest {
 
         // then
         perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.optionId").value(1))
                 .andExpect(jsonPath("$.leftOption").value(315))
                 .andExpect(jsonPath("$.rightOption").value(1000))
                 .andExpect(jsonPath("$.rank").value(1))

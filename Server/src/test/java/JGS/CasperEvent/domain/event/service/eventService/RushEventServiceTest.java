@@ -224,6 +224,7 @@ class RushEventServiceTest {
  
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
@@ -258,6 +259,7 @@ class RushEventServiceTest {
 
         // then
         assertNotNull(result);
+        assertEquals(2, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(500, result.getTotalParticipants());
@@ -292,6 +294,7 @@ class RushEventServiceTest {
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
@@ -325,6 +328,7 @@ class RushEventServiceTest {
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(500, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
@@ -358,6 +362,7 @@ class RushEventServiceTest {
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(500, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
