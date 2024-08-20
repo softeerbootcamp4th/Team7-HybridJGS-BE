@@ -6,17 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class RushEventResultResponseDto {
-    private final long leftOption;
-    private final long rightOption;
-    private final long rank;
-    private final long totalParticipants;
-    private final boolean isWinner;
-
-    public RushEventResultResponseDto(RushEventRateResponseDto rushEventRateResponseDto, long rank, long totalParticipants, boolean isWinner) {
-        this.leftOption = rushEventRateResponseDto.leftOption();
-        this.rightOption = rushEventRateResponseDto.rightOption();
-        this.rank = rank;
-        this.totalParticipants = totalParticipants;
-        this.isWinner = isWinner;
-    }
+    private final Long leftOption;
+    private final Long rightOption;
+    private final Long rank;
+    private final Long totalParticipants;
+    private final Boolean isWinner;
 }
