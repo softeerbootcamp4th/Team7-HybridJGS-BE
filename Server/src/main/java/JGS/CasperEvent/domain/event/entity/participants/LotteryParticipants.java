@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.entity.participants;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.entity.BaseUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ public class LotteryParticipants extends BaseEntity {
     @JoinColumn(name = "base_user_id")
     //todo: 왜이런지 알아보기
     @JsonBackReference
+    @JsonIgnore
     private BaseUser baseUser;
 
     private int linkClickedCount;
