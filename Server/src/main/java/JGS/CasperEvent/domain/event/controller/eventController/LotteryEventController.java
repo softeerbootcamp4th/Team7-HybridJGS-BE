@@ -7,6 +7,10 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.Lott
 import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +39,25 @@ public class LotteryEventController {
         this.redisService = redisService;
     }
 
-    // 추첨 이벤트 조회 API
+    @Operation(summary = "추첨 이벤트 조회", description = "현재 진행 중인 추첨 이벤트의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lottery event retrieval successful"),
+            @ApiResponse(responseCode = "404", description = "No lottery event found in the database"),
+            @ApiResponse(responseCode = "409", description = "More than one lottery event exists in the database")
+    })
     @GetMapping
-    public ResponseEntity<LotteryEventResponseDto> getLotteryEvent(){
+    public ResponseEntity<LotteryEventResponseDto> getLotteryEvent() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(lotteryEventService.getLotteryEvent());
     }
 
-    // 캐스퍼 봇 생성 API
+    @Operation(summary = "캐스퍼 봇 생성", description = "새로운 캐스퍼 봇을 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Casper bot creation successful"),
+            @ApiResponse(responseCode = "404", description = "No lottery event found in the database"),
+            @ApiResponse(responseCode = "409", description = "More than one lottery event exists in the database")
+    })
     @PostMapping("/casperBot")
     public ResponseEntity<CasperBotResponseDto> postCasperBot(
             HttpServletRequest request,
@@ -54,7 +68,11 @@ public class LotteryEventController {
                 .body(lotteryEventService.postCasperBot(user, postCasperBot));
     }
 
-    // 응모 여부 조회 API
+    @Operation(summary = "응모 여부 조회", description = "현재 사용자의 응모 여부를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Application status retrieval successful"),
+            @ApiResponse(responseCode = "404", description = "User has not applied")
+    })
     @GetMapping("/applied")
     public ResponseEntity<LotteryParticipantResponseDto> GetLotteryParticipant(HttpServletRequest request) throws UserPrincipalNotFoundException {
         BaseUser user = (BaseUser) request.getAttribute("user");
@@ -63,7 +81,10 @@ public class LotteryEventController {
                 .body(lotteryEventService.getLotteryParticipant(user));
     }
 
-    // 최근 100개 캐스퍼 봇 조회
+    @Operation(summary = "최근 100개 캐스퍼 봇 조회", description = "최근에 생성된 100개의 캐스퍼 봇을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Recent Casper bots retrieval successful")
+    })
     @GetMapping("/caspers")
     public ResponseEntity<List<CasperBotResponseDto>> getCasperBots() {
         return ResponseEntity.status(HttpStatus.OK)
