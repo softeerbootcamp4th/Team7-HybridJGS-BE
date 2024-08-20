@@ -101,16 +101,27 @@ public class RushEventService {
     }
 
     // 이벤트 결과를 반환
-    // 해당 요청은 무조건 응모한 유저일 때만 요청 가능하다고 가정
+    // 응모하지 않은 유저가 요청하는 경우가 존재 -> 응모 비율만 반환하도록 수정
     @Transactional
     public RushEventResultResponseDto getRushEventResult(BaseUser user) {
         RushEventResponseDto todayRushEvent = getTodayRushEventFromRedis();
+        Long todayEventId = todayRushEvent.rushEventId();
 
         // 최종 선택 비율을 조회
         // TODO: 레디스에 캐시
-        RushEventRateResponseDto rushEventRateResponseDto = getRushEventRate(user);
-        long leftOption = rushEventRateResponseDto.leftOption();
-        long rightOption = rushEventRateResponseDto.rightOption();
+        long leftOption = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
+        long rightOption = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
+
+        Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getId());
+        if (optionIdOptional.isEmpty()) {
+            return new RushEventResultResponseDto(
+                    leftOption,
+                    rightOption,
+                    null,
+                    null,
+                    null
+            );
+        }
 
         // 동점인 경우
         if (leftOption == rightOption) {
@@ -118,16 +129,15 @@ public class RushEventService {
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.rushEventId(), user.getId());
 
             // 각 옵션 선택지를 더하여 전체 참여자 수 구하기
-            long totalParticipants = rushEventRateResponseDto.leftOption() + rushEventRateResponseDto.rightOption();
+            long totalParticipants = leftOption + rightOption;
 
             // 당첨 여부
             boolean isWinner = rank <= todayRushEvent.winnerCount();
 
-            return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, isWinner);
+            return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, isWinner);
         }
 
-        // 해당 유저가 선택한 옵션을 가져옴
-        int optionId = rushEventRateResponseDto.optionId();
+        int optionId = optionIdOptional.get();
 
         long totalParticipants = (optionId == 1 ? leftOption : rightOption);
 
@@ -136,13 +146,13 @@ public class RushEventService {
 
         // 해당 유저가 선택한 옵션이 패배한 경우
         if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {
-            return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, false);
+            return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, false);
         }
 
         // 당첨 여부
         boolean isWinner = rank <= todayRushEvent.winnerCount();
 
-        return new RushEventResultResponseDto(rushEventRateResponseDto, rank, totalParticipants, isWinner);
+        return new RushEventResultResponseDto(leftOption, rightOption, rank, totalParticipants, isWinner);
     }
 
     // 오늘의 이벤트를 DB에 꺼내서 반환
@@ -191,7 +201,7 @@ public class RushEventService {
         String[][] texts = {
                 {"첫 차는 저렴해야 한다", "가성비 좋게 저렴한 차로 시작해서 차근히 업그레이드하고 싶어", "가성비 좋은 도심형 전기차", "캐스퍼 일렉트릭은 전기차 평균보다 30% 저렴해요 첫 차로 캐스퍼 일렉트릭 어떤가요?", "첫 차는 안전해야 한다", "처음 사는 차인 만큼 안전한 차를 사서 오래 타고 싶어", "가성비 좋은 도심형 전기차", "캐스퍼는 작고 귀엽기만 하다고 생각했나요? 이젠 현대 스마트센스 안전옵션까지 지원해요"},
                 {"온라인 쇼핑이 편해서 좋다", "편한게 최고야! 집에서 인터넷으로 쇼핑할래", "현대 유일 온라인 예약", "차 살 때도 온라인 쇼핑을! 오직 온라인에서만 구매할 수 있는 캐스퍼 일렉트릭", "오프라인 쇼핑이 확실해서 좋다", "살 거면 제대로 사야지! 직접 보고 나서 판단할래", "캐스퍼 스튜디오 송파", "캐스퍼 일렉트릭을 원하는 시간에 직접 만나볼 수 있는 무인 전시 스튜디오"},
-                {"텐트 치고 캠핑하기", "캠핑은 텐트가 근보이지!", "V2L로 캠핑 준비 끝", "캠핑장 전기 눈치싸움은 이제 그만! 차에 직접 220V 전원을 연결할 수 있어요", "차 안에서 차박하기", "가벼운 짐으로 차에서 잠드는 낭만이 좋아", "풀 폴딩으로 공간활용", "모든 시트가 완전히 접혀서 나만의 작은 방으로 만들 수 있어요"},
+                {"텐트 치고 캠핑하기", "캠핑은 텐트가 근본이지!", "V2L로 캠핑 준비 끝", "캠핑장 전기 눈치싸움은 이제 그만! 차에 직접 220V 전원을 연결할 수 있어요", "차 안에서 차박하기", "가벼운 짐으로 차에서 잠드는 낭만이 좋아", "풀 폴딩으로 공간활용", "모든 시트가 완전히 접혀서 나만의 작은 방으로 만들 수 있어요"},
                 {"평생 주차 무료로 하기", "요즘 주차장은 너무 비싸 주차비 걱정은 그만 하고 싶어", "전기차는 주차비 혜택 받아요", "공영주차장 50% 할인 정책으로 주차비 부담을 덜 수 있어요", "평생 주유 무료로 하기", "기름값이 너무 많이 올랐어 주유비가 많이 들어 고민이야", "전기차는 기름값 걱정 없어요", "주유비 부담 없이 마음껏 드라이브를 즐길 수 있어요"},
                 {"무채색 차가 좋다", "검은색, 흰색, 회색! 오래 타려면 무난한 게 최고야", "기본 색감도 다채롭게", "무채색 컬러도 매트부터 메탈릭까지 다양한 질감으로 구성했어요", "컬러풀한 차가 좋다", "무채색은 지루해! 내가 좋아하는 색으로 고를래", "신규 색상 5종 출시", "기존 캐스퍼 색상 라인업에 새로운 5종을 추가! 내 차의 개성을 뽐내봐요"},
                 {"주말에는 바다로 가기", "아까운 주말엔 국내여행이라도 다녀오고 싶어", "충전 한 번에 315km", "엔트리급 전기차의 주행거리 혁신 한 번 충전으로 서울에서 강릉까지 왕복도 거뜬해요", "주말에는 도심 드라이브", "평일에 너무 피곤했으니 오랜만에 동네 드라이브나 할래", "충전 한 번에 315km", "엔트리급 전기차의 주행거리 혁신 한 번 충전으로 서울에서 강릉까지 왕복도 거뜬해요"}
