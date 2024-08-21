@@ -71,17 +71,13 @@ public class S3Service {
         metadata.setContentType("image/" + extension);
         metadata.setContentLength(bytes.length);
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-
-        try {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
             PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
             amazonS3.putObject(putObjectRequest);
+            is.close();
         } catch (Exception e) {
             throw new AmazonS3Exception("이미지 업로드에 실패했습니다.");
-        } finally {
-            byteArrayInputStream.close();
-            is.close();
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
