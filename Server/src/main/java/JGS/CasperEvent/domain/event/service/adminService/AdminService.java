@@ -147,28 +147,26 @@ public class AdminService {
         RushEventOptionRequestDto leftOption = rushEventRequestDto.getLeftOptionRequestDto();
         RushEventOptionRequestDto rightOption = rushEventRequestDto.getRightOptionRequestDto();
 
-        RushOption leftRushOption = rushOptionRepository.save(new RushOption(
-                rushEvent,
-                leftOption.getMainText(),
-                leftOption.getSubText(),
-                leftOption.getResultMainText(),
-                leftOption.getResultSubText(),
-                leftOptionImgSrc,
-                Position.LEFT
-        ));
-
-        RushOption rightRushOption = rushOptionRepository.save(new RushOption(
-                rushEvent,
-                rightOption.getMainText(),
-                rightOption.getSubText(),
-                rightOption.getResultMainText(),
-                rightOption.getResultSubText(),
-                rightOptionImgSrc,
-                Position.RIGHT
-        ));
+        RushOption leftRushOption = createAndSaveRushOption(rushEvent, leftOption, leftOptionImgSrc, Position.LEFT);
+        RushOption rightRushOption = createAndSaveRushOption(rushEvent, rightOption, rightOptionImgSrc, Position.RIGHT);
 
         rushEvent.addOption(leftRushOption, rightRushOption);
         return AdminRushEventResponseDto.of(rushEvent);
+    }
+
+    public RushOption createAndSaveRushOption(RushEvent rushEvent, RushEventOptionRequestDto optionDto, String imgSrc, Position position) {
+
+        RushOption rushOption = new RushOption(
+                rushEvent,
+                optionDto.getMainText(),
+                optionDto.getSubText(),
+                optionDto.getResultMainText(),
+                optionDto.getResultSubText(),
+                imgSrc,
+                position
+        );
+
+        return rushOptionRepository.save(rushOption);
     }
 
     // 선착순 이벤트 조회
@@ -555,7 +553,6 @@ public class AdminService {
                 () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
         );
 
-        // todo: config에서 가져오도록 변경
         final String LIST_KEY = "recentData";
 
         // 긍정적인 문구 리스트
