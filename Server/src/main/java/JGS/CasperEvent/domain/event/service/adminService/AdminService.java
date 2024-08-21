@@ -342,7 +342,6 @@ public class AdminService {
 
         List<Object[]> lotteryParticipants = lotteryParticipantsRepository.findIdAndAppliedCounts();
 
-
         if (winnerCount >= lotteryParticipants.size()) {
             Long winnerId;
             for (Object[] lotteryParticipant : lotteryParticipants) {
