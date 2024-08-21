@@ -4,6 +4,8 @@ import JGS.CasperEvent.global.jwt.dto.Jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -11,8 +13,12 @@ import java.util.Date;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
-    public static final byte[] secret = "JaeYoungSecretKeyJaeYoungSecretKeyJaeYoungSecretKey".getBytes();
+
+    @Value("${spring.jwt.secretKey}")
+    private static String jwtSecretKey;
+    protected static final byte[] secret = jwtSecretKey.getBytes();
     private final Key key = Keys.hmacShaKeyFor(secret);
 
     public Jwt createJwt(Map<String, Object> claims) {
