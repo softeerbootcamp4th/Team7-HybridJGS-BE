@@ -59,6 +59,7 @@ public class AdminService {
     private final CasperBotRepository casperBotRepository;
     private final LotteryWinnerRepository lotteryWinnerRepository;
     private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
+    private final Random random = new Random();
 
     // 어드민 인증
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
@@ -359,7 +360,6 @@ public class AdminService {
         }
 
         // Fisher-Yates Shuffle Algorithm
-        Random random = new Random();
         for (int i = appliedParticipants.size() - 1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             Long temp = appliedParticipants.get(i);
@@ -530,7 +530,7 @@ public class AdminService {
         List<String> positiveMessages = List.of("사랑해 캐스퍼", "캐스퍼 최고!", "캐스퍼와 함께해요!", "캐스퍼 짱!", "캐스퍼는 나의 친구!");
 
         // 랜덤으로 긍정적인 문구 선택
-        String randomPositiveMessage = positiveMessages.get(new Random().nextInt(positiveMessages.size()));
+        String randomPositiveMessage = positiveMessages.get(random.nextInt(positiveMessages.size()));
 
         // isDeleted = true 로 업데이트
         casperBot.deleteExpectation();
