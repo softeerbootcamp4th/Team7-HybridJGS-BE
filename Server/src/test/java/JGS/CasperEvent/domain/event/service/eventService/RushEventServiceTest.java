@@ -40,7 +40,7 @@ class RushEventServiceTest {
     private RushOptionRepository rushOptionRepository;
 
     @Mock
-    private RushEventCacheService rushEventCacheService;
+    private EventCacheService eventCacheService;
     @InjectMocks
     RushEventService rushEventService;
 
@@ -63,7 +63,7 @@ class RushEventServiceTest {
                 new RushEvent()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
         // when
@@ -90,7 +90,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
 
         // when
@@ -115,7 +115,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(false);
         RushEvent rushEvent = new RushEvent();
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
@@ -142,7 +142,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
 
         // when & then
@@ -170,7 +170,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(100L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
@@ -200,7 +200,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -234,7 +234,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(2));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -268,7 +268,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -302,7 +302,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -335,7 +335,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -368,7 +368,7 @@ class RushEventServiceTest {
                 new HashSet<>()
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.empty());
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
@@ -421,7 +421,7 @@ class RushEventServiceTest {
                 )
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
 
         // when
         MainRushEventOptionsResponseDto result = rushEventService.getTodayRushEventOptions();
@@ -450,7 +450,7 @@ class RushEventServiceTest {
                 )
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when
         ResultRushEventOptionResponseDto result = rushEventService.getRushEventOptionResult(optionId);
 
@@ -478,7 +478,7 @@ class RushEventServiceTest {
                 )
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
             rushEventService.getRushEventOptionResult(optionId)
@@ -521,7 +521,7 @@ class RushEventServiceTest {
                 )
         );
 
-        given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
                 rushEventService.getRushEventOptionResult(optionId)
