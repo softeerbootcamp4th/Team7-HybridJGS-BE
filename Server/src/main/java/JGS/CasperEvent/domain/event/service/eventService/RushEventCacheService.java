@@ -7,6 +7,8 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class RushEventCacheService {
 
     private final RushEventRepository rushEventRepository;
+    private final CacheManager cacheManager;
 
     @Cacheable(value = "todayEventCache", key = "#today")
     public RushEventResponseDto getTodayEvent(LocalDate today) {
@@ -35,5 +38,12 @@ public class RushEventCacheService {
         }
 
         return RushEventResponseDto.of(rushEventList.get(0));
+    }
+
+    public void setCacheValue(LocalDate today, RushEventResponseDto rushEvent) {
+        Cache cache = cacheManager.getCache("todayEventCache");
+        if (cache != null) {
+            cache.put(today, rushEvent);
+        }
     }
 }
