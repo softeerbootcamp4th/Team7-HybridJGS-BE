@@ -27,7 +27,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -128,7 +127,7 @@ class LotteryEventServiceTest {
 
     @Test
     @DisplayName("응모 내역 조회 테스트 - 성공")
-    void getLotteryParticipants_Success() throws UserPrincipalNotFoundException {
+    void getLotteryParticipants_Success() {
         //given
         given(lotteryParticipantsRepository.findByBaseUser(user))
                 .willReturn(Optional.ofNullable(lotteryParticipants));

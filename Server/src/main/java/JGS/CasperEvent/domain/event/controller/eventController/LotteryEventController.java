@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -75,7 +74,7 @@ public class LotteryEventController {
             @ApiResponse(responseCode = "404", description = "User has not applied")
     })
     @GetMapping("/applied")
-    public ResponseEntity<LotteryParticipantResponseDto> GetLotteryParticipant(HttpServletRequest request) throws UserPrincipalNotFoundException {
+    public ResponseEntity<LotteryParticipantResponseDto> GetLotteryParticipant(HttpServletRequest request) {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.OK)

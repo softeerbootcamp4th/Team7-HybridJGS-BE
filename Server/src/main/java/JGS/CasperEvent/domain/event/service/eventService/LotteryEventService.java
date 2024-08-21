@@ -24,7 +24,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -64,9 +63,9 @@ public class LotteryEventService {
         return casperBotDto;
     }
 
-    public LotteryParticipantResponseDto getLotteryParticipant(BaseUser user) throws UserPrincipalNotFoundException {
+    public LotteryParticipantResponseDto getLotteryParticipant(BaseUser user) {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user)
-                .orElseThrow(() -> new UserPrincipalNotFoundException("응모 내역이 없습니다."));
+                .orElseThrow(() -> new CustomException("응모 내역이 없습니다.", CustomErrorCode.USER_NOT_FOUND));
         return LotteryParticipantResponseDto.of(participant, getCasperBot(participant.getCasperId()));
     }
 
