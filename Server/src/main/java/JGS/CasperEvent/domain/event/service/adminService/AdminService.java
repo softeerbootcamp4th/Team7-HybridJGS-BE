@@ -541,8 +541,7 @@ public class AdminService {
                         casperBot.getExpectation(),
                         casperBot.getCreatedAt().toLocalDate(),
                         casperBot.getCreatedAt().toLocalTime()
-                ))
-                .collect(Collectors.toList());
+                )).toList();
 
         // 마지막 페이지 여부 계산
         boolean isLastPage = casperBotPage.isLast();
@@ -558,7 +557,7 @@ public class AdminService {
                 () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
         );
 
-        // todo: 전체 설정에서 가져오도록 변경
+        // todo: config에서 가져오도록 변경
         final String LIST_KEY = "recentData";
 
         // 긍정적인 문구 리스트
@@ -590,8 +589,7 @@ public class AdminService {
                             );
                         }
                         return data;
-                    })
-                    .collect(Collectors.toList());
+                    }).toList();
 
             // Redis에서 현재 리스트를 삭제합니다.
             casperBotRedisTemplate.delete(LIST_KEY);
