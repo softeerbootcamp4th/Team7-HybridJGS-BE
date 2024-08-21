@@ -68,7 +68,6 @@ public class AdminService {
     // 어드민 생성
     public ResponseDto postAdmin(AdminRequestDto adminRequestDto) {
         String adminId = adminRequestDto.getAdminId();
-        //Todo: 비밀번호 암호화 필요
         String password = adminRequestDto.getPassword();
 
         Admin admin = adminRepository.findById(adminId).orElse(null);
@@ -338,40 +337,48 @@ public class AdminService {
 
         int winnerCount = lotteryEvent.getWinnerCount();
 
-        List<LotteryParticipants> lotteryParticipants = lotteryParticipantsRepository.findAll();
+        List<Object[]> lotteryParticipants = lotteryParticipantsRepository.findIdAndAppliedCounts();
 
-        if(winnerCount >= lotteryParticipants.size()){
-            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
-                lotteryWinnerRepository.save(new LotteryWinners(lotteryParticipant));
+        if (winnerCount >= lotteryParticipants.size()) {
+            for (Object[] lotteryParticipant : lotteryParticipants) {
+                lotteryWinnerRepository.save(new LotteryWinners(
+                        lotteryParticipantsRepository.findById((Long) lotteryParticipant[0]).get()
+                ));
             }
             return new ResponseDto("추첨이 완료되었습니다.");
         }
-        Set<LotteryParticipants> lotteryEventWinners = new HashSet<>();
 
-        int totalWeight;
+        int appliedCount;
+        List<Long> appliedParticipants = new ArrayList<>();
+
+        for (Object[] lotteryParticipant : lotteryParticipants) {
+            appliedCount = (int) lotteryParticipant[1];
+            for (int i = 0; i < appliedCount; i++) {
+                appliedParticipants.add((long) lotteryParticipant[0]);
+            }
+        }
+
+        // Fisher-Yates Shuffle Algorithm
         Random random = new Random();
+        for (int i = appliedParticipants.size() - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            Long temp = appliedParticipants.get(i);
+            appliedParticipants.set(i, appliedParticipants.get(j));
+            appliedParticipants.set(j, temp);
+        }
+
+        Set<Long> lotteryEventWinners = new HashSet<>();
         while (lotteryEventWinners.size() < winnerCount) {
-            totalWeight = 0;
-            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
-                totalWeight += lotteryParticipant.getAppliedCount();
-            }
-
-            int randomValue = random.nextInt(totalWeight) + 1;
-
-            int cumulativeSum = 0;
-            for (LotteryParticipants lotteryParticipant : lotteryParticipants) {
-                cumulativeSum += lotteryParticipant.getAppliedCount();
-                if (randomValue <= cumulativeSum) {
-                    lotteryEventWinners.add(lotteryParticipant);
-                    lotteryParticipants.remove(lotteryParticipant);
-                    break;
-                }
-            }
+            Long winnerId = appliedParticipants.remove(0);
+            if (lotteryEventWinners.contains(winnerId)) continue;
+            lotteryEventWinners.add(winnerId);
         }
 
-        for (LotteryParticipants lotteryEventWinner : lotteryEventWinners) {
-            lotteryWinnerRepository.save(new LotteryWinners(lotteryEventWinner));
-        }
+        List<LotteryWinners> winnersToSave = lotteryEventWinners.stream()
+                .map(winnerId -> new LotteryWinners(lotteryParticipantsRepository.findById(winnerId).get()))
+                .collect(Collectors.toList());
+
+        lotteryWinnerRepository.saveAll(winnersToSave);
 
         return new ResponseDto("추첨이 완료되었습니다.");
     }
