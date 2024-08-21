@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -11,20 +12,26 @@ import java.time.LocalTime;
 @Getter
 @Builder
 @EqualsAndHashCode
+@Schema(description = "추첨 이벤트를 생성하기 위한 요청 데이터입니다.")
 public class LotteryEventRequestDto {
 
     @NotNull(message = "이벤트 시작 날짜를 지정하세요.")
+    @Schema(description = "이벤트의 시작 날짜", example = "2024-09-01", required = true)
     private LocalDate startDate;
 
     @NotNull(message = "이벤트 시작 시간을 지정하세요.")
+    @Schema(description = "이벤트의 시작 시간", example = "14:00:00", required = true)
     private LocalTime startTime;
 
     @NotNull(message = "이벤트 종료 날짜를 지정하세요.")
+    @Schema(description = "이벤트의 종료 날짜", example = "2024-09-30", required = true)
     private LocalDate endDate;
 
-    @NotNull(message = "이벤트 시작 시간을 지정하세요.")
+    @NotNull(message = "이벤트 종료 시간을 지정하세요.")
+    @Schema(description = "이벤트의 종료 시간", example = "18:00:00", required = true)
     private LocalTime endTime;
 
     @NotNull(message = "당첨인원 수를 지정하세요.")
+    @Schema(description = "당첨 인원 수", example = "10", required = true)
     private int winnerCount;
 }
