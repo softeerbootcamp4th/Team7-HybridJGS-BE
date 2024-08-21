@@ -7,7 +7,6 @@ import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.util.AESUtils;
 import JGS.CasperEvent.global.util.Base62Utils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
