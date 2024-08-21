@@ -3,6 +3,9 @@ package JGS.CasperEvent.global.util;
 public class Base62Utils {
     private static final String BASE62_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+    private Base62Utils() {
+    }
+
     public static String encode(long number) {
         if (number == 0) return Character.toString(BASE62_CHARS.charAt(0));
 
