@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,5 +21,8 @@ public interface LotteryParticipantsRepository extends JpaRepository<LotteryPart
 
     @Query("SELECT COUNT(p) FROM LotteryParticipants p WHERE p.baseUser.id LIKE :id%")
     long countByBaseUser_Id(@Param("id") String id);
+
+    @Query("SELECT lp.id, lp.appliedCount From LotteryParticipants lp")
+    List<Object[]> findIdAndAppliedCounts();
 }
 
