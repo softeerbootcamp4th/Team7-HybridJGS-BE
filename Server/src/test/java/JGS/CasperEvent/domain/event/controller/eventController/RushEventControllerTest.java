@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(RushEventController.class)
 @Import(JwtProvider.class)
-public class RushEventControllerTest {
+class RushEventControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -145,9 +145,6 @@ public class RushEventControllerTest {
     @Test
     @DisplayName("오늘의 선착순 이벤트 조회 API 성공 테스트")
     public void getTodayEventTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/today")
                 .header("Authorization", accessToken)
@@ -166,7 +163,6 @@ public class RushEventControllerTest {
     @Test
     @DisplayName("응모 성공 테스트 - Option ID 2")
     public void applyRushEvent_Success() throws Exception {
-        String accessToken = this.accessToken;
         int optionId = 2;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -180,7 +176,6 @@ public class RushEventControllerTest {
     @Test
     @DisplayName("응모 실패 테스트 - Option ID 1")
     public void applyRushEvent_Failure_AlreadyApplied() throws Exception {
-        String accessToken = this.accessToken;
         int optionId = 1;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -197,8 +192,6 @@ public class RushEventControllerTest {
     @DisplayName("선택지 결과 조회 성공 테스트")
     public void getResultOptionTest() throws Exception {
         // given
-        String accessToken = this.accessToken;
-
         int optionId = 1;
 
         // when
@@ -217,9 +210,6 @@ public class RushEventControllerTest {
     @Test
     @DisplayName("밸런스 게임 비율 조회 API 테스트")
     public void getRushEventRateTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/balance")
                 .header("Authorization", accessToken)
@@ -236,9 +226,6 @@ public class RushEventControllerTest {
     @Test
     @DisplayName("밸런스 게임 최종 결과 조회 API 테스트")
     public void getRushEventResultTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/result")
                 .header("Authorization", accessToken)

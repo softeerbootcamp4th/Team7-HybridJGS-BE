@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = AdminController.class)
 @Import(JwtProvider.class)
-public class AdminControllerTest {
+class AdminControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired

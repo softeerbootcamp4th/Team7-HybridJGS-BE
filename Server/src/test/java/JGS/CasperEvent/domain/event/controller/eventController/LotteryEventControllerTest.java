@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(LotteryEventController.class)
 @Import(JwtProvider.class)
-public class LotteryEventControllerTest {
+class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
