@@ -5,6 +5,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public class RepositoryErrorHandler {
+
+    private RepositoryErrorHandler() {
+    }
+
     public static <T, ID> T findByIdOrElseThrow(JpaRepository<T, ID> repository, ID id, CustomErrorCode customErrorCode) {
         return repository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(customErrorCode.name())
