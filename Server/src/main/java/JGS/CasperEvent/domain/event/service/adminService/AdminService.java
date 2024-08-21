@@ -23,6 +23,7 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionReposit
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.eventService.EventCacheService;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.enums.Role;
@@ -58,6 +59,7 @@ public class AdminService {
     private final CasperBotRepository casperBotRepository;
     private final LotteryWinnerRepository lotteryWinnerRepository;
     private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
+    private final EventCacheService eventCacheService;
     private final Random random = new Random();
 
     // 어드민 인증
@@ -93,6 +95,7 @@ public class AdminService {
                 lotteryEventRequestDto.getWinnerCount()
         ));
 
+        eventCacheService.setLotteryEvent();
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
@@ -280,7 +283,7 @@ public class AdminService {
         lotteryEventRepository.deleteById(currentLotteryEvent.getLotteryEventId());
     }
 
-    // 선착순 이벤트 업데이트
+    // 추첨 이벤트 업데이트
     @Transactional
     public LotteryEventDetailResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
@@ -311,7 +314,7 @@ public class AdminService {
 
         // 필드 업데이트
         currentLotteryEvent.updateLotteryEvent(newStartDateTime, newEndDateTime, lotteryEventRequestDto.getWinnerCount());
-
+        eventCacheService.setLotteryEvent();
         return LotteryEventDetailResponseDto.of(currentLotteryEvent);
     }
 
