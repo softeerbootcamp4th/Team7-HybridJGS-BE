@@ -17,7 +17,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handler(CustomException e){
-        log.error("CustomException [{}]", e.getMessage(), e);
+        log.error("CustomException: {} {}", e.getErrorCode(), e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.valueOf(e.getErrorCode().getStatus()))
                 .body(ErrorResponse.of(e.getErrorCode(), e.getMessage()));
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
-        log.error("MethodArgumentNotValidException [{}]", e.getMessage(), e);
+        log.error("MethodArgumentNotValidException: [{}]", e.getMessage());
 
         BindingResult bindingResult = e.getBindingResult();
         StringBuilder builder = new StringBuilder();
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException e){
-        log.error("RuntimeException [{}]", e.getMessage(), e);
+        log.error("RuntimeException: [{}]", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(JDBCConnectionException.class)
     public ResponseEntity<ErrorResponse> handleJDBCConnectionException(JDBCConnectionException e) {
-        log.error("데이터베이스 연결 에러 [{}]", e.getMessage(), e);
+        log.error("JDBCConnectionException: [{}]", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
-        log.error("예외 발생 [{}] ", e.getMessage(), e);
+        log.error("Exception: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
