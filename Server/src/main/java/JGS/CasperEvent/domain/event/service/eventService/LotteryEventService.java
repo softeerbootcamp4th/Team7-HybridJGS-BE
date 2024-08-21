@@ -83,20 +83,24 @@ public class LotteryEventService {
             participant = new LotteryParticipants(user);
             lotteryParticipantsRepository.save(participant);
 
-            if (casperBotRequestDto.getReferralId() != null) {
-                String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
-                Optional<LotteryParticipants> referralParticipant =
-                        lotteryParticipantsRepository.findByBaseUser(
-                                userRepository.findById(referralId).orElse(null)
-                        );
-                referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
-            }
+            addReferralAppliedCount(casperBotRequestDto);
 
             user.updateLotteryParticipants(participant);
             userRepository.save(user);
         }
 
         return participant;
+    }
+
+    private void addReferralAppliedCount(CasperBotRequestDto casperBotRequestDto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        String encryptedReferralId = casperBotRequestDto.getReferralId();
+        if (encryptedReferralId == null) return;
+        String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
+        Optional<LotteryParticipants> referralParticipant =
+                lotteryParticipantsRepository.findByBaseUser(
+                        userRepository.findById(referralId).orElse(null)
+                );
+        referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
     }
 
     public LotteryEventResponseDto getLotteryEvent() {
