@@ -3,6 +3,7 @@ package JGS.CasperEvent.global.error;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -48,4 +49,20 @@ public class GlobalExceptionHandler  {
                 .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
     }
 
+    @ExceptionHandler(JDBCConnectionException.class)
+    public ResponseEntity<ErrorResponse> handleJDBCConnectionException(JDBCConnectionException e) {
+        log.error("데이터베이스 연결 에러 [{}]", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+        log.error("예외 발생 [{}] ", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+    }
 }
