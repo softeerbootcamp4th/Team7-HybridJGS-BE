@@ -29,7 +29,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, CasperBotResponseDto> CasperBotRedisTemplate(){
+    public RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate(){
         RedisTemplate<String, CasperBotResponseDto> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
