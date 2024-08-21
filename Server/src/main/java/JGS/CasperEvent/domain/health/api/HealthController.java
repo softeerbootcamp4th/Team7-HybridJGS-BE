@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.health.api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,8 @@ public class HealthController {
 
     @GetMapping
     public ResponseEntity<String> health(){
-        return ResponseEntity.ok().body("Server OK");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Server OK");
     }
 }

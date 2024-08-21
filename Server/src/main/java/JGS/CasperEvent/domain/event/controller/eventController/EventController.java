@@ -4,6 +4,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.TotalEventDateResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ public class EventController {
     @GetMapping("/total")
     public ResponseEntity<TotalEventDateResponseDto> getTotalEventDate() {
         TotalEventDateResponseDto totalEventDateResponseDto = eventService.getTotalEventDate();
-        return ResponseEntity.ok(totalEventDateResponseDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(totalEventDateResponseDto);
     }
 }
