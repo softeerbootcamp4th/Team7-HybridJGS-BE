@@ -64,10 +64,9 @@ class LotteryEventServiceTest {
     private LotteryParticipants lotteryParticipants;
     private CasperBotRequestDto casperBotRequestDto;
     private CasperBot casperBot;
-    private CasperBotResponseDto casperBotResponseDto;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp()  {
         byte[] decodedKey = "I0EM1X1NeXKJv4Q+ifZllg==".getBytes();
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
         ReflectionTestUtils.setField(lotteryEventService, "secretKey", secretKey);
@@ -98,9 +97,6 @@ class LotteryEventServiceTest {
 
         // 캐스퍼 봇 엔티티
         casperBot = new CasperBot(casperBotRequestDto, "010-0000-0000");
-
-        // 캐스퍼 봇 응답 DTO
-        casperBotResponseDto = CasperBotResponseDto.of(casperBot);
     }
 
     @Test
@@ -135,7 +131,7 @@ class LotteryEventServiceTest {
 
         //when
         LotteryParticipantResponseDto lotteryParticipantResponseDto = lotteryEventService.getLotteryParticipant(user);
-        CasperBotResponseDto casperBot = lotteryParticipantResponseDto.casperBot();
+        CasperBotResponseDto casperBotResponseDto = lotteryParticipantResponseDto.casperBot();
 
         //then
         assertThat(lotteryParticipantResponseDto).isNotNull();
@@ -144,13 +140,13 @@ class LotteryEventServiceTest {
         assertThat(lotteryParticipantResponseDto.appliedCount()).isEqualTo(1);
 
         assertThat(lotteryParticipantResponseDto.casperBot()).isNotNull();
-        assertThat(casperBot.eyeShape()).isEqualTo(0);
-        assertThat(casperBot.eyePosition()).isEqualTo(0);
-        assertThat(casperBot.mouthShape()).isEqualTo(0);
-        assertThat(casperBot.color()).isEqualTo(0);
-        assertThat(casperBot.sticker()).isEqualTo(0);
-        assertThat(casperBot.name()).isEqualTo("name");
-        assertThat(casperBot.expectation()).isEqualTo("expectation");
+        assertThat(casperBotResponseDto.eyeShape()).isEqualTo(0);
+        assertThat(casperBotResponseDto.eyePosition()).isEqualTo(0);
+        assertThat(casperBotResponseDto.mouthShape()).isEqualTo(0);
+        assertThat(casperBotResponseDto.color()).isEqualTo(0);
+        assertThat(casperBotResponseDto.sticker()).isEqualTo(0);
+        assertThat(casperBotResponseDto.name()).isEqualTo("name");
+        assertThat(casperBotResponseDto.expectation()).isEqualTo("expectation");
     }
 
     @Test

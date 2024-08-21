@@ -63,9 +63,6 @@ class RushEventServiceTest {
                 new RushEvent()
         );
 
-        List<MainRushEventResponseDto> mainRushEventResponseDtoList = rushEventList.stream()
-                .map(MainRushEventResponseDto::of).toList();
-
         given(rushEventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
@@ -75,7 +72,7 @@ class RushEventServiceTest {
         // then
         assertNotNull(allRushEvents);
         assertEquals(2, allRushEvents.getEvents().size());
-        assertEquals(allRushEvents.getTodayEventId(), 1);
+        assertEquals(1, allRushEvents.getTodayEventId());
     }
 
     @Test
@@ -496,18 +493,6 @@ class RushEventServiceTest {
     void getRushEventOptionResult3() {
         // given
         int optionId = 3;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->

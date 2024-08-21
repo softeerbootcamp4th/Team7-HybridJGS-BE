@@ -270,7 +270,7 @@ class AdminServiceTest {
         given(adminRepository.findByIdAndPassword("adminId", "password")).willReturn(Optional.ofNullable(admin));
 
         //when
-        Admin admin = adminService.verifyAdmin(adminRequestDto);
+        admin = adminService.verifyAdmin(adminRequestDto);
 
         //then
         assertThat(admin.getRole()).isEqualTo(Role.ADMIN);
@@ -1021,8 +1021,8 @@ class AdminServiceTest {
         List<LotteryParticipants> lotteryParticipantsList = new ArrayList<>();
 
         for (int i = 0; i < 400; i++) {
-            BaseUser user = new BaseUser(String.format("010-0000-%04d", i), Role.USER);
-            LotteryParticipants lotteryParticipants = new LotteryParticipants(user);
+            user = new BaseUser(String.format("010-0000-%04d", i), Role.USER);
+            lotteryParticipants = new LotteryParticipants(user);
             lotteryParticipantsList.add(lotteryParticipants);
         }
 

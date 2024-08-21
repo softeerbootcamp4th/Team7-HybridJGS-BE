@@ -124,7 +124,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("메인화면 선착순 이벤트 전체 조회 API 테스트")
-    public void getRushEventListAndServerTime() throws Exception {
+    void getRushEventListAndServerTime() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush")
                 .contentType(MediaType.APPLICATION_JSON));
