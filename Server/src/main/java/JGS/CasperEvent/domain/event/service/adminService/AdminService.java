@@ -340,11 +340,17 @@ public class AdminService {
 
         List<Object[]> lotteryParticipants = lotteryParticipantsRepository.findIdAndAppliedCounts();
 
+
         if (winnerCount >= lotteryParticipants.size()) {
+            Long winnerId;
             for (Object[] lotteryParticipant : lotteryParticipants) {
+                winnerId = (Long) lotteryParticipant[0];
                 lotteryWinnerRepository.save(new LotteryWinners(
-                        lotteryParticipantsRepository.findById((Long) lotteryParticipant[0]).get()
+                        lotteryParticipantsRepository.findById(winnerId).orElseThrow(
+                                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
+                        )
                 ));
+
             }
             return new ResponseDto("추첨이 완료되었습니다.");
         }
