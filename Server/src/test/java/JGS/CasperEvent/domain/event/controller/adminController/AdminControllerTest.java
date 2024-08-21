@@ -24,18 +24,22 @@ import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import JGS.CasperEvent.global.response.ResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.security.Key;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -55,7 +59,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = AdminController.class)
-@Import(JwtProvider.class)
 class AdminControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -100,6 +103,15 @@ class AdminControllerTest {
     private RushEventParticipantResponseDto rushEventParticipantResponseDto;
     private RushEventParticipantsListResponseDto rushEventParticipantsListResponseDto;
 
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public JwtProvider jwtProvider(){
+            String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
+            byte[] secret = secretKey.getBytes();
+            return new JwtProvider(Keys.hmacShaKeyFor(secret));
+        }
+    }
 
     @BeforeEach
     void setUp() throws Exception {
