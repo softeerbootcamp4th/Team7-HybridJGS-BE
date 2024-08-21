@@ -238,8 +238,11 @@ public class AdminService {
 
         boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
 
-        int winnerOptionId = (leftSelect > rightSelect) ? 1 : (leftSelect < rightSelect) ? 2 : 0;
+        int winnerOptionId;
 
+        if (leftSelect > rightSelect) winnerOptionId = 1;
+        else if (leftSelect < rightSelect) winnerOptionId = 2;
+        else winnerOptionId = 0;
 
         if (!isPhoneNumberEmpty && winnerOptionId != 0) {
             // 전화번호와 유효한 옵션 ID가 있는 경우
@@ -381,8 +384,9 @@ public class AdminService {
         }
 
         List<LotteryWinners> winnersToSave = lotteryEventWinners.stream()
-                .map(winnerId -> new LotteryWinners(lotteryParticipantsRepository.findById(winnerId).get()))
-                .collect(Collectors.toList());
+                .map(winnerId -> new LotteryWinners(lotteryParticipantsRepository.findById(winnerId).orElseThrow(() ->
+                        new CustomException(CustomErrorCode.USER_NOT_FOUND)
+                ))).toList();
 
         lotteryWinnerRepository.saveAll(winnersToSave);
 
