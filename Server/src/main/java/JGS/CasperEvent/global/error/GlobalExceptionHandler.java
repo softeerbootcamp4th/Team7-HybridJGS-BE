@@ -42,7 +42,7 @@ public class GlobalExceptionHandler  {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> RuntimeExceptionHandler(RuntimeException e){
+    public ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException e){
         log.error("RuntimeException [{}]", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
