@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CasperBotRepository extends JpaRepository<CasperBot, Long> {
     @Query("SELECT c FROM CasperBot c WHERE c.phoneNumber = :phoneNumber AND c.isDeleted = false AND c.expectation <> ''")

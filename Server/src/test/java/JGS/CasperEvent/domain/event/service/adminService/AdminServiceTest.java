@@ -114,6 +114,7 @@ class AdminServiceTest {
         user = spy(new BaseUser("010-0000-0000", Role.USER));
         lenient().when(user.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         lenient().when(user.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
+
         // 추첨 이벤트 생성 요청 DTO
         lotteryEventRequestDto = LotteryEventRequestDto.builder()
                 .startDate(LocalDate.of(2000, 9, 27))
@@ -132,6 +133,7 @@ class AdminServiceTest {
 
         // 추첨 이벤트 참여자 엔티티
         lotteryParticipants = spy(new LotteryParticipants(user));
+        lenient().when(lotteryParticipants.getId()).thenReturn(1L);
         lenient().when(lotteryParticipants.getCreatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
         lenient().when(lotteryParticipants.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
@@ -236,25 +238,15 @@ class AdminServiceTest {
                 build();
 
         casperBot =
-
                 spy(new CasperBot(casperBotRequestDto, "010-0000-0000"));
-
         lenient().
-
                 when(casperBot.getCasperId()).
-
                 thenReturn(1L);
-
         lenient().
-
                 when(casperBot.getCreatedAt()).
-
                 thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
-
         lenient().
-
                 when(casperBot.getUpdatedAt()).
-
                 thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
     }
 
@@ -270,7 +262,7 @@ class AdminServiceTest {
         given(adminRepository.findByIdAndPassword("adminId", "password")).willReturn(Optional.ofNullable(admin));
 
         //when
-        Admin admin = adminService.verifyAdmin(adminRequestDto);
+        admin = adminService.verifyAdmin(adminRequestDto);
 
         //then
         assertThat(admin.getRole()).isEqualTo(Role.ADMIN);
@@ -1021,14 +1013,21 @@ class AdminServiceTest {
         List<LotteryParticipants> lotteryParticipantsList = new ArrayList<>();
 
         for (int i = 0; i < 400; i++) {
-            BaseUser user = new BaseUser(String.format("010-0000-%04d", i), Role.USER);
-            LotteryParticipants lotteryParticipants = new LotteryParticipants(user);
             lotteryParticipantsList.add(lotteryParticipants);
         }
 
         given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
         given(lotteryWinnerRepository.count()).willReturn(0L);
-        given(lotteryParticipantsRepository.findAll()).willReturn(lotteryParticipantsList);
+
+        List<Object[]> idAndAppliedCounts = new ArrayList<>();
+        for (int i = 0; i < 400; i++) {
+            Object[] data = new Object[2];
+            data[0] = (long) i;
+            data[1] = 2;
+            idAndAppliedCounts.add(data);
+        }
+        given(lotteryParticipantsRepository.findById(any())).willReturn(Optional.ofNullable(lotteryParticipants));
+        given(lotteryParticipantsRepository.findIdAndAppliedCounts()).willReturn(idAndAppliedCounts);
 
         //when
         ResponseDto responseDto = adminService.pickLotteryEventWinners();
@@ -1049,7 +1048,13 @@ class AdminServiceTest {
 
         given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
         given(lotteryWinnerRepository.count()).willReturn(0L);
-        given(lotteryParticipantsRepository.findAll()).willReturn(lotteryParticipantsList);
+        List<Object[]> idAndAppliedCounts = new ArrayList<>();
+        Object[] data = new Object[2];
+        data[0] = 1L;
+        data[1] = 2;
+        idAndAppliedCounts.add(data);
+        given(lotteryParticipantsRepository.findById(1L)).willReturn(Optional.ofNullable(lotteryParticipants));
+        given(lotteryParticipantsRepository.findIdAndAppliedCounts()).willReturn(idAndAppliedCounts);
 
         //when
         ResponseDto responseDto = adminService.pickLotteryEventWinners();

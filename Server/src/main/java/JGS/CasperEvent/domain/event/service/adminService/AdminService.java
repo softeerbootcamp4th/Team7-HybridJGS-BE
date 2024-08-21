@@ -41,7 +41,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static JGS.CasperEvent.global.util.RepositoryErrorHandler.findByIdOrElseThrow;
 
@@ -59,6 +58,7 @@ public class AdminService {
     private final CasperBotRepository casperBotRepository;
     private final LotteryWinnerRepository lotteryWinnerRepository;
     private final RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
+    private final Random random = new Random();
 
     // 어드민 인증
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
@@ -147,28 +147,26 @@ public class AdminService {
         RushEventOptionRequestDto leftOption = rushEventRequestDto.getLeftOptionRequestDto();
         RushEventOptionRequestDto rightOption = rushEventRequestDto.getRightOptionRequestDto();
 
-        RushOption leftRushOption = rushOptionRepository.save(new RushOption(
-                rushEvent,
-                leftOption.getMainText(),
-                leftOption.getSubText(),
-                leftOption.getResultMainText(),
-                leftOption.getResultSubText(),
-                leftOptionImgSrc,
-                Position.LEFT
-        ));
-
-        RushOption rightRushOption = rushOptionRepository.save(new RushOption(
-                rushEvent,
-                rightOption.getMainText(),
-                rightOption.getSubText(),
-                rightOption.getResultMainText(),
-                rightOption.getResultSubText(),
-                rightOptionImgSrc,
-                Position.RIGHT
-        ));
+        RushOption leftRushOption = createAndSaveRushOption(rushEvent, leftOption, leftOptionImgSrc, Position.LEFT);
+        RushOption rightRushOption = createAndSaveRushOption(rushEvent, rightOption, rightOptionImgSrc, Position.RIGHT);
 
         rushEvent.addOption(leftRushOption, rightRushOption);
         return AdminRushEventResponseDto.of(rushEvent);
+    }
+
+    public RushOption createAndSaveRushOption(RushEvent rushEvent, RushEventOptionRequestDto optionDto, String imgSrc, Position position) {
+
+        RushOption rushOption = new RushOption(
+                rushEvent,
+                optionDto.getMainText(),
+                optionDto.getSubText(),
+                optionDto.getResultMainText(),
+                optionDto.getResultSubText(),
+                imgSrc,
+                position
+        );
+
+        return rushOptionRepository.save(rushOption);
     }
 
     // 선착순 이벤트 조회
@@ -237,8 +235,11 @@ public class AdminService {
 
         boolean isPhoneNumberEmpty = phoneNumber.isEmpty();
 
-        int winnerOptionId = (leftSelect > rightSelect) ? 1 : (leftSelect < rightSelect) ? 2 : 0;
+        int winnerOptionId;
 
+        if (leftSelect > rightSelect) winnerOptionId = 1;
+        else if (leftSelect < rightSelect) winnerOptionId = 2;
+        else winnerOptionId = 0;
 
         if (!isPhoneNumberEmpty && winnerOptionId != 0) {
             // 전화번호와 유효한 옵션 ID가 있는 경우
@@ -340,10 +341,15 @@ public class AdminService {
         List<Object[]> lotteryParticipants = lotteryParticipantsRepository.findIdAndAppliedCounts();
 
         if (winnerCount >= lotteryParticipants.size()) {
+            Long winnerId;
             for (Object[] lotteryParticipant : lotteryParticipants) {
+                winnerId = (Long) lotteryParticipant[0];
                 lotteryWinnerRepository.save(new LotteryWinners(
-                        lotteryParticipantsRepository.findById((Long) lotteryParticipant[0]).get()
+                        lotteryParticipantsRepository.findById(winnerId).orElseThrow(
+                                () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
+                        )
                 ));
+
             }
             return new ResponseDto("추첨이 완료되었습니다.");
         }
@@ -359,7 +365,6 @@ public class AdminService {
         }
 
         // Fisher-Yates Shuffle Algorithm
-        Random random = new Random();
         for (int i = appliedParticipants.size() - 1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             Long temp = appliedParticipants.get(i);
@@ -375,8 +380,9 @@ public class AdminService {
         }
 
         List<LotteryWinners> winnersToSave = lotteryEventWinners.stream()
-                .map(winnerId -> new LotteryWinners(lotteryParticipantsRepository.findById(winnerId).get()))
-                .collect(Collectors.toList());
+                .map(winnerId -> new LotteryWinners(lotteryParticipantsRepository.findById(winnerId).orElseThrow(() ->
+                        new CustomException(CustomErrorCode.USER_NOT_FOUND)
+                ))).toList();
 
         lotteryWinnerRepository.saveAll(winnersToSave);
 
@@ -422,47 +428,72 @@ public class AdminService {
 
         for (RushEventRequestDto rushEventRequestDto : rushEventRequestDtoList) {
             RushEvent rushEvent = rushEventRepository.findByRushEventId(rushEventRequestDto.getRushEventId());
-
-            LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
-            LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
             LocalDateTime startDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime());
             LocalDateTime endDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime());
-            if (!Objects.equals(curStartDateTime, startDateTime) || !Objects.equals(curEndDateTime, endDateTime)) {
-                // 종료 날짜가 시작 날짜보다 뒤인지 체크
-                if (endDateTime.isBefore(startDateTime)) {
-                    throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
-                }
 
-                if (curStartDateTime.isBefore(now) && curEndDateTime.isAfter(now)) {
-                    // 현재 진행 중인 이벤트인 경우
-                    if (!curStartDateTime.equals(startDateTime)) {
-                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
-                    }
-                    if (endDateTime.isBefore(now)) {
-                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
-                    }
-                }
-
-                // 이벤트가 시작 전인 경우
-                else if (startDateTime.isBefore(now)) {
-                    throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
-                }
-            }
-
-            RushOption leftOption = rushEvent.getLeftOption();
-            RushOption rightOption = rushEvent.getRightOption();
-
-            rushEvent.updateRushEvent(rushEventRequestDto);
-            leftOption.updateRushOption(rushEventRequestDto.getLeftOptionRequestDto());
-            rightOption.updateRushOption(rushEventRequestDto.getRightOptionRequestDto());
+            validateEventTimes(rushEvent, startDateTime, endDateTime, now);
+            updateRushEvent(rushEvent, rushEventRequestDto);
         }
+
 
         List<RushEvent> rushEvents = rushEventRepository.findAll();
         List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
         for (RushEvent rushEvent : rushEvents) {
             rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
         }
+
         return rushEventResponseDtoList;
+    }
+
+    // 이벤트 시간 유효성 검사
+    private void validateEventTimes(RushEvent rushEvent, LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime now) {
+        LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
+        LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
+
+        if (!Objects.equals(curStartDateTime, startDateTime) || !Objects.equals(curEndDateTime, endDateTime)) {
+            checkEndTimeBeforeStartTime(startDateTime, endDateTime);
+            checkEventInProgress(rushEvent, startDateTime, endDateTime, now);
+            checkEventBeforeStartTime(startDateTime, now);
+        }
+    }
+
+    // 현재 시간이 종료 시간보다 앞서는 경우
+    private void checkEndTimeBeforeStartTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (endDateTime.isBefore(startDateTime)) {
+            throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
+        }
+    }
+
+    // 이벤트가 현재 진행중인지 확인
+    private void checkEventInProgress(RushEvent rushEvent, LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime now) {
+        LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
+        LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
+
+        if (curStartDateTime.isBefore(now) && curEndDateTime.isAfter(now)) {
+            if (!curStartDateTime.equals(startDateTime)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
+            }
+            if (endDateTime.isBefore(now)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
+            }
+        }
+    }
+
+    // 이벤트가 시작 전인지 확인
+    private void checkEventBeforeStartTime(LocalDateTime startDateTime, LocalDateTime now) {
+        if (startDateTime.isBefore(now)) {
+            throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
+        }
+    }
+
+    // 선착순 이벤트 업데이트
+    private void updateRushEvent(RushEvent rushEvent, RushEventRequestDto rushEventRequestDto) {
+        RushOption leftOption = rushEvent.getLeftOption();
+        RushOption rightOption = rushEvent.getRightOption();
+
+        rushEvent.updateRushEvent(rushEventRequestDto);
+        leftOption.updateRushOption(rushEventRequestDto.getLeftOptionRequestDto());
+        rightOption.updateRushOption(rushEventRequestDto.getRightOptionRequestDto());
     }
 
     // 선착순 이벤트 삭제
@@ -506,8 +537,7 @@ public class AdminService {
                         casperBot.getExpectation(),
                         casperBot.getCreatedAt().toLocalDate(),
                         casperBot.getCreatedAt().toLocalTime()
-                ))
-                .collect(Collectors.toList());
+                )).toList();
 
         // 마지막 페이지 여부 계산
         boolean isLastPage = casperBotPage.isLast();
@@ -523,14 +553,13 @@ public class AdminService {
                 () -> new CustomException(CustomErrorCode.CASPERBOT_NOT_FOUND)
         );
 
-        // todo: 전체 설정에서 가져오도록 변경
         final String LIST_KEY = "recentData";
 
         // 긍정적인 문구 리스트
         List<String> positiveMessages = List.of("사랑해 캐스퍼", "캐스퍼 최고!", "캐스퍼와 함께해요!", "캐스퍼 짱!", "캐스퍼는 나의 친구!");
 
         // 랜덤으로 긍정적인 문구 선택
-        String randomPositiveMessage = positiveMessages.get(new Random().nextInt(positiveMessages.size()));
+        String randomPositiveMessage = positiveMessages.get(random.nextInt(positiveMessages.size()));
 
         // isDeleted = true 로 업데이트
         casperBot.deleteExpectation();
@@ -555,8 +584,7 @@ public class AdminService {
                             );
                         }
                         return data;
-                    })
-                    .collect(Collectors.toList());
+                    }).toList();
 
             // Redis에서 현재 리스트를 삭제합니다.
             casperBotRedisTemplate.delete(LIST_KEY);

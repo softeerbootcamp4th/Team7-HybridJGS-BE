@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,9 @@ public class RushEventController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of rush events.")
     @GetMapping
     public ResponseEntity<RushEventListResponseDto> getRushEventListAndServerTime() {
-        return ResponseEntity.ok(rushEventService.getAllRushEvents());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(rushEventService.getAllRushEvents());
     }
 
     @Operation(summary = "응모 여부 체크", description = "해당 유저가 오늘의 이벤트에 응모했는지 여부를 조회합니다.")
@@ -34,7 +37,9 @@ public class RushEventController {
     @GetMapping("/applied")
     public ResponseEntity<Boolean> checkUserParticipationInRushEvent(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        return ResponseEntity.ok(rushEventService.isExists(user.getId()));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(rushEventService.isExists(user.getId()));
     }
 
     @Operation(summary = "선착순 이벤트 응모", description = "해당 유저가 오늘의 이벤트에 응모합니다. optionId 값이 필요합니다. optionId 값이 1이면 왼쪽 선택지, 2이면 오른쪽 선택지에 응모합니다.")
@@ -48,7 +53,9 @@ public class RushEventController {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
         rushEventService.apply(user, optionId);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @Operation(summary = "실시간 응모 비율 조회", description = "실시간으로 변경되는 응모 비율을 조회합니다.")
@@ -57,7 +64,9 @@ public class RushEventController {
     public ResponseEntity<RushEventRateResponseDto> rushEventRate(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
         RushEventRateResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(user);
-        return ResponseEntity.ok(rushEventRateResponseDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(rushEventRateResponseDto);
     }
 
     @Operation(summary = "선착순 이벤트 결과를 조회합니다.", description = "이벤트가 끝나고 나서 최종 결과를 조회합니다.")
@@ -66,7 +75,9 @@ public class RushEventController {
     public ResponseEntity<RushEventResultResponseDto> rushEventResult(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
-        return ResponseEntity.ok(result);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
     }
 
     @Operation(summary = "오늘의 이벤트를 초기화합니다.", description = "오늘의 이벤트를 전부 초기화하고, 응모 여부도 전부 초기화합니다.")
@@ -74,7 +85,9 @@ public class RushEventController {
     @GetMapping("/today/test")
     public ResponseEntity<Void> setTodayEvent() {
         rushEventService.setRushEvents();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @Operation(summary = "오늘의 이벤트 옵션을 조회합니다.", description = "이벤트 참여자가 이벤트에 진입했을 때 보여질 옵션 선택지 정보를 조회합니다.")
@@ -82,7 +95,9 @@ public class RushEventController {
     @GetMapping("/today")
     public ResponseEntity<MainRushEventOptionsResponseDto> getTodayEvent() {
         MainRushEventOptionsResponseDto mainRushEventOptionsResponseDto = rushEventService.getTodayRushEventOptions();
-        return ResponseEntity.ok(mainRushEventOptionsResponseDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(mainRushEventOptionsResponseDto);
     }
 
     @Operation(summary = "옵션의 결과 Text를 조회합니다.", description = "유저가 응모를 했을 때 보여질 옵션의 상세 Text를 조회합니다.")
@@ -93,6 +108,8 @@ public class RushEventController {
     @GetMapping("/options/{optionId}/result")
     public ResponseEntity<ResultRushEventOptionResponseDto> getResultOption(@PathVariable("optionId") int optionId) {
         ResultRushEventOptionResponseDto resultRushEventOptionResponseDto = rushEventService.getRushEventOptionResult(optionId);
-        return ResponseEntity.ok(resultRushEventOptionResponseDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(resultRushEventOptionResponseDto);
     }
 }

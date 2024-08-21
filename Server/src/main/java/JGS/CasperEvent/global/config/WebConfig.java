@@ -19,10 +19,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         FilterRegistrationBean<CorsFilter> registrationBean = new FilterRegistrationBean<>();
@@ -47,7 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean verifyUserFilter(ObjectMapper mapper, UserService userService) {
+    public FilterRegistrationBean<Filter> verifyUserFilter(ObjectMapper mapper, UserService userService) {
         FilterRegistrationBean<Filter> filterRegistrationBean =
                 new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new VerifyUserFilter(mapper, userService));
@@ -57,7 +55,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean jwtFilter(JwtProvider provider, ObjectMapper mapper) {
+    public FilterRegistrationBean<Filter> jwtFilter(JwtProvider provider, ObjectMapper mapper) {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new JwtUserFilter(provider, mapper));
@@ -67,7 +65,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean verifyAdminFilter(ObjectMapper mapper, AdminService adminService) {
+    public FilterRegistrationBean<Filter> verifyAdminFilter(ObjectMapper mapper, AdminService adminService) {
 
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
@@ -78,7 +76,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean jwtAdminFilter(JwtProvider provider, ObjectMapper mapper) {
+    public FilterRegistrationBean<Filter> jwtAdminFilter(JwtProvider provider, ObjectMapper mapper) {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new JwtUserFilter(provider, mapper));
@@ -87,7 +85,7 @@ public class WebConfig implements WebMvcConfigurer {
         return filterRegistrationBean;
     }
     @Bean
-    public FilterRegistrationBean jwtAuthorizationFilter(JwtProvider provider, ObjectMapper mapper) {
+    public FilterRegistrationBean<Filter> jwtAuthorizationFilter(JwtProvider provider, ObjectMapper mapper) {
         FilterRegistrationBean<Filter> filterRegistrationBean = new
                 FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new JwtAuthorizationFilter(provider, mapper));

@@ -9,12 +9,15 @@ import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,8 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RushEventController.class)
-@Import(JwtProvider.class)
-public class RushEventControllerTest {
+class RushEventControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,6 +51,16 @@ public class RushEventControllerTest {
 
     private String phoneNumber;
     private String accessToken;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public JwtProvider jwtProvider(){
+            String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
+            byte[] secret = secretKey.getBytes();
+            return new JwtProvider(Keys.hmacShaKeyFor(secret));
+        }
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -124,7 +136,7 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("메인화면 선착순 이벤트 전체 조회 API 테스트")
-    public void getRushEventListAndServerTime() throws Exception {
+    void getRushEventListAndServerTime() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -144,10 +156,7 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("오늘의 선착순 이벤트 조회 API 성공 테스트")
-    public void getTodayEventTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
+    void getTodayEventTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/today")
                 .header("Authorization", accessToken)
@@ -165,8 +174,7 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("응모 성공 테스트 - Option ID 2")
-    public void applyRushEvent_Success() throws Exception {
-        String accessToken = this.accessToken;
+    void applyRushEvent_Success() throws Exception {
         int optionId = 2;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -174,13 +182,12 @@ public class RushEventControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         perform.andExpect(status().isNoContent())  // 204 No Content 응답 확인
-            .andDo(print());
-}
+                .andDo(print());
+    }
 
     @Test
     @DisplayName("응모 실패 테스트 - Option ID 1")
-    public void applyRushEvent_Failure_AlreadyApplied() throws Exception {
-        String accessToken = this.accessToken;
+    void applyRushEvent_Failure_AlreadyApplied() throws Exception {
         int optionId = 1;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -195,10 +202,8 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("선택지 결과 조회 성공 테스트")
-    public void getResultOptionTest() throws Exception {
+    void getResultOptionTest() throws Exception {
         // given
-        String accessToken = this.accessToken;
-
         int optionId = 1;
 
         // when
@@ -216,10 +221,7 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("밸런스 게임 비율 조회 API 테스트")
-    public void getRushEventRateTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
+    void getRushEventRateTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/balance")
                 .header("Authorization", accessToken)
@@ -235,10 +237,7 @@ public class RushEventControllerTest {
 
     @Test
     @DisplayName("밸런스 게임 최종 결과 조회 API 테스트")
-    public void getRushEventResultTest() throws Exception {
-        // given
-        String accessToken = this.accessToken;
-
+    void getRushEventResultTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/result")
                 .header("Authorization", accessToken)

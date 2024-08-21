@@ -11,11 +11,11 @@ import lombok.*;
 public class AdminRequestDto {
 
     @NotNull
-    @Schema(description = "관리자 아이디", example = "adminId", required = true)
+    @Schema(description = "관리자 아이디", example = "adminId")
     private String adminId;
 
     @NotNull
-    @Schema(description = "관리자 인증을 위한 비밀번호", example = "password", required = true)
+    @Schema(description = "관리자 인증을 위한 비밀번호", example = "password")
     private String password;
 
 }

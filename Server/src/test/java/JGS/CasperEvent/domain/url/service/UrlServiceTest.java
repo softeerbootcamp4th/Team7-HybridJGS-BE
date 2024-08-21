@@ -5,7 +5,9 @@ import JGS.CasperEvent.domain.url.entity.Url;
 import JGS.CasperEvent.domain.url.repository.UrlRepository;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
+import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import JGS.CasperEvent.global.util.AESUtils;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.crypto.BadPaddingException;
@@ -50,6 +54,16 @@ class UrlServiceTest {
         ReflectionTestUtils.setField(urlService, "secretKey", secretKey);
         ReflectionTestUtils.setField(urlService, "shortenBaseUrl", "baseUrl");
 
+    }
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public JwtProvider jwtProvider(){
+            String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
+            byte[] secret = secretKey.getBytes();
+            return new JwtProvider(Keys.hmacShaKeyFor(secret));
+        }
     }
 
     @Test

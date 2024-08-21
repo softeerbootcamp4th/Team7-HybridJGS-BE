@@ -14,12 +14,15 @@ import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,8 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LotteryEventController.class)
-@Import(JwtProvider.class)
-public class LotteryEventControllerTest {
+class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -62,6 +64,16 @@ public class LotteryEventControllerTest {
     private CasperBotResponseDto casperBotResponse;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventResponseDto lotteryEventResponseDto;
+
+    @TestConfiguration
+    static class TestConfig{
+        @Bean
+        public JwtProvider jwtProvider(){
+            String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
+            byte[] secret = secretKey.getBytes();
+            return new JwtProvider(Keys.hmacShaKeyFor(secret));
+        }
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -147,7 +159,7 @@ public class LotteryEventControllerTest {
 
     @Test
     @DisplayName("응모 여부 조회 성공 테스트")
-    void GetLotteryParticipantsSuccessTest() throws Exception {
+    void getLotteryParticipantsSuccessTest() throws Exception {
         //given
         given(lotteryEventService.getLotteryParticipant(user))
                 .willReturn(LotteryParticipantResponseDto.of(lotteryParticipants, casperBotResponse));

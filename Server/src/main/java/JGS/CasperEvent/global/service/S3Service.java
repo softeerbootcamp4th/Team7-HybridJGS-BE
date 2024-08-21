@@ -36,7 +36,11 @@ public class S3Service {
     }
 
     private String uploadImage(MultipartFile image) {
-        this.validateImageFileExtension(image.getOriginalFilename());
+        String originalFilename = image.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new AmazonS3Exception("파일명이 null입니다.");
+        }
+        this.validateImageFileExtension(originalFilename);
         try {
             return this.uploadImageToS3(image);
         } catch (IOException e) {
@@ -71,17 +75,13 @@ public class S3Service {
         metadata.setContentType("image/" + extension);
         metadata.setContentLength(bytes.length);
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-
-        try {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
             PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
             amazonS3.putObject(putObjectRequest);
+            is.close();
         } catch (Exception e) {
             throw new AmazonS3Exception("이미지 업로드에 실패했습니다.");
-        } finally {
-            byteArrayInputStream.close();
-            is.close();
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();

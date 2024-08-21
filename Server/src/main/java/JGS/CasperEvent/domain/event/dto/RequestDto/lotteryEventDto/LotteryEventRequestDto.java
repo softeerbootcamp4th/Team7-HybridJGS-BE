@@ -16,22 +16,22 @@ import java.time.LocalTime;
 public class LotteryEventRequestDto {
 
     @NotNull(message = "이벤트 시작 날짜를 지정하세요.")
-    @Schema(description = "이벤트의 시작 날짜", example = "2024-09-01", required = true)
+    @Schema(description = "이벤트의 시작 날짜", example = "2024-09-01")
     private LocalDate startDate;
 
     @NotNull(message = "이벤트 시작 시간을 지정하세요.")
-    @Schema(description = "이벤트의 시작 시간", example = "14:00:00", required = true)
+    @Schema(description = "이벤트의 시작 시간", example = "14:00:00")
     private LocalTime startTime;
 
     @NotNull(message = "이벤트 종료 날짜를 지정하세요.")
-    @Schema(description = "이벤트의 종료 날짜", example = "2024-09-30", required = true)
+    @Schema(description = "이벤트의 종료 날짜", example = "2024-09-30")
     private LocalDate endDate;
 
     @NotNull(message = "이벤트 종료 시간을 지정하세요.")
-    @Schema(description = "이벤트의 종료 시간", example = "18:00:00", required = true)
+    @Schema(description = "이벤트의 종료 시간", example = "18:00:00")
     private LocalTime endTime;
 
     @NotNull(message = "당첨인원 수를 지정하세요.")
-    @Schema(description = "당첨 인원 수", example = "10", required = true)
+    @Schema(description = "당첨 인원 수", example = "10")
     private int winnerCount;
 }
