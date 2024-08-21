@@ -74,7 +74,7 @@ public class LotteryEventController {
             @ApiResponse(responseCode = "404", description = "User has not applied")
     })
     @GetMapping("/applied")
-    public ResponseEntity<LotteryParticipantResponseDto> GetLotteryParticipant(HttpServletRequest request) {
+    public ResponseEntity<LotteryParticipantResponseDto> getLotteryParticipant(HttpServletRequest request) {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.OK)

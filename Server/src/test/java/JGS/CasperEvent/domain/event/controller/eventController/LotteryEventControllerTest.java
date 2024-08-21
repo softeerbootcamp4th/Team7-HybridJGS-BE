@@ -147,7 +147,7 @@ public class LotteryEventControllerTest {
 
     @Test
     @DisplayName("응모 여부 조회 성공 테스트")
-    void GetLotteryParticipantsSuccessTest() throws Exception {
+    void getLotteryParticipantsSuccessTest() throws Exception {
         //given
         given(lotteryEventService.getLotteryParticipant(user))
                 .willReturn(LotteryParticipantResponseDto.of(lotteryParticipants, casperBotResponse));
