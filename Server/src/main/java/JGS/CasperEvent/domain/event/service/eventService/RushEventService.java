@@ -228,7 +228,7 @@ public class RushEventService {
             rushEvents.add(rushEvent);
         }
 
-        rushEventCacheService.setCacheValue(LocalDate.now(), RushEventResponseDto.of(rushEvents.get(2)));
+        rushEventCacheService.setCacheValue(LocalDate.now());
     }
 
 

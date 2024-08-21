@@ -7,8 +7,7 @@ import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +20,21 @@ import java.util.List;
 public class RushEventCacheService {
 
     private final RushEventRepository rushEventRepository;
-    private final CacheManager cacheManager;
 
     @Cacheable(value = "todayEventCache", key = "#today")
     public RushEventResponseDto getTodayEvent(LocalDate today) {
         log.info("오늘의 이벤트 캐싱 {}", today);
+        // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
+        return fetchTodayRushEvent(today);
+    }
+
+    @CachePut(value = "todayEventCache", key = "#today")
+    public RushEventResponseDto setCacheValue(LocalDate today) {
+        log.info("이벤트 업데이트 {}", today);
+        return fetchTodayRushEvent(today);
+    }
+
+    private RushEventResponseDto fetchTodayRushEvent(LocalDate today) {
         // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
         List<RushEvent> rushEventList = rushEventRepository.findByEventDate(today);
 
@@ -38,12 +47,5 @@ public class RushEventCacheService {
         }
 
         return RushEventResponseDto.of(rushEventList.get(0));
-    }
-
-    public void setCacheValue(LocalDate today, RushEventResponseDto rushEvent) {
-        Cache cache = cacheManager.getCache("todayEventCache");
-        if (cache != null) {
-            cache.put(today, rushEvent);
-        }
     }
 }
