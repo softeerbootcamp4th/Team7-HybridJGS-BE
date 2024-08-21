@@ -1,9 +1,7 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -29,7 +27,6 @@ import javax.crypto.SecretKey;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,16 +36,16 @@ public class LotteryEventService {
 
     private static final Logger log = LoggerFactory.getLogger(LotteryEventService.class);
     private final UserRepository userRepository;
-    private final LotteryEventRepository lotteryEventRepository;
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
     private final CasperBotRepository casperBotRepository;
     private final RedisService redisService;
     private final SecretKey secretKey;
+    private final EventCacheService eventCacheService;
 
     public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
 
-        LotteryEvent lotteryEvent = getEvent();
+        LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
         lotteryEvent.addAppliedCount();
@@ -112,21 +109,7 @@ public class LotteryEventService {
     }
 
     public LotteryEventResponseDto getLotteryEvent() {
-        LotteryEvent lotteryEvent = getEvent();
+        LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
         return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
-    }
-
-    private LotteryEvent getEvent() {
-        List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
-
-        if (lotteryEventList.isEmpty()) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
-        }
-
-        if (lotteryEventList.size() > 1) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
-        }
-
-        return lotteryEventList.get(0);
     }
 }
