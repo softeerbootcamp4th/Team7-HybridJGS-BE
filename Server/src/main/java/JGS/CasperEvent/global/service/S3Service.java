@@ -36,7 +36,11 @@ public class S3Service {
     }
 
     private String uploadImage(MultipartFile image) {
-        this.validateImageFileExtension(image.getOriginalFilename());
+        String originalFilename = image.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new AmazonS3Exception("파일명이 null입니다.");
+        }
+        this.validateImageFileExtension(originalFilename);
         try {
             return this.uploadImageToS3(image);
         } catch (IOException e) {
