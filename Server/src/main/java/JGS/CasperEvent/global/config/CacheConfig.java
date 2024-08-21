@@ -10,7 +10,7 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("todayEventCache");
+        return new ConcurrentMapCacheManager("todayEventCache", "ongoingLotteryEvent");
     }
 
 }
