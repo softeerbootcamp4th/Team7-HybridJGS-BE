@@ -75,7 +75,7 @@ public class AdminService {
         if (admin != null) throw new CustomException("이미 등록된 ID입니다.", CustomErrorCode.CONFLICT);
         adminRepository.save(new Admin(adminId, password, Role.ADMIN));
 
-        return ResponseDto.of("관리자 생성 성공");
+        return new ResponseDto("관리자 생성 성공");
     }
 
     // 이미지 업로드
@@ -508,7 +508,7 @@ public class AdminService {
         if (now.isAfter(startDateTime) && now.isBefore(endDateTime))
             throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_DELETE);
         rushEventRepository.delete(rushEvent);
-        return ResponseDto.of("요청에 성공하였습니다.");
+        return new ResponseDto("요청에 성공하였습니다.");
     }
 
     // 선착순 이벤트 선택지 조회

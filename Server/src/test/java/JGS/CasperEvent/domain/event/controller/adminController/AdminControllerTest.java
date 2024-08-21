@@ -291,7 +291,7 @@ class AdminControllerTest {
         AdminRequestDto adminRequestDto = AdminRequestDto.builder().adminId(adminId).password(password).build();
         String requestBody = objectMapper.writeValueAsString(adminRequestDto);
 
-        given(adminService.postAdmin(adminRequestDto)).willReturn(ResponseDto.of("관리자 생성 성공"));
+        given(adminService.postAdmin(adminRequestDto)).willReturn(new ResponseDto("관리자 생성 성공"));
         //when
         ResultActions perform = mockMvc.perform(post("/admin/join").contentType(APPLICATION_JSON).content(requestBody));
 
@@ -666,7 +666,7 @@ class AdminControllerTest {
     void pickLotteryEventWinnerSuccessTest() throws Exception {
         //given
         given(adminService.pickLotteryEventWinners())
-                .willReturn(ResponseDto.of("추첨이 완료되었습니다."));
+                .willReturn(new ResponseDto("추첨이 완료되었습니다."));
 
         //when
         ResultActions perform = mockMvc.perform(post("/admin/event/lottery/winner")
@@ -684,7 +684,7 @@ class AdminControllerTest {
     void deleteLotteryEventWinners() throws Exception {
         //given
         given(adminService.deleteLotteryEventWinners())
-                .willReturn(ResponseDto.of("당첨자 명단을 삭제했습니다."));
+                .willReturn(new ResponseDto("당첨자 명단을 삭제했습니다."));
 
         //when
         ResultActions perform = mockMvc.perform(delete("/admin/event/lottery/winner")
