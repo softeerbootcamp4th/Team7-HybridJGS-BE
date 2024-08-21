@@ -422,47 +422,72 @@ public class AdminService {
 
         for (RushEventRequestDto rushEventRequestDto : rushEventRequestDtoList) {
             RushEvent rushEvent = rushEventRepository.findByRushEventId(rushEventRequestDto.getRushEventId());
-
-            LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
-            LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
             LocalDateTime startDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getStartTime());
             LocalDateTime endDateTime = LocalDateTime.of(rushEventRequestDto.getEventDate(), rushEventRequestDto.getEndTime());
-            if (!Objects.equals(curStartDateTime, startDateTime) || !Objects.equals(curEndDateTime, endDateTime)) {
-                // 종료 날짜가 시작 날짜보다 뒤인지 체크
-                if (endDateTime.isBefore(startDateTime)) {
-                    throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
-                }
 
-                if (curStartDateTime.isBefore(now) && curEndDateTime.isAfter(now)) {
-                    // 현재 진행 중인 이벤트인 경우
-                    if (!curStartDateTime.equals(startDateTime)) {
-                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
-                    }
-                    if (endDateTime.isBefore(now)) {
-                        throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
-                    }
-                }
-
-                // 이벤트가 시작 전인 경우
-                else if (startDateTime.isBefore(now)) {
-                    throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
-                }
-            }
-
-            RushOption leftOption = rushEvent.getLeftOption();
-            RushOption rightOption = rushEvent.getRightOption();
-
-            rushEvent.updateRushEvent(rushEventRequestDto);
-            leftOption.updateRushOption(rushEventRequestDto.getLeftOptionRequestDto());
-            rightOption.updateRushOption(rushEventRequestDto.getRightOptionRequestDto());
+            validateEventTimes(rushEvent, startDateTime, endDateTime, now);
+            updateRushEvent(rushEvent, rushEventRequestDto);
         }
+
 
         List<RushEvent> rushEvents = rushEventRepository.findAll();
         List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
         for (RushEvent rushEvent : rushEvents) {
             rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
         }
+
         return rushEventResponseDtoList;
+    }
+
+    // 이벤트 시간 유효성 검사
+    private void validateEventTimes(RushEvent rushEvent, LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime now) {
+        LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
+        LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
+
+        if (!Objects.equals(curStartDateTime, startDateTime) || !Objects.equals(curEndDateTime, endDateTime)) {
+            checkEndTimeBeforeStartTime(startDateTime, endDateTime);
+            checkEventInProgress(rushEvent, startDateTime, endDateTime, now);
+            checkEventBeforeStartTime(startDateTime, now);
+        }
+    }
+
+    // 현재 시간이 종료 시간보다 앞서는 경우
+    private void checkEndTimeBeforeStartTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (endDateTime.isBefore(startDateTime)) {
+            throw new CustomException(CustomErrorCode.EVENT_END_TIME_BEFORE_START_TIME);
+        }
+    }
+
+    // 이벤트가 현재 진행중인지 확인
+    private void checkEventInProgress(RushEvent rushEvent, LocalDateTime startDateTime, LocalDateTime endDateTime, LocalDateTime now) {
+        LocalDateTime curStartDateTime = rushEvent.getStartDateTime();
+        LocalDateTime curEndDateTime = rushEvent.getEndDateTime();
+
+        if (curStartDateTime.isBefore(now) && curEndDateTime.isAfter(now)) {
+            if (!curStartDateTime.equals(startDateTime)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME);
+            }
+            if (endDateTime.isBefore(now)) {
+                throw new CustomException(CustomErrorCode.EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW);
+            }
+        }
+    }
+
+    // 이벤트가 시작 전인지 확인
+    private void checkEventBeforeStartTime(LocalDateTime startDateTime, LocalDateTime now) {
+        if (startDateTime.isBefore(now)) {
+            throw new CustomException(CustomErrorCode.EVENT_BEFORE_START_TIME);
+        }
+    }
+
+    // 선착순 이벤트 업데이트
+    private void updateRushEvent(RushEvent rushEvent, RushEventRequestDto rushEventRequestDto) {
+        RushOption leftOption = rushEvent.getLeftOption();
+        RushOption rightOption = rushEvent.getRightOption();
+
+        rushEvent.updateRushEvent(rushEventRequestDto);
+        leftOption.updateRushOption(rushEventRequestDto.getLeftOptionRequestDto());
+        rightOption.updateRushOption(rushEventRequestDto.getRightOptionRequestDto());
     }
 
     // 선착순 이벤트 삭제
