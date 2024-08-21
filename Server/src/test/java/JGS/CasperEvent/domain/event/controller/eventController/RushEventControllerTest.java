@@ -144,7 +144,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("오늘의 선착순 이벤트 조회 API 성공 테스트")
-    public void getTodayEventTest() throws Exception {
+    void getTodayEventTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/today")
                 .header("Authorization", accessToken)
@@ -162,7 +162,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("응모 성공 테스트 - Option ID 2")
-    public void applyRushEvent_Success() throws Exception {
+    void applyRushEvent_Success() throws Exception {
         int optionId = 2;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -170,12 +170,12 @@ class RushEventControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         perform.andExpect(status().isNoContent())  // 204 No Content 응답 확인
-            .andDo(print());
-}
+                .andDo(print());
+    }
 
     @Test
     @DisplayName("응모 실패 테스트 - Option ID 1")
-    public void applyRushEvent_Failure_AlreadyApplied() throws Exception {
+    void applyRushEvent_Failure_AlreadyApplied() throws Exception {
         int optionId = 1;
 
         ResultActions perform = mockMvc.perform(post("/event/rush/options/{optionId}/apply", optionId)
@@ -190,7 +190,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("선택지 결과 조회 성공 테스트")
-    public void getResultOptionTest() throws Exception {
+    void getResultOptionTest() throws Exception {
         // given
         int optionId = 1;
 
@@ -209,7 +209,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("밸런스 게임 비율 조회 API 테스트")
-    public void getRushEventRateTest() throws Exception {
+    void getRushEventRateTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/balance")
                 .header("Authorization", accessToken)
@@ -225,7 +225,7 @@ class RushEventControllerTest {
 
     @Test
     @DisplayName("밸런스 게임 최종 결과 조회 API 테스트")
-    public void getRushEventResultTest() throws Exception {
+    void getRushEventResultTest() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/event/rush/result")
                 .header("Authorization", accessToken)
