@@ -17,6 +17,8 @@ import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.jwt.repository.UserRepository;
 import JGS.CasperEvent.global.util.AESUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LotteryEventService {
 
+    private static final Logger log = LoggerFactory.getLogger(LotteryEventService.class);
     private final UserRepository userRepository;
     private final LotteryEventRepository lotteryEventRepository;
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
@@ -95,12 +98,17 @@ public class LotteryEventService {
     private void addReferralAppliedCount(CasperBotRequestDto casperBotRequestDto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         String encryptedReferralId = casperBotRequestDto.getReferralId();
         if (encryptedReferralId == null) return;
-        String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
-        Optional<LotteryParticipants> referralParticipant =
-                lotteryParticipantsRepository.findByBaseUser(
-                        userRepository.findById(referralId).orElse(null)
-                );
-        referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
+        try {
+            String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
+            Optional<LotteryParticipants> referralParticipant =
+                    lotteryParticipantsRepository.findByBaseUser(
+                            userRepository.findById(referralId).orElse(null)
+                    );
+            referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
+        } catch (Exception e) {
+            log.debug(e.getLocalizedMessage());
+        }
+
     }
 
     public LotteryEventResponseDto getLotteryEvent() {
