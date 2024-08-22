@@ -1,6 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto;
-
-import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+package JGS.CasperEvent.domain.event.dto.response.lottery;
 
 import java.util.List;
 

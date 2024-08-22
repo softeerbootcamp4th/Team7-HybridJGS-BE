@@ -1,6 +1,5 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
+package JGS.CasperEvent.domain.event.dto.response.rush;
 
-import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import lombok.Getter;
 
 import java.time.LocalDate;
