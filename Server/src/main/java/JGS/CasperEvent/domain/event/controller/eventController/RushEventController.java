@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,8 +94,8 @@ public class RushEventController {
     @Operation(summary = "오늘의 이벤트 옵션을 조회합니다.", description = "이벤트 참여자가 이벤트에 진입했을 때 보여질 옵션 선택지 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved today's rush event options.")
     @GetMapping("/today")
-    public ResponseEntity<MainRushEventOptionsResponseDto> getTodayEvent() {
-        MainRushEventOptionsResponseDto mainRushEventOptionsResponseDto = rushEventService.getTodayRushEventOptions();
+    public ResponseEntity<RushEventResponseDto> getTodayEvent() {
+        RushEventResponseDto mainRushEventOptionsResponseDto = rushEventService.getTodayRushEventOptions();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(mainRushEventOptionsResponseDto);
