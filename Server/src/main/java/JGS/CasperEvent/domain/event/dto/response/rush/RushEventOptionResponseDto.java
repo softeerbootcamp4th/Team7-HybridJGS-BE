@@ -35,6 +35,7 @@ public class RushEventOptionResponseDto {
         this.updatedAt = updatedAt;
     }
 
+    // RushEventOptionResponseDto
     public static RushEventOptionResponseDto of(RushOption rushOption) {
         return new RushEventOptionResponseDto(
                 rushOption.getOptionId(),
@@ -46,6 +47,19 @@ public class RushEventOptionResponseDto {
                 rushOption.getPosition(),
                 rushOption.getCreatedAt(),
                 rushOption.getUpdatedAt()
+        );
+    }
+
+    private RushEventOptionResponseDto(String mainText, String subTest) {
+        this.mainText = mainText;
+        this.subText = subTest;
+    }
+
+    // MainRushEventOptionResponseDto
+    public static RushEventOptionResponseDto inMain(RushEventOptionResponseDto rushEventOptionResponseDto) {
+        return new RushEventOptionResponseDto(
+                rushEventOptionResponseDto.getMainText(),
+                rushEventOptionResponseDto.getSubText()
         );
     }
 }
