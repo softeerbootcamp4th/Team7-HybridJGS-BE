@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
@@ -120,11 +121,11 @@ public class AdminService {
             count = lotteryParticipantsRepository.countByBaseUser_Id(phoneNumber);
         }
 
-        List<LotteryEventParticipantsResponseDto> lotteryEventParticipantsResponseDtoList = new ArrayList<>();
+        List<LotteryEventParticipantResponseDto> lotteryEventParticipantsResponseDtoList = new ArrayList<>();
 
         for (LotteryParticipants lotteryParticipant : lotteryParticipantsPage) {
             lotteryEventParticipantsResponseDtoList.add(
-                    LotteryEventParticipantsResponseDto.of(lotteryParticipant)
+                    LotteryEventParticipantResponseDto.withDetail(lotteryParticipant)
             );
         }
         Boolean isLastPage = !lotteryParticipantsPage.hasNext();
