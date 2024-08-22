@@ -90,7 +90,7 @@ class AdminControllerTest {
     private LotteryEventResponseDto lotteryEventDetailResponseDto;
     private ExpectationsPagingResponseDto expectationsPagingResponseDto;
     private LotteryEventResponseDto lotteryEventExpectationResponseDto;
-    private LotteryEventWinnerListResponseDto lotteryEventWinnerListResponseDto;
+    private ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventWinnerListResponseDto;
     private LotteryEventParticipantResponseDto lotteryEventWinnerResponseDto;
     private LotteryWinners lotteryWinners;
 
@@ -190,7 +190,7 @@ class AdminControllerTest {
         // 추첨 이벤트 당첨자 리스트 응답 DTO
         List<LotteryEventParticipantResponseDto> lotteryEventWinnerResponseDtoList = new ArrayList<>();
         lotteryEventWinnerResponseDtoList.add(lotteryEventWinnerResponseDto);
-        lotteryEventWinnerListResponseDto = new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDtoList, true, 1);
+        lotteryEventWinnerListResponseDto = new ParticipantsListResponseDto<>(lotteryEventWinnerResponseDtoList, true, 1);
 
         // 추첨 이벤트 기대평 응답 DTO
         lotteryEventExpectationResponseDto = LotteryEventResponseDto.withExpectation(casperBot);

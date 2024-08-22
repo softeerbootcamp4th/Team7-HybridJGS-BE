@@ -1118,7 +1118,7 @@ class AdminServiceTest {
                 .willReturn(lotteryWinnersPage);
 
         //when
-        LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "");
+        ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "");
 
         //then
         LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
@@ -1149,7 +1149,7 @@ class AdminServiceTest {
         given(lotteryWinnerRepository.countByPhoneNumber("010-0000-0000")).willReturn(1L);
 
         //when
-        LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "010-0000-0000");
+        ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "010-0000-0000");
 
         //then
         LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
