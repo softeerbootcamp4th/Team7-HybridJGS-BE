@@ -403,7 +403,7 @@ public class AdminService {
     }
 
     // 추첨 이벤트 당첨자 명단 조회
-    public LotteryEventWinnerListResponseDto getLotteryEventWinners(int size, int page, String phoneNumber) {
+    public ParticipantsListResponseDto<LotteryEventParticipantResponseDto> getLotteryEventWinners(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
         if (lotteryWinnerRepository.count() == 0) throw new CustomException(CustomErrorCode.LOTTERY_EVENT_NOT_DRAWN);
 
@@ -425,7 +425,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
-        return new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDto, isLastPage, count);
+        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
     // 선착순 이벤트 업데이트
