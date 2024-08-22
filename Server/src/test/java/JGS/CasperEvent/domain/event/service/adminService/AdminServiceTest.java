@@ -619,7 +619,7 @@ class AdminServiceTest {
                 .willReturn(1L);
 
         //when
-        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "010-0000-0000");
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "010-0000-0000");
 
         //then
         assertThat(rushEventParticipants.isLastPage()).isTrue();
@@ -651,7 +651,7 @@ class AdminServiceTest {
                 .willReturn(1L);
 
         //when
-        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 0, "");
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 0, "");
 
         //then
         assertThat(rushEventParticipants.isLastPage()).isTrue();
@@ -682,7 +682,7 @@ class AdminServiceTest {
                 .willReturn(1L);
 
         //when
-        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "");
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 1, "");
 
         //then
         assertThat(rushEventParticipants.isLastPage()).isTrue();
@@ -713,7 +713,7 @@ class AdminServiceTest {
                 .willReturn(1L);
 
         //when
-        RushEventParticipantsListResponseDto rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 0, "010-0000-0000");
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipants = adminService.getRushEventParticipants(1, 1, 0, 0, "010-0000-0000");
 
         //then
         assertThat(rushEventParticipants.isLastPage()).isTrue();
@@ -747,7 +747,7 @@ class AdminServiceTest {
                 .willReturn(rushParticipantsPage);
 
         //when
-        RushEventParticipantsListResponseDto rushEventWinners
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventWinners
                 = adminService.getRushEventWinners(1L, 1, 0, "010-0000-0000");
 
         //then
@@ -782,7 +782,7 @@ class AdminServiceTest {
                 .willReturn(rushParticipantsPage);
 
         //when
-        RushEventParticipantsListResponseDto rushEventWinners
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventWinners
                 = adminService.getRushEventWinners(1L, 1, 0, "");
 
         //then
@@ -817,7 +817,7 @@ class AdminServiceTest {
                 .willReturn(rushParticipantsPage);
 
         //when
-        RushEventParticipantsListResponseDto rushEventWinners
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventWinners
                 = adminService.getRushEventWinners(1L, 1, 0, "");
 
         //then
@@ -852,7 +852,7 @@ class AdminServiceTest {
                 .willReturn(rushParticipantsPage);
 
         //when
-        RushEventParticipantsListResponseDto rushEventWinners
+        ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventWinners
                 = adminService.getRushEventWinners(1L, 1, 0, "010-0000-0000");
 
         //then

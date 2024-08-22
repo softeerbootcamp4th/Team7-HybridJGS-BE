@@ -104,7 +104,7 @@ class AdminControllerTest {
     private RushOption rightOption;
     private RushParticipants rushParticipants;
     private JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto rushEventParticipantResponseDto;
-    private RushEventParticipantsListResponseDto rushEventParticipantsListResponseDto;
+    private ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipantsListResponseDto;
 
     @TestConfiguration
     static class TestConfig{
@@ -283,7 +283,7 @@ class AdminControllerTest {
         // 선착순 이벤트 참여자 리스트 조회 응답 DTO
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         rushEventParticipantResponseDtoList.add(rushEventParticipantResponseDto);
-        rushEventParticipantsListResponseDto = new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, true, 1);
+        rushEventParticipantsListResponseDto = new ParticipantsListResponseDto<>(rushEventParticipantResponseDtoList, true, 1);
     }
 
 
