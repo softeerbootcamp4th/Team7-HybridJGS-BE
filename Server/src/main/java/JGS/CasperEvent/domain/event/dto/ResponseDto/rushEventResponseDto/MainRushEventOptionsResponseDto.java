@@ -1,6 +1,8 @@
 package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
 
-public record MainRushEventOptionsResponseDto(MainRushEventOptionResponseDto leftOption,
-                                              MainRushEventOptionResponseDto rightOption) {
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
+
+public record MainRushEventOptionsResponseDto(RushEventOptionResponseDto leftOption,
+                                              RushEventOptionResponseDto rightOption) {
 }
