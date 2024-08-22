@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RedisService {
+public class LotteryEventRedisService {
     private static final String LIST_KEY = "recentData";
     private static final int MAX_SIZE = 100;
 
     private final RedisTemplate<String, CasperBotResponseDto> redisTemplate;
 
     @Autowired
-    public RedisService(RedisTemplate<String, CasperBotResponseDto> redisTemplate) {
+    public LotteryEventRedisService(RedisTemplate<String, CasperBotResponseDto> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

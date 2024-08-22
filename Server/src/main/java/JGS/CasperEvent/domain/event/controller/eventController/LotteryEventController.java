@@ -4,7 +4,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequ
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
-import JGS.CasperEvent.domain.event.service.redisService.RedisService;
+import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,12 +31,12 @@ import java.util.List;
 public class LotteryEventController {
 
     private final LotteryEventService lotteryEventService;
-    private final RedisService redisService;
+    private final LotteryEventRedisService lotteryEventRedisService;
 
     @Autowired
-    public LotteryEventController(LotteryEventService lotteryEventService, RedisService redisService) {
+    public LotteryEventController(LotteryEventService lotteryEventService, LotteryEventRedisService lotteryEventRedisService) {
         this.lotteryEventService = lotteryEventService;
-        this.redisService = redisService;
+        this.lotteryEventRedisService = lotteryEventRedisService;
     }
 
     @Operation(summary = "추첨 이벤트 조회", description = "현재 진행 중인 추첨 이벤트의 정보를 조회합니다.")
@@ -88,6 +88,6 @@ public class LotteryEventController {
     @GetMapping("/caspers")
     public ResponseEntity<List<CasperBotResponseDto>> getCasperBots() {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(redisService.getRecentData());
+                .body(lotteryEventRedisService.getRecentData());
     }
 }

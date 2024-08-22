@@ -7,7 +7,7 @@ import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
-import JGS.CasperEvent.domain.event.service.redisService.RedisService;
+import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
@@ -37,7 +37,7 @@ public class LotteryEventService {
     private final UserRepository userRepository;
     private final LotteryParticipantsRepository lotteryParticipantsRepository;
     private final CasperBotRepository casperBotRepository;
-    private final RedisService redisService;
+    private final LotteryEventRedisService lotteryEventRedisService;
     private final SecretKey secretKey;
     private final EventCacheService eventCacheService;
 
@@ -57,7 +57,7 @@ public class LotteryEventService {
         }
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
-        redisService.addData(casperBotDto);
+        lotteryEventRedisService.addData(casperBotDto);
 
         return casperBotDto;
     }
