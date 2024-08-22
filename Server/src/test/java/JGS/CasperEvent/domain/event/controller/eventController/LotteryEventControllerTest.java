@@ -2,9 +2,10 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
@@ -63,12 +64,12 @@ class LotteryEventControllerTest {
     private CasperBotRequestDto casperBotRequest;
     private CasperBotResponseDto casperBotResponse;
     private LotteryParticipants lotteryParticipants;
-    private LotteryEventResponseDto lotteryEventResponseDto;
+    private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
 
     @TestConfiguration
-    static class TestConfig{
+    static class TestConfig {
         @Bean
-        public JwtProvider jwtProvider(){
+        public JwtProvider jwtProvider() {
             String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
             byte[] secret = secretKey.getBytes();
             return new JwtProvider(Keys.hmacShaKeyFor(secret));
@@ -90,11 +91,14 @@ class LotteryEventControllerTest {
         this.accessToken = getToken(this.phoneNumber);
 
         // 추첨 이벤트 조회
-        lotteryEventResponseDto = new LotteryEventResponseDto(
-                LocalDateTime.of(2024, 8, 15, 0, 0, 0),
+        LotteryEvent lotteryEvent = new LotteryEvent(
                 LocalDateTime.of(2024, 8, 1, 0, 0, 0),
                 LocalDateTime.of(2024, 8, 31, 0, 0, 0),
-                ChronoUnit.DAYS.between(LocalDateTime.of(2024, 8, 1, 0, 0, 0), LocalDateTime.of(2024, 8, 31, 0, 0, 0))
+                315
+        );
+        lotteryEventResponseDto = LotteryEventResponseDto.of(
+                lotteryEvent,
+                LocalDateTime.of(2024, 8, 1, 0, 0, 0)
         );
 
         casperBotRequest = CasperBotRequestDto.builder()
@@ -125,7 +129,7 @@ class LotteryEventControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.serverDateTime").value("2024-08-15T00:00:00"))
+                .andExpect(jsonPath("$.serverDateTime").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventStartDate").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventEndDate").value("2024-08-31T00:00:00"))
                 .andDo(print());
