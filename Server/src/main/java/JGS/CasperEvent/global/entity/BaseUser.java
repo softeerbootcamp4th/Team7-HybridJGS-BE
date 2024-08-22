@@ -9,31 +9,34 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Entity
 @EqualsAndHashCode(callSuper = false)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class BaseUser extends BaseEntity {
+
+
     @Id
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    String phoneNumber;
     Role role;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "baseUser", cascade = CascadeType.ALL)
     @JsonIgnore
-    private LotteryParticipants lotteryParticipants;
+    private List<LotteryParticipants> lotteryParticipants;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "baseUser", cascade = CascadeType.ALL)
     @JsonIgnore
-    private RushParticipants rushParticipants;
+    private List<RushParticipants> rushParticipants;
 
-    public void updateLotteryParticipants(LotteryParticipants lotteryParticipant) {
-        this.lotteryParticipants = lotteryParticipant;
-    }
-
-    public BaseUser(String id, Role role) {
-        this.id = id;
+    public BaseUser(String phoneNumber, Role role) {
+        this.phoneNumber = phoneNumber;
         this.role = role;
     }
 
