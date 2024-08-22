@@ -90,7 +90,7 @@ class AdminControllerTest {
     private ExpectationsPagingResponseDto expectationsPagingResponseDto;
     private LotteryEventResponseDto lotteryEventExpectationResponseDto;
     private LotteryEventWinnerListResponseDto lotteryEventWinnerListResponseDto;
-    private LotteryEventWinnerResponseDto lotteryEventWinnerResponseDto;
+    private LotteryEventParticipantResponseDto lotteryEventWinnerResponseDto;
     private LotteryWinners lotteryWinners;
 
 
@@ -184,10 +184,10 @@ class AdminControllerTest {
 
 
         // 추첨 이벤트 당첨자 응답 DTO
-        lotteryEventWinnerResponseDto = LotteryEventWinnerResponseDto.of(lotteryWinners);
+        lotteryEventWinnerResponseDto = LotteryEventParticipantResponseDto.winner(lotteryWinners);
 
         // 추첨 이벤트 당첨자 리스트 응답 DTO
-        List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDtoList = new ArrayList<>();
+        List<LotteryEventParticipantResponseDto> lotteryEventWinnerResponseDtoList = new ArrayList<>();
         lotteryEventWinnerResponseDtoList.add(lotteryEventWinnerResponseDto);
         lotteryEventWinnerListResponseDto = new LotteryEventWinnerListResponseDto(lotteryEventWinnerResponseDtoList, true, 1);
 
