@@ -5,7 +5,6 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -178,7 +177,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "No rush event found matching the provided ID.")
     })
     @GetMapping("/event/rush/{rushEventId}/options")
-    public ResponseEntity<AdminRushEventOptionResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
+    public ResponseEntity<RushEventResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventOptions(rushEventId));
