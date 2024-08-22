@@ -1,11 +1,13 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -86,5 +88,17 @@ public class RushEventResponseDto {
                 rushEvent.getStartDateTime(),
                 rushEvent.getEndDateTime()
         );
+    }
+
+    private RushEventResponseDto(Set<RushEventOptionResponseDto> options) {
+        this.options = options;
+    }
+
+    // AdminRushEventOptionResponseDto
+    public static RushEventResponseDto withOptions(RushEvent rushEvent) {
+        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> optionResponseDtoList = new HashSet<>();
+        optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getLeftOption()));
+        optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getRightOption()));
+        return new RushEventResponseDto(optionResponseDtoList);
     }
 }
