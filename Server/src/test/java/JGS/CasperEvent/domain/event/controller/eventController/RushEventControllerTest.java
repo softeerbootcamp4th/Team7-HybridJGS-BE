@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -75,12 +76,12 @@ class RushEventControllerTest {
         // Mock 데이터 설정
         RushEventListResponseDto rushEventListResponseDto = new RushEventListResponseDto(
                 Arrays.asList(
-                        new MainRushEventResponseDto(37L, LocalDateTime.of(2024, 8, 11, 22, 0), LocalDateTime.of(2024, 8, 11, 22, 10)),
-                        new MainRushEventResponseDto(38L, LocalDateTime.of(2024, 8, 12, 22, 0), LocalDateTime.of(2024, 8, 12, 22, 10)),
-                        new MainRushEventResponseDto(39L, LocalDateTime.of(2024, 8, 13, 22, 0), LocalDateTime.of(2024, 8, 13, 22, 10)),
-                        new MainRushEventResponseDto(40L, LocalDateTime.of(2024, 8, 14, 22, 0), LocalDateTime.of(2024, 8, 14, 22, 10)),
-                        new MainRushEventResponseDto(41L, LocalDateTime.of(2024, 8, 15, 22, 0), LocalDateTime.of(2024, 8, 15, 22, 10)),
-                        new MainRushEventResponseDto(42L, LocalDateTime.of(2024, 8, 16, 22, 0), LocalDateTime.of(2024, 8, 16, 22, 10))
+                        RushEventResponseDto.withMain(37L, LocalDateTime.of(2024, 8, 11, 22, 0), LocalDateTime.of(2024, 8, 11, 22, 10)),
+                        RushEventResponseDto.withMain(38L, LocalDateTime.of(2024, 8, 12, 22, 0), LocalDateTime.of(2024, 8, 12, 22, 10)),
+                        RushEventResponseDto.withMain(39L, LocalDateTime.of(2024, 8, 13, 22, 0), LocalDateTime.of(2024, 8, 13, 22, 10)),
+                        RushEventResponseDto.withMain(40L, LocalDateTime.of(2024, 8, 14, 22, 0), LocalDateTime.of(2024, 8, 14, 22, 10)),
+                        RushEventResponseDto.withMain(41L, LocalDateTime.of(2024, 8, 15, 22, 0), LocalDateTime.of(2024, 8, 15, 22, 10)),
+                        RushEventResponseDto.withMain(42L, LocalDateTime.of(2024, 8, 16, 22, 0), LocalDateTime.of(2024, 8, 16, 22, 10))
                 ),
                 LocalDateTime.of(2024, 8, 12, 13, 46, 29, 48782),
                 37L,
