@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
@@ -81,7 +82,7 @@ class AdminControllerTest {
     private LotteryEventRequestDto lotteryEventRequestDto;
     private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
     private LotteryParticipants lotteryParticipants;
-    private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
+    private LotteryEventParticipantResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
     private LotteryEventResponseDto lotteryEventDetailResponseDto;
     private LotteryEventExpectationsResponseDto lotteryEventExpectationsResponseDto;
@@ -149,10 +150,10 @@ class AdminControllerTest {
 
 
         // 추첨 이벤트 참여자 응답 DTO
-        this.lotteryEventParticipantsResponseDto = LotteryEventParticipantsResponseDto.of(lotteryParticipants);
+        this.lotteryEventParticipantsResponseDto = LotteryEventParticipantResponseDto.withDetail(lotteryParticipants);
 
         // 추첨 이벤트 참여자 리스트 응답 DTO
-        List<LotteryEventParticipantsResponseDto> participants = new ArrayList<>();
+        List<LotteryEventParticipantResponseDto> participants = new ArrayList<>();
         participants.add(lotteryEventParticipantsResponseDto);
         this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
 
