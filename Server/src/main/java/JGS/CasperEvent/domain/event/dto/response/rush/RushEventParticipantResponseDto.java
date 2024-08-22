@@ -11,42 +11,12 @@ import java.time.LocalTime;
 public class RushEventParticipantResponseDto {
     private Long id;
     private String phoneNumber;
-    private int linkClickedCounts;
-    private int expectation;
-    private int appliedCount;
     private Long ranking;
     private LocalDate createdDate;
     private LocalTime createdTime;
     private int balanceGameChoice;
     private Long rank;
 
-    private RushEventParticipantResponseDto(Long id, String phoneNumber,
-                                            int linkClickedCounts, int expectation,
-                                            int appliedCount, Long ranking,
-                                            LocalDate createdDate, LocalTime createdTime) {
-        this.id = id;
-        this.phoneNumber = phoneNumber;
-        this.linkClickedCounts = linkClickedCounts;
-        this.expectation = expectation;
-        this.appliedCount = appliedCount;
-        this.ranking = ranking;
-        this.createdDate = createdDate;
-        this.createdTime = createdTime;
-    }
-
-    // LotteryEventWinnerResponseDto
-    public static RushEventParticipantResponseDto winner(LotteryWinners lotteryWinner) {
-        return new RushEventParticipantResponseDto(
-                lotteryWinner.getId(),
-                lotteryWinner.getPhoneNumber(),
-                lotteryWinner.getLinkClickedCount(),
-                lotteryWinner.getExpectation(),
-                lotteryWinner.getAppliedCount(),
-                lotteryWinner.getRanking(),
-                lotteryWinner.getCreatedAt().toLocalDate(),
-                lotteryWinner.getCreatedAt().toLocalTime()
-        );
-    }
 
     private RushEventParticipantResponseDto(Long id, String phoneNumber,
                                             int balanceGameChoice, LocalDate createdDate,
