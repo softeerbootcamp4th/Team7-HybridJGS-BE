@@ -8,7 +8,7 @@ import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
-import JGS.CasperEvent.domain.event.service.redisService.RedisService;
+import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
@@ -23,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -54,7 +53,7 @@ class LotteryEventControllerTest {
     @MockBean
     private AdminService adminService;
     @MockBean
-    private RedisService redisService;
+    private LotteryEventRedisService lotteryEventRedisService;
 
     private BaseUser user;
     private String phoneNumber;
@@ -192,7 +191,7 @@ class LotteryEventControllerTest {
         for (int i = 0; i < 100; i++) {
             recentData.add(casperBotResponse);
         }
-        given(redisService.getRecentData())
+        given(lotteryEventRedisService.getRecentData())
                 .willReturn(recentData);
 
         //when
