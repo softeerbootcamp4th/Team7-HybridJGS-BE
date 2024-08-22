@@ -87,6 +87,7 @@ public class RushEventService {
         // redis incr 호출
 //        rushEventRedisService.incrementOptionCount(todayEventId, optionId);
 
+
         // 새로운 RushParticipants 를 생성하여 DB 에 저장
         RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
         rushParticipantsRepository.save(rushParticipants);
