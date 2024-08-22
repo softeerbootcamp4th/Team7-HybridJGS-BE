@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -133,7 +134,7 @@ public class AdminService {
     }
 
     // 선착순 이벤트 생성
-    public AdminRushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
+    public RushEventResponseDto createRushEvent(RushEventRequestDto rushEventRequestDto, MultipartFile prizeImg, MultipartFile leftOptionImg, MultipartFile rightOptionImg) {
         if (rushEventRepository.count() >= 6) throw new CustomException(CustomErrorCode.TOO_MANY_RUSH_EVENT);
         String prizeImgSrc = s3Service.upload(prizeImg);
         String leftOptionImgSrc = s3Service.upload(leftOptionImg);
@@ -155,7 +156,7 @@ public class AdminService {
         RushOption rightRushOption = createAndSaveRushOption(rushEvent, rightOption, rightOptionImgSrc, Position.RIGHT);
 
         rushEvent.addOption(leftRushOption, rightRushOption);
-        return AdminRushEventResponseDto.of(rushEvent);
+        return RushEventResponseDto.withDetail(rushEvent);
     }
 
     public RushOption createAndSaveRushOption(RushEvent rushEvent, RushEventOptionRequestDto optionDto, String imgSrc, Position position) {
@@ -174,11 +175,11 @@ public class AdminService {
     }
 
     // 선착순 이벤트 조회
-    public List<AdminRushEventResponseDto> getRushEvents() {
+    public List<RushEventResponseDto> getRushEvents() {
         List<RushEvent> rushEvents = rushEventRepository.findAll();
-        List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
+        List<RushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
         for (RushEvent rushEvent : rushEvents) {
-            rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
+            rushEventResponseDtoList.add(RushEventResponseDto.withDetail(rushEvent));
         }
         return rushEventResponseDtoList;
     }
@@ -427,7 +428,7 @@ public class AdminService {
 
     // 선착순 이벤트 업데이트
     @Transactional
-    public List<AdminRushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
+    public List<RushEventResponseDto> updateRushEvents(List<RushEventRequestDto> rushEventRequestDtoList) {
         LocalDateTime now = LocalDateTime.now();
 
         for (RushEventRequestDto rushEventRequestDto : rushEventRequestDtoList) {
@@ -441,9 +442,9 @@ public class AdminService {
 
 
         List<RushEvent> rushEvents = rushEventRepository.findAll();
-        List<AdminRushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
+        List<RushEventResponseDto> rushEventResponseDtoList = new ArrayList<>();
         for (RushEvent rushEvent : rushEvents) {
-            rushEventResponseDtoList.add(AdminRushEventResponseDto.of(rushEvent));
+            rushEventResponseDtoList.add(RushEventResponseDto.withDetail(rushEvent));
         }
 
         return rushEventResponseDtoList;
