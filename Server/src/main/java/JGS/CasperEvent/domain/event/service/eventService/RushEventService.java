@@ -94,14 +94,14 @@ public class RushEventService {
     }
 
     // 진행중인 게임의 응모 비율 반환
-    public RushEventRateResponseDto getRushEventRate(BaseUser user) {
+    public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto getRushEventRate(BaseUser user) {
         LocalDate today = LocalDate.now();
         Long todayEventId = eventCacheService.getTodayEvent(today).getRushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getId());
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
 
-        return new RushEventRateResponseDto(
+        return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.of(
                 optionId.orElseThrow(() -> new CustomException("유저가 응모한 선택지가 존재하지 않습니다.", CustomErrorCode.USER_NOT_FOUND)),
                 leftOptionCount, rightOptionCount);
     }
