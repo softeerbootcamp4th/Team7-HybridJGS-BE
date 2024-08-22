@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
+import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.ResultRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.global.enums.Position;
 import lombok.Getter;
@@ -60,6 +61,21 @@ public class RushEventOptionResponseDto {
         return new RushEventOptionResponseDto(
                 rushEventOptionResponseDto.getMainText(),
                 rushEventOptionResponseDto.getSubText()
+        );
+    }
+
+    private RushEventOptionResponseDto(String mainText, String resultMainText, String resultSubText) {
+        this.mainText = mainText;
+        this.resultMainText = resultMainText;
+        this.resultSubText = resultSubText;
+    }
+
+    // ResultRushEventOptionResponseDto
+    public static RushEventOptionResponseDto inResult(RushEventOptionResponseDto rushEventOptionResponseDto) {
+        return new RushEventOptionResponseDto(
+                rushEventOptionResponseDto.getMainText(),
+                rushEventOptionResponseDto.getResultMainText(),
+                rushEventOptionResponseDto.getResultSubText()
         );
     }
 }
