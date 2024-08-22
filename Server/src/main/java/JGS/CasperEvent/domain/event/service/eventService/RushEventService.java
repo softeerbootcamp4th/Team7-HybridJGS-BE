@@ -87,7 +87,8 @@ public class RushEventService {
         RushEvent rushEvent = RepositoryErrorHandler.findByIdOrElseThrow(rushEventRepository, todayEventId, CustomErrorCode.NO_RUSH_EVENT);
 
         // redis incr 호출
-        rushEventRedisService.incrementOptionCount(todayEventId, optionId);
+//        rushEventRedisService.incrementOptionCount(todayEventId, optionId);
+
 
         // 새로운 RushParticipants 를 생성하여 DB 에 저장
         RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
@@ -100,9 +101,12 @@ public class RushEventService {
         Long todayEventId = eventCacheService.getTodayEvent(today).getRushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
 
+        long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
+        long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
+
         // redis 에 캐싱 값 가져옴
-        long leftOptionCount = rushEventRedisService.getOptionCount(todayEventId, 1);
-        long rightOptionCount = rushEventRedisService.getOptionCount(todayEventId, 2);
+//        long leftOptionCount = rushEventRedisService.getOptionCount(todayEventId, 1);
+//        long rightOptionCount = rushEventRedisService.getOptionCount(todayEventId, 2);
 
         return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.of(
                 optionId.orElseThrow(() -> new CustomException("유저가 응모한 선택지가 존재하지 않습니다.", CustomErrorCode.USER_NOT_FOUND)),
