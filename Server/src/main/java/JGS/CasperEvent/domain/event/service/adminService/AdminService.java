@@ -7,7 +7,6 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -187,7 +186,7 @@ public class AdminService {
     }
 
     // 선착순 이벤트 참여자 조회
-    public RushEventParticipantsListResponseDto getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
+    public ParticipantsListResponseDto<RushEventParticipantResponseDto> getRushEventParticipants(long rushEventId, int size, int page, int optionId, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<RushParticipants> rushParticipantsPage = null;
@@ -226,11 +225,11 @@ public class AdminService {
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
-        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 당첨자 조회
-    public RushEventParticipantsListResponseDto getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
+    public ParticipantsListResponseDto<RushEventParticipantResponseDto> getRushEventWinners(long rushEventId, int size, int page, String phoneNumber) {
         Page<RushParticipants> rushParticipantsPage = null;
 
         RushEvent rushEvent = findByIdOrElseThrow(rushEventRepository, rushEventId, CustomErrorCode.NO_RUSH_EVENT);
@@ -277,7 +276,7 @@ public class AdminService {
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         long totalParticipants = rushParticipantsList.size();
-        return new RushEventParticipantsListResponseDto(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
+        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
     // 선착순 이벤트 삭제
