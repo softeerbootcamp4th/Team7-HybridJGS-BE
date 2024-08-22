@@ -44,7 +44,7 @@ public class RushEventService {
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
 
         // 모든 이벤트 꺼내오기
-        List<MainRushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
+        List<RushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
 
         // 선착순 이벤트 전체 시작 날짜와 종료 날짜 구하기
         List<LocalDate> dates = mainRushEventDtoList.stream().map(rushEvent -> rushEvent.getStartDateTime().toLocalDate()).sorted().toList();
@@ -54,12 +54,7 @@ public class RushEventService {
 
         // 전체 이벤트 기간 구하기
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
-
-        // RushEvent를 DTO로 전환
-        List<RushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
-                .map(RushEventResponseDto::withMain)
-                .toList();
-
+        
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListResponseDto(
                 mainRushEventDtoList,

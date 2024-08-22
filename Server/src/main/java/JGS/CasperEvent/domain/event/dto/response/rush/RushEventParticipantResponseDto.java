@@ -33,7 +33,7 @@ public class RushEventParticipantResponseDto {
     public static RushEventParticipantResponseDto result(RushParticipants rushParticipants, Long rank) {
         return new RushEventParticipantResponseDto(
                 rushParticipants.getId(),
-                rushParticipants.getBaseUser().getId(),
+                rushParticipants.getBaseUser().getPhoneNumber(),
                 rushParticipants.getOptionId(),
                 rushParticipants.getCreatedAt().toLocalDate(),
                 rushParticipants.getCreatedAt().toLocalTime(),

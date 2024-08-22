@@ -4,7 +4,6 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequ
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
 import JGS.CasperEvent.global.entity.BaseUser;

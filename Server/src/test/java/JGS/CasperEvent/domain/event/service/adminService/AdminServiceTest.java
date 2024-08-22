@@ -268,14 +268,14 @@ class AdminServiceTest {
                 .password("password")
                 .build();
 
-        given(adminRepository.findByIdAndPassword("adminId", "password")).willReturn(Optional.ofNullable(admin));
+        given(adminRepository.findByPhoneNumberAndPassword("adminId", "password")).willReturn(Optional.ofNullable(admin));
 
         //when
         admin = adminService.verifyAdmin(adminRequestDto);
 
         //then
         assertThat(admin.getRole()).isEqualTo(Role.ADMIN);
-        assertThat(admin.getId()).isEqualTo("adminId");
+        assertThat(admin.getPhoneNumber()).isEqualTo("adminId");
         assertThat(admin.getPassword()).isEqualTo("password");
     }
 
@@ -304,7 +304,7 @@ class AdminServiceTest {
                 .password("password")
                 .build();
 
-        given(adminRepository.findById("adminId")).willReturn(Optional.ofNullable(admin));
+        given(adminRepository.findByPhoneNumber("adminId")).willReturn(Optional.ofNullable(admin));
 
         //when
         CustomException customException = assertThrows(CustomException.class, () ->

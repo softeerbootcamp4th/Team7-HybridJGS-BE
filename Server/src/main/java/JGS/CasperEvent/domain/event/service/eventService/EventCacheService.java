@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.MainRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
@@ -80,7 +79,7 @@ public class EventCacheService {
     }
 
     @Cacheable(value = "allRushEventCache")
-    public List<MainRushEventResponseDto> getAllRushEvent() {
+    public List<RushEventResponseDto> getAllRushEvent() {
         log.info("전체 이벤트 캐싱");
         // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
         return fetchAllRushEvent();
@@ -88,18 +87,18 @@ public class EventCacheService {
 
     //todo: 어드민 선착순 이벤트 변경 시 메서드 호출
     @CachePut(value = "allRushEventCache")
-    public List<MainRushEventResponseDto> setAllRushEvent() {
+    public List<RushEventResponseDto> setAllRushEvent() {
         log.info("이벤트 변경 캐싱");
         return fetchAllRushEvent();
     }
 
-    private List<MainRushEventResponseDto> fetchAllRushEvent() {
+    private List<RushEventResponseDto> fetchAllRushEvent() {
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
 
         // RushEvent를 DTO로 전환
         return  rushEventList.stream()
-                .map(MainRushEventResponseDto::of)
+                .map(RushEventResponseDto::withMain)
                 .toList();
     }
 }

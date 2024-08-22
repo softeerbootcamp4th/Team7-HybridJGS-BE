@@ -69,7 +69,7 @@ public class LotteryEventParticipantResponseDto {
     public static LotteryEventParticipantResponseDto withDetail(LotteryParticipants lotteryParticipants) {
         return new LotteryEventParticipantResponseDto(
                 lotteryParticipants.getId(),
-                lotteryParticipants.getBaseUser().getId(),
+                lotteryParticipants.getBaseUser().getPhoneNumber(),
                 lotteryParticipants.getLinkClickedCount(),
                 lotteryParticipants.getExpectations(),
                 lotteryParticipants.getAppliedCount(),
