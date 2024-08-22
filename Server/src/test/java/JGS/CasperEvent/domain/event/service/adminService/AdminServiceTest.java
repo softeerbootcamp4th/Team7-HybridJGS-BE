@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -24,6 +25,7 @@ import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionReposit
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryWinnerRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.eventService.EventCacheService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.EventStatus;
@@ -83,6 +85,8 @@ class AdminServiceTest {
     private RedisTemplate<String, CasperBotResponseDto> casperBotRedisTemplate;
     @Mock
     private ListOperations<String, CasperBotResponseDto> listOperations;
+    @Mock
+    private EventCacheService eventCacheService;
 
 
     private RushEvent rushEvent;
@@ -332,10 +336,10 @@ class AdminServiceTest {
         LotteryEventResponseDto lotteryEventResponseDto = adminService.createLotteryEvent(lotteryEventRequestDto);
 
         //then
-        assertThat(lotteryEventResponseDto.serverDateTime()).isNotNull();
-        assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
-        assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
-        assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
+        assertThat(lotteryEventResponseDto.getServerDateTime()).isNotNull();
+        assertThat(lotteryEventResponseDto.getEventStartDate()).isEqualTo("2000-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getEventEndDate()).isEqualTo("2100-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getActivePeriod()).isEqualTo(36524);
     }
 
     @Test
@@ -876,6 +880,7 @@ class AdminServiceTest {
         List<LotteryEvent> lotteryEventList = new ArrayList<>();
         lotteryEventList.add(lotteryEvent);
         given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.setLotteryEvent()).willReturn(lotteryEvent);
 
         //when
         LotteryEventDetailResponseDto lotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
