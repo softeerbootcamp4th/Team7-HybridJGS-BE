@@ -21,7 +21,7 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
             "AND rp.optionId = :optionId " +
             "AND rp.id < (SELECT rp2.id FROM RushParticipants rp2 " +
             "WHERE rp2.rushEvent.rushEventId = :eventId " +
-            "AND rp2.baseUser.id = :userId)")
+            "AND rp2.baseUser.phoneNumber = :userId)")
     long findUserRankByEventIdAndUserIdAndOptionId(@Param("eventId") Long eventId,
                                                    @Param("userId") String userId,
                                                    @Param("optionId") int optionId);
@@ -30,13 +30,13 @@ public interface RushParticipantsRepository extends JpaRepository<RushParticipan
             "WHERE rp.rushEvent.rushEventId = :eventId " +
             "AND rp.id < (SELECT rp2.id FROM RushParticipants rp2 " +
             "WHERE rp2.rushEvent.rushEventId = :eventId " +
-            "AND rp2.baseUser.id = :userId)")
+            "AND rp2.baseUser.phoneNumber = :userId)")
     long findUserRankByEventIdAndUserId(@Param("eventId") Long eventId,
                                         @Param("userId") String userId);
 
     long countAllByOptionId(int optionId);
 
-    @Query("SELECT rp.optionId FROM RushParticipants rp WHERE rp.baseUser.id = :userId")
+    @Query("SELECT rp.optionId FROM RushParticipants rp WHERE rp.baseUser.phoneNumber = :userId")
     Optional<Integer> getOptionIdByUserId(@Param("userId") String userId);
 
     Page<RushParticipants> findByRushEvent_RushEventId(Long rushEventId, Pageable pageable);
