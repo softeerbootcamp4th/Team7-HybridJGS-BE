@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
@@ -23,10 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;

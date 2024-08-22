@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
