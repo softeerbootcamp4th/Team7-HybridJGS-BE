@@ -5,6 +5,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
@@ -110,7 +111,7 @@ public class AdminService {
     }
 
     // 추첨 이벤트 참여자 조회
-    public LotteryEventParticipantsListResponseDto getLotteryEventParticipants(int size, int page, String phoneNumber) {
+    public ParticipantsListResponseDto<LotteryEventParticipantResponseDto> getLotteryEventParticipants(int size, int page, String phoneNumber) {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<LotteryParticipants> lotteryParticipantsPage = null;
@@ -131,7 +132,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryParticipantsPage.hasNext();
-        return new LotteryEventParticipantsListResponseDto(lotteryEventParticipantsResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 생성
