@@ -64,6 +64,10 @@ public class RushEventOptionResponseDto {
         );
     }
 
+    public static RushEventOptionResponseDto inMain(String mainText, String subText){
+        return new RushEventOptionResponseDto(mainText, subText);
+    }
+
     private RushEventOptionResponseDto(String mainText, String resultMainText, String resultSubText) {
         this.mainText = mainText;
         this.resultMainText = resultMainText;
