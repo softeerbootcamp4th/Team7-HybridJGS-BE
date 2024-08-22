@@ -6,9 +6,9 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
@@ -122,7 +122,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 참여자 조회", description = "선착순 이벤트 참여자를 조회합니다. rushEventId가 필요합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Rush event participants retrieved successfully.")
     @GetMapping("/event/rush/{rushEventId}/participants")
-    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
+    public ResponseEntity<ParticipantsListResponseDto<RushEventParticipantResponseDto>> getRushEventParticipants(
             @PathVariable("rushEventId") Long rushEventId,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
@@ -136,7 +136,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 당첨자 조회", description = "선착순 이벤트 당첨자를 조회합니다. rushEventId가 필요합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Rush event winners retrieved successfully.")
     @GetMapping("/event/rush/{rushEventId}/winner")
-    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventWinners(
+    public ResponseEntity<ParticipantsListResponseDto<RushEventParticipantResponseDto>> getRushEventWinners(
             @PathVariable("rushEventId") Long rushEventId,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
