@@ -4,6 +4,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,7 +77,7 @@ public class RushEventController {
     @GetMapping("/result")
     public ResponseEntity<RushEventResultResponseDto> rushEventResult(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);
