@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto;
 
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
