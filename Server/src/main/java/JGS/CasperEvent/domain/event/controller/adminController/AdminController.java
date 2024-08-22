@@ -6,7 +6,6 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -259,7 +258,7 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Lottery event has not yet been drawn.")
     })
     @GetMapping("/event/lottery/winner")
-    public ResponseEntity<LotteryEventWinnerListResponseDto> getWinners(
+    public ResponseEntity<ParticipantsListResponseDto<LotteryEventParticipantResponseDto>> getWinners(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
