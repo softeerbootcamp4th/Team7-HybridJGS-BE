@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
 
