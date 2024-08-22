@@ -22,6 +22,7 @@ public class BaseUser extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(unique = true)
     String phoneNumber;
     Role role;
 
