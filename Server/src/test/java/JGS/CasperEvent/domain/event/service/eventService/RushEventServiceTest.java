@@ -424,12 +424,12 @@ class RushEventServiceTest {
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
 
         // when
-        MainRushEventOptionsResponseDto result = rushEventService.getTodayRushEventOptions();
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto result = rushEventService.getTodayRushEventOptions();
 
         // then
         assertNotNull(result);
-        assertEquals("leftMainText", result.leftOption().mainText());
-        assertEquals("rightMainText", result.rightOption().mainText());
+        assertEquals("leftMainText", result.getLeftOption().getMainText());
+        assertEquals("rightMainText", result.getRightOption().getMainText());
     }
 
     @Test
