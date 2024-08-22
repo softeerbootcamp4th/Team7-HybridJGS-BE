@@ -4,9 +4,11 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
@@ -84,7 +86,7 @@ public class AdminController {
     @Operation(summary = "추첨 이벤트 참여자 조회", description = "추첨 이벤트 참여자를 조회합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Lottery event participants retrieved successfully.")
     @GetMapping("/event/lottery/participants")
-    public ResponseEntity<LotteryEventParticipantsListResponseDto> getLotteryEventParticipants(
+    public ResponseEntity<ParticipantsListResponseDto<LotteryEventParticipantResponseDto>> getLotteryEventParticipants(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
