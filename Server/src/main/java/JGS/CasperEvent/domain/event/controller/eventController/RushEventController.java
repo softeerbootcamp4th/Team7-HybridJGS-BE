@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -107,8 +108,8 @@ public class RushEventController {
             @ApiResponse(responseCode = "400", description = "Invalid option ID provided.")
     })
     @GetMapping("/options/{optionId}/result")
-    public ResponseEntity<ResultRushEventOptionResponseDto> getResultOption(@PathVariable("optionId") int optionId) {
-        ResultRushEventOptionResponseDto resultRushEventOptionResponseDto = rushEventService.getRushEventOptionResult(optionId);
+    public ResponseEntity<RushEventOptionResponseDto> getResultOption(@PathVariable("optionId") int optionId) {
+        RushEventOptionResponseDto resultRushEventOptionResponseDto = rushEventService.getRushEventOptionResult(optionId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(resultRushEventOptionResponseDto);
