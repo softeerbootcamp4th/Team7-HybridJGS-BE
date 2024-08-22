@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -95,7 +96,7 @@ class AdminControllerTest {
     private RushEventRequestDto rushEventRequestDto;
     private RushEventOptionRequestDto leftOptionRequestDto;
     private RushEventOptionRequestDto rightOptionRequestDto;
-    private AdminRushEventResponseDto adminRushEventResponseDto;
+    private RushEventResponseDto adminRushEventResponseDto;
     private RushEvent rushEvent;
     private RushOption leftOption;
     private RushOption rightOption;
@@ -267,7 +268,7 @@ class AdminControllerTest {
         rushEvent.addOption(leftOption, rightOption);
 
         // 선착순 이벤트 조회 응답 DTO
-        adminRushEventResponseDto = AdminRushEventResponseDto.of(rushEvent);
+        adminRushEventResponseDto = RushEventResponseDto.withDetail(rushEvent);
 
         // 선착순 이벤트 참여자 엔티티
         rushParticipants = spy(new RushParticipants(user, rushEvent, 1));
@@ -431,7 +432,7 @@ class AdminControllerTest {
     @DisplayName("선착순 이벤트 전체 조회 성공 테스트")
     void getRushEventsSuccessTest() throws Exception {
         //given
-        List<AdminRushEventResponseDto> rushEvents = new ArrayList<>();
+        List<RushEventResponseDto> rushEvents = new ArrayList<>();
         rushEvents.add(adminRushEventResponseDto);
         given(adminService.getRushEvents()).willReturn(rushEvents);
 
@@ -509,7 +510,7 @@ class AdminControllerTest {
         List<RushEventRequestDto> rushEventRequestDtoList = new ArrayList<>();
         rushEventRequestDtoList.add(rushEventRequestDto);
 
-        List<AdminRushEventResponseDto> adminRushEventResponseDtoList = new ArrayList<>();
+        List<RushEventResponseDto> adminRushEventResponseDtoList = new ArrayList<>();
         adminRushEventResponseDtoList.add(adminRushEventResponseDto);
 
         given(adminService.updateRushEvents(anyList()))
