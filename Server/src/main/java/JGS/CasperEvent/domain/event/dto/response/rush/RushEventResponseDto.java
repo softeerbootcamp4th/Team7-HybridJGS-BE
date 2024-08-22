@@ -86,6 +86,12 @@ public class RushEventResponseDto {
     }
 
     // MainRushEventResponseDto
+    public static RushEventResponseDto withMain(Long rushEventId, LocalDateTime startDateTime, LocalDateTime endDateTime){
+        return new RushEventResponseDto(
+                rushEventId, startDateTime, endDateTime
+        );
+    }
+    
     public static RushEventResponseDto withMain(RushEvent rushEvent) {
         return new RushEventResponseDto(
                 rushEvent.getRushEventId(),
