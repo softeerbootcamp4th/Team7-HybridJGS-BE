@@ -63,7 +63,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "Multiple lottery events found in the database.")
     })
     @GetMapping("/event/lottery")
-    public ResponseEntity<LotteryEventDetailResponseDto> getLotteryEvent() {
+    public ResponseEntity<LotteryEventResponseDto> getLotteryEvent() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEvent());
