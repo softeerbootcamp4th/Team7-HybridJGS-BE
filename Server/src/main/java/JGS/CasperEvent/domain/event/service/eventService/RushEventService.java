@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
@@ -252,7 +253,7 @@ public class RushEventService {
         return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto.withMainOption(leftOption, rightOption);
     }
 
-    public ResultRushEventOptionResponseDto getRushEventOptionResult(int optionId) {
+    public RushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
         LocalDate today = LocalDate.now();
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
@@ -267,6 +268,6 @@ public class RushEventService {
                 .findFirst()
                 .orElseThrow(() -> new CustomException("사용자가 선택한 선택지가 존재하지 않습니다.", CustomErrorCode.NO_RUSH_EVENT_OPTION));
 
-        return ResultRushEventOptionResponseDto.of(selectedOption);
+        return RushEventOptionResponseDto.inResult(selectedOption);
     }
 }
