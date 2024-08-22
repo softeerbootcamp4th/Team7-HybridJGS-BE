@@ -284,7 +284,7 @@ public class AdminService {
 
     // 추첨 이벤트 업데이트
     @Transactional
-    public LotteryEventDetailResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+    public LotteryEventResponseDto updateLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         LotteryEvent currentLotteryEvent = getCurrentLotteryEvent();
 
         LocalDateTime now = LocalDateTime.now();
@@ -314,7 +314,7 @@ public class AdminService {
         // 필드 업데이트
         currentLotteryEvent.updateLotteryEvent(newStartDateTime, newEndDateTime, lotteryEventRequestDto.getWinnerCount());
         eventCacheService.setLotteryEvent();
-        return LotteryEventDetailResponseDto.of(currentLotteryEvent);
+        return LotteryEventResponseDto.withDetail(currentLotteryEvent);
     }
 
     // 추첨 이벤트 조회
