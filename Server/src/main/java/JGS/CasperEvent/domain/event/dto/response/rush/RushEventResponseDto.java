@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
 
@@ -22,6 +21,10 @@ public class RushEventResponseDto {
     private LocalDateTime updatedAt;
     private EventStatus status;
     private Set<RushEventOptionResponseDto> options;
+
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+
 
     private RushEventResponseDto(Long rushEventId, LocalDate eventDate,
                                  LocalTime startTime, LocalTime endTime,
@@ -66,6 +69,22 @@ public class RushEventResponseDto {
                 rushEvent.getUpdatedAt(),
                 status,
                 options
+        );
+    }
+
+    private RushEventResponseDto(Long rushEventId, LocalDateTime startDateTime,
+                                 LocalDateTime endDateTime) {
+        this.rushEventId = rushEventId;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
+
+    // MainRushEventResponseDto
+    public static RushEventResponseDto withMain(RushEvent rushEvent) {
+        return new RushEventResponseDto(
+                rushEvent.getRushEventId(),
+                rushEvent.getStartDateTime(),
+                rushEvent.getEndDateTime()
         );
     }
 }
