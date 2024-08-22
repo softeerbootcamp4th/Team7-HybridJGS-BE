@@ -149,6 +149,8 @@ class AdminControllerTest {
         LotteryParticipants realLotteryParticipants = new LotteryParticipants(user);
         this.lotteryParticipants = spy(realLotteryParticipants);
         doReturn(1L).when(lotteryParticipants).getId();
+        doReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0)).when(lotteryParticipants).getCreatedAt();
+        doReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0)).when(lotteryParticipants).getUpdatedAt();
 
 
         // 추첨 이벤트 참여자 응답 DTO

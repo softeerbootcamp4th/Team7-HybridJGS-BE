@@ -11,6 +11,7 @@ import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.ExpectationsPagingResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
@@ -496,7 +497,7 @@ class AdminServiceTest {
 
 
         //when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto adminRushEventResponseDto = adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg);
+        RushEventResponseDto adminRushEventResponseDto = adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg);
 
         //then
         assertThat(adminRushEventResponseDto.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
@@ -507,12 +508,12 @@ class AdminServiceTest {
         assertThat(adminRushEventResponseDto.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
         assertThat(adminRushEventResponseDto.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = adminRushEventResponseDto.getOptions();
+        Set<RushEventOptionResponseDto> options = adminRushEventResponseDto.getOptions();
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+        for (RushEventOptionResponseDto option : options) {
             if (option.getMainText().equals("Main Text 2") &&
                     option.getSubText().equals("Sub Text 2") &&
                     option.getResultMainText().equals("Result Main Text 2") &&
@@ -564,10 +565,10 @@ class AdminServiceTest {
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
         //when
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> rushEvents = adminService.getRushEvents();
+        List<RushEventResponseDto> rushEvents = adminService.getRushEvents();
 
         //then
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto firstEvent = rushEvents.get(0);
+        RushEventResponseDto firstEvent = rushEvents.get(0);
         assertThat(firstEvent.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
         assertThat(firstEvent.getStartTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(firstEvent.getEndTime()).isEqualTo(LocalTime.of(23, 59));
@@ -576,12 +577,13 @@ class AdminServiceTest {
         assertThat(firstEvent.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
         assertThat(firstEvent.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = firstEvent.getOptions();
+        Set<RushEventOptionResponseDto> options = firstEvent.getOptions();
 
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
-        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+        for (RushEventOptionResponseDto option : options) {
+            System.out.println("option = " + option);
             if (option.getMainText().equals("Main Text 2") &&
                     option.getSubText().equals("Sub Text 2") &&
                     option.getResultMainText().equals("Result Main Text 2") &&
@@ -598,7 +600,6 @@ class AdminServiceTest {
                 secondOptionFound = true;
             }
         }
-
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
@@ -1196,11 +1197,11 @@ class AdminServiceTest {
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
         //when
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> rushEventResponseDtoList = adminService.updateRushEvents(rushEventRequestDtoList);
+        List<RushEventResponseDto> rushEventResponseDtoList = adminService.updateRushEvents(rushEventRequestDtoList);
 
         //then
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto actualRushEvent = rushEventResponseDtoList.iterator().next();
+        RushEventResponseDto actualRushEvent = rushEventResponseDtoList.iterator().next();
         assertThat(actualRushEvent.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
         assertThat(actualRushEvent.getStartTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(actualRushEvent.getEndTime()).isEqualTo(LocalTime.of(23, 59));
@@ -1209,13 +1210,13 @@ class AdminServiceTest {
         assertThat(actualRushEvent.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
         assertThat(actualRushEvent.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = actualRushEvent.getOptions();
+        Set<RushEventOptionResponseDto> options = actualRushEvent.getOptions();
 
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+        for (RushEventOptionResponseDto option : options) {
             if (option.getMainText().equals("Main Text 2") &&
                     option.getSubText().equals("Sub Text 2") &&
                     option.getResultMainText().equals("Result Main Text 2") &&
@@ -1530,12 +1531,12 @@ class AdminServiceTest {
         RushEventResponseDto rushEventOptions = adminService.getRushEventOptions(1L);
 
         //then
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = rushEventOptions.getOptions();
+        Set<RushEventOptionResponseDto> options = rushEventOptions.getOptions();
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+        for (RushEventOptionResponseDto option : options) {
             if (option.getMainText().equals("Main Text 2") &&
                     option.getSubText().equals("Sub Text 2") &&
                     option.getResultMainText().equals("Result Main Text 2") &&

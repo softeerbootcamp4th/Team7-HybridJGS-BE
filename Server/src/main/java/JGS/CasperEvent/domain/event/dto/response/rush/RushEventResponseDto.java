@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.dto.response.rush;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@ToString
 public class RushEventResponseDto {
     private Long rushEventId;
     private LocalDate eventDate;
@@ -42,6 +44,16 @@ public class RushEventResponseDto {
         this.prizeImageUrl = prizeImageUrl;
         this.prizeDescription = prizeDescription;
         this.options = options;
+    }
+
+
+    public static RushEventResponseDto of(Long rushEventId, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                                          int winnerCount, String prizeImageUrl,
+                                          String prizeDescription,
+                                          Set<RushEventOptionResponseDto> options) {
+        return new RushEventResponseDto(
+                rushEventId, startDateTime, endDateTime, winnerCount, prizeImageUrl,
+                prizeDescription, options);
     }
 
     // RushEventResponseDto
