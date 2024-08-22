@@ -26,7 +26,7 @@ public class LotteryWinners {
 
     public  LotteryWinners(LotteryParticipants lotteryParticipants) {
         this.id = lotteryParticipants.getId();
-        this.phoneNumber = lotteryParticipants.getBaseUser().getId();
+        this.phoneNumber = lotteryParticipants.getBaseUser().getPhoneNumber();
         this.linkClickedCount = lotteryParticipants.getLinkClickedCount();
         this.expectation = lotteryParticipants.getExpectations();
         this.appliedCount = lotteryParticipants.getAppliedCount();

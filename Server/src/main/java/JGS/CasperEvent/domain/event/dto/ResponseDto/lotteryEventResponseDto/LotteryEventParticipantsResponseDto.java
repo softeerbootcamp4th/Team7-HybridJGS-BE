@@ -13,7 +13,7 @@ public record LotteryEventParticipantsResponseDto(
     public static LotteryEventParticipantsResponseDto of(LotteryParticipants participant) {
         return new LotteryEventParticipantsResponseDto(
                 participant.getId(),
-                participant.getBaseUser().getId(),
+                participant.getBaseUser().getPhoneNumber(),
                 participant.getLinkClickedCount(),
                 participant.getExpectations(),
                 participant.getAppliedCount(),

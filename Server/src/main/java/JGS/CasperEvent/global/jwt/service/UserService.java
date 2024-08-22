@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public BaseUser verifyUser(UserLoginDto userLoginDto) {
-        return userRepository.findById(userLoginDto.getPhoneNumber()).orElseGet(
+        return userRepository.findByPhoneNumber(userLoginDto.getPhoneNumber()).orElseGet(
                 () -> userRepository.save(new BaseUser(userLoginDto.getPhoneNumber(), Role.USER)));
     }
 }

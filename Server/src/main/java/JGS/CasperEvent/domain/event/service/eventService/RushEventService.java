@@ -70,7 +70,7 @@ public class RushEventService {
     public boolean isExists(String userId) {
         LocalDate today = LocalDate.now();
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
-        return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, userId);
+        return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(todayEventId, userId);
     }
 
     @Transactional
@@ -79,7 +79,7 @@ public class RushEventService {
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
 
         // 이미 응모한 회원인지 검증
-        if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, user.getId())) {
+        if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(todayEventId, user.getPhoneNumber())) {
             throw new CustomException("이미 응모한 회원입니다.", CustomErrorCode.CONFLICT);
         }
 
@@ -95,7 +95,7 @@ public class RushEventService {
     public RushEventRateResponseDto getRushEventRate(BaseUser user) {
         LocalDate today = LocalDate.now();
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
-        Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getId());
+        Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
 
@@ -117,7 +117,7 @@ public class RushEventService {
         long leftOption = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOption = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
 
-        Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getId());
+        Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
         if (optionIdOptional.isEmpty()) {
             return new RushEventResultResponseDto(
                     null,
@@ -135,7 +135,7 @@ public class RushEventService {
         // 동점인 경우
         if (leftOption == rightOption) {
             // 전체 참여자에서 등수 계산하기
-            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.rushEventId(), user.getId());
+            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.rushEventId(), user.getPhoneNumber());
 
             // 각 옵션 선택지를 더하여 전체 참여자 수 구하기
             long totalParticipants = leftOption + rightOption;
@@ -149,7 +149,7 @@ public class RushEventService {
         long totalParticipants = (optionId == 1 ? leftOption : rightOption);
 
         // eventId, userId, optionId 를 이용하여 해당 유저가 응모한 선택지에서 등수를 가져옴
-        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayRushEvent.rushEventId(), user.getId(), optionId);
+        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayRushEvent.rushEventId(), user.getPhoneNumber(), optionId);
 
         // 해당 유저가 선택한 옵션이 패배한 경우
         if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {

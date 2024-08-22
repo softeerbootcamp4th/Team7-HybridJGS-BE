@@ -6,7 +6,6 @@ import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
-import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.redisService.RedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -47,7 +46,7 @@ public class LotteryEventService {
 
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
 
-        CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getId()));
+        CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getPhoneNumber()));
         lotteryEvent.addAppliedCount();
 
         participants.updateCasperId(casperBot.getCasperId());
@@ -85,7 +84,6 @@ public class LotteryEventService {
 
             addReferralAppliedCount(casperBotRequestDto);
 
-            user.updateLotteryParticipants(participant);
             userRepository.save(user);
         }
 
@@ -99,7 +97,7 @@ public class LotteryEventService {
             String referralId = AESUtils.decrypt(casperBotRequestDto.getReferralId(), secretKey);
             Optional<LotteryParticipants> referralParticipant =
                     lotteryParticipantsRepository.findByBaseUser(
-                            userRepository.findById(referralId).orElse(null)
+                            userRepository.findByPhoneNumber(referralId).orElse(null)
                     );
             referralParticipant.ifPresent(LotteryParticipants::linkClickedCountAdded);
         } catch (Exception e) {
