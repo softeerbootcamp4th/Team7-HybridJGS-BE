@@ -192,7 +192,7 @@ class AdminControllerTest {
         lotteryEventExpectationResponseDto = LotteryEventResponseDto.withExpectation(casperBot);
 
         // 추첨 이벤트 기대평 리스트 응답 DTO
-        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = new ArrayList<>();
+        List<LotteryEventResponseDto> lotteryEventExpectationResponseDtoList = new ArrayList<>();
         lotteryEventExpectationResponseDtoList.add(lotteryEventExpectationResponseDto);
         lotteryEventExpectationsResponseDto = new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, true, 1);
 
