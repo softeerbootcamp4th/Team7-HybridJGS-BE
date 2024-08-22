@@ -55,9 +55,9 @@ class RushEventControllerTest {
     private String accessToken;
 
     @TestConfiguration
-    static class TestConfig{
+    static class TestConfig {
         @Bean
-        public JwtProvider jwtProvider(){
+        public JwtProvider jwtProvider() {
             String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
             byte[] secret = secretKey.getBytes();
             return new JwtProvider(Keys.hmacShaKeyFor(secret));
@@ -93,14 +93,14 @@ class RushEventControllerTest {
 
         given(rushEventService.getAllRushEvents()).willReturn(rushEventListResponseDto);
 
-        RushEventResponseDto mainRushEventOptionsResponseDto =  RushEventResponseDto.withMainOption(
+        RushEventResponseDto mainRushEventOptionsResponseDto = RushEventResponseDto.withMainOption(
                 RushEventOptionResponseDto.inMain("leftMainText", "leftSubText"),
                 RushEventOptionResponseDto.inMain("rightMainText", "rightSubText")
         );
 
         given(rushEventService.getTodayRushEventOptions()).willReturn(mainRushEventOptionsResponseDto);
 
-        ResultRushEventOptionResponseDto resultRushEventOptionResponseDto = new ResultRushEventOptionResponseDto(
+        RushEventOptionResponseDto resultRushEventOptionResponseDto = RushEventOptionResponseDto.inResult(
                 "mainText",
                 "resultMainText",
                 "resultSubText"
