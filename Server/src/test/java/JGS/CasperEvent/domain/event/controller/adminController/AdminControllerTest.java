@@ -557,7 +557,7 @@ class AdminControllerTest {
     @DisplayName("선착순 이벤트 선택지 조회 성공 테스트")
     void getRushEventOptionsSuccessTest() throws Exception {
         //given
-        AdminRushEventOptionResponseDto adminRushEventOptionResponseDto = AdminRushEventOptionResponseDto.of(rushEvent);
+        RushEventResponseDto adminRushEventOptionResponseDto = RushEventResponseDto.withOptions(rushEvent);
         given(adminService.getRushEventOptions(1L))
                 .willReturn(adminRushEventOptionResponseDto);
         //when

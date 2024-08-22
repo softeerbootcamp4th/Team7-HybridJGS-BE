@@ -11,7 +11,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -1526,7 +1526,7 @@ class AdminServiceTest {
         given(rushEventRepository.findById(1L)).willReturn(Optional.ofNullable(rushEvent));
 
         //when
-        AdminRushEventOptionResponseDto rushEventOptions = adminService.getRushEventOptions(1L);
+        RushEventResponseDto rushEventOptions = adminService.getRushEventOptions(1L);
 
         //then
         Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = rushEventOptions.options();
