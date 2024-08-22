@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
@@ -360,11 +361,11 @@ class RushEventServiceTest {
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when
-        ResultRushEventOptionResponseDto result = rushEventService.getRushEventOptionResult(optionId);
+        RushEventOptionResponseDto result = rushEventService.getRushEventOptionResult(optionId);
 
         // then
         assertNotNull(result);
-        assertEquals("leftMainText", result.mainText());
+        assertEquals("leftMainText", result.getMainText());
     }
 
     @Test
