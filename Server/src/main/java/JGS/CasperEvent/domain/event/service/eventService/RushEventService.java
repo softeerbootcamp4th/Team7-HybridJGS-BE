@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.service.eventService;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
@@ -120,7 +121,7 @@ public class RushEventService {
     // 이벤트 결과를 반환
     // 응모하지 않은 유저가 요청하는 경우가 존재 -> 응모 비율만 반환하도록 수정
     @Transactional
-    public RushEventResultResponseDto getRushEventResult(BaseUser user) {
+    public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto getRushEventResult(BaseUser user) {
         LocalDate today = LocalDate.now();
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayRushEvent = eventCacheService.getTodayEvent(today);
         Long todayEventId = todayRushEvent.getRushEventId();
@@ -132,7 +133,7 @@ public class RushEventService {
 
         Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
         if (optionIdOptional.isEmpty()) {
-            return new RushEventResultResponseDto(
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(
                     null,
                     leftOption,
                     rightOption,
@@ -156,7 +157,7 @@ public class RushEventService {
             // 당첨 여부
             boolean isWinner = rank <= todayRushEvent.getWinnerCount();
 
-            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
         }
 
         long totalParticipants = (optionId == 1 ? leftOption : rightOption);
@@ -166,13 +167,14 @@ public class RushEventService {
 
         // 해당 유저가 선택한 옵션이 패배한 경우
         if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {
-            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, false);
+
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, false);
         }
 
         // 당첨 여부
         boolean isWinner = rank <= todayRushEvent.getWinnerCount();
 
-        return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
+        return  RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
     }
 
     @Transactional
