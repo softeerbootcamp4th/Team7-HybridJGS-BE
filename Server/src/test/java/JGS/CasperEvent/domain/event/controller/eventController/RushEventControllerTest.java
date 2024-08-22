@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -124,7 +125,7 @@ class RushEventControllerTest {
 
         given(rushEventService.getRushEventRate(any())).willReturn(rushEventRateResponseDto);
 
-        RushEventResultResponseDto rushEventResultResponseDto = new RushEventResultResponseDto(
+        RushEventResultResponseDto rushEventResultResponseDto =  RushEventResultResponseDto.withDetail(
                 1,
                 315L,
                 1000L,
