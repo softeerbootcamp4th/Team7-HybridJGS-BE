@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
@@ -101,7 +102,7 @@ class AdminControllerTest {
     private RushOption leftOption;
     private RushOption rightOption;
     private RushParticipants rushParticipants;
-    private RushEventParticipantResponseDto rushEventParticipantResponseDto;
+    private JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto rushEventParticipantResponseDto;
     private RushEventParticipantsListResponseDto rushEventParticipantsListResponseDto;
 
     @TestConfiguration
@@ -276,7 +277,7 @@ class AdminControllerTest {
         lenient().when(rushParticipants.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 선착순 이벤트 참여자 응답 DTO
-        rushEventParticipantResponseDto = RushEventParticipantResponseDto.of(rushParticipants, 1L);
+        rushEventParticipantResponseDto = JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto.result(rushParticipants, 1L);
 
         // 선착순 이벤트 참여자 리스트 조회 응답 DTO
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
