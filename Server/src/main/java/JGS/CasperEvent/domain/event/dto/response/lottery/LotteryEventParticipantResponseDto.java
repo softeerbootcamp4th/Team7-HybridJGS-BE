@@ -1,8 +1,8 @@
 package JGS.CasperEvent.domain.event.dto.response.lottery;
 
-import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LotteryEventParticipantResponseDto {
     private Long id;
     private String phoneNumber;

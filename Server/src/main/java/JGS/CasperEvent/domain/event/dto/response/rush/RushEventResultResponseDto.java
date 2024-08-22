@@ -1,14 +1,20 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RushEventResultResponseDto {
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private Integer optionId;
     private Long leftOption;
     private Long rightOption;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private Long rank;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private Long totalParticipants;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private Boolean isWinner;
 
     private RushEventResultResponseDto(Integer optionId, Long leftOption, Long rightOption) {

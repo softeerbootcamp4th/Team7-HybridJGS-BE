@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.dto.response.rush;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RushEventResponseDto {
     private Long rushEventId;
     private LocalDate eventDate;
