@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
-import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import lombok.Getter;
 
@@ -11,7 +10,6 @@ import java.time.LocalTime;
 public class RushEventParticipantResponseDto {
     private Long id;
     private String phoneNumber;
-    private Long ranking;
     private LocalDate createdDate;
     private LocalTime createdTime;
     private int balanceGameChoice;
