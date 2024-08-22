@@ -6,6 +6,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
@@ -85,7 +86,7 @@ class AdminControllerTest {
     private LotteryEventResponseDto lotteryEventResponseDto;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantResponseDto lotteryEventParticipantsResponseDto;
-    private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
+    private ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventParticipantsListResponseDto;
     private LotteryEventResponseDto lotteryEventDetailResponseDto;
     private ExpectationsPagingResponseDto expectationsPagingResponseDto;
     private LotteryEventResponseDto lotteryEventExpectationResponseDto;
@@ -157,7 +158,7 @@ class AdminControllerTest {
         // 추첨 이벤트 참여자 리스트 응답 DTO
         List<LotteryEventParticipantResponseDto> participants = new ArrayList<>();
         participants.add(lotteryEventParticipantsResponseDto);
-        this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
+        this.lotteryEventParticipantsListResponseDto = new ParticipantsListResponseDto<>(participants, true, 1);
 
         // 추첨 이벤트 상세 응답 DTO
         lotteryEventDetailResponseDto = LotteryEventResponseDto.withDetail(lotteryEvent);

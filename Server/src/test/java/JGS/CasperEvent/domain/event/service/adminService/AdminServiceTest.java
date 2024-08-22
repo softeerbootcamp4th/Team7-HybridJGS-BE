@@ -6,6 +6,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventR
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.ResponseDto.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
@@ -435,7 +436,7 @@ class AdminServiceTest {
         given(lotteryParticipantsRepository.count()).willReturn(1L);
 
         //when
-        LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "");
+        ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "");
         LotteryEventParticipantResponseDto retrievedParticipant = lotteryEventParticipantsListResponseDto.participantsList().get(0);
 
         //then
@@ -463,7 +464,7 @@ class AdminServiceTest {
         given(lotteryParticipantsRepository.countByBaseUser_Id("010-0000-0000")).willReturn(1L);
 
         //when
-        LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "010-0000-0000");
+        ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventParticipantsListResponseDto = adminService.getLotteryEventParticipants(10, 0, "010-0000-0000");
         LotteryEventParticipantResponseDto retrievedParticipant = lotteryEventParticipantsListResponseDto.participantsList().get(0);
 
         //then
