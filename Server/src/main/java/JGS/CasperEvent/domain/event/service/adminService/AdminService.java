@@ -533,13 +533,8 @@ public class AdminService {
         Page<CasperBot> casperBotPage = casperBotRepository.findByPhoneNumberAndActiveExpectations(lotteryParticipant.getBaseUser().getId(), pageable);
 
         // DTO로 변환합니다.
-        List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = casperBotPage.getContent().stream()
-                .map(casperBot -> new LotteryEventExpectationResponseDto(
-                        casperBot.getCasperId(),
-                        casperBot.getExpectation(),
-                        casperBot.getCreatedAt().toLocalDate(),
-                        casperBot.getCreatedAt().toLocalTime()
-                )).toList();
+        List<LotteryEventResponseDto> lotteryEventExpectationResponseDtoList = casperBotPage.getContent().stream()
+                .map(LotteryEventResponseDto::withExpectation).toList();
 
         // 마지막 페이지 여부 계산
         boolean isLastPage = casperBotPage.isLast();
