@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.redisService;
 
-import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

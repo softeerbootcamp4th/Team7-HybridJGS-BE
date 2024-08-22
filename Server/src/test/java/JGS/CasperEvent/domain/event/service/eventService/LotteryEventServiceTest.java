@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -37,7 +37,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)

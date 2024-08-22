@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -110,6 +110,6 @@ public class LotteryEventService {
 
     public LotteryEventResponseDto getLotteryEvent() {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
-        return JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 }
