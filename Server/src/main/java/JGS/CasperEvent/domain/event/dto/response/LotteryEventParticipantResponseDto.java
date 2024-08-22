@@ -1,9 +1,11 @@
 package JGS.CasperEvent.domain.event.dto.response;
 
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class LotteryEventParticipantResponseDto {
     private Long id;
     private String phoneNumber;
