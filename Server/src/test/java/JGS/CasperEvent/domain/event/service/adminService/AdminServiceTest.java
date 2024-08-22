@@ -367,16 +367,17 @@ class AdminServiceTest {
         given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
 
         //when
-        LotteryEventDetailResponseDto lotteryEventDetailResponseDto = adminService.getLotteryEvent();
+
+        LotteryEventResponseDto lotteryEventResponseDto = adminService.getLotteryEvent();
 
         //then
-        assertThat(lotteryEventDetailResponseDto.startDate()).isEqualTo(LocalDate.of(2000, 9, 27));
-        assertThat(lotteryEventDetailResponseDto.startTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(lotteryEventDetailResponseDto.endDate()).isEqualTo(LocalDate.of(2100, 9, 27));
-        assertThat(lotteryEventDetailResponseDto.endTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(lotteryEventDetailResponseDto.appliedCount()).isEqualTo(0);
-        assertThat(lotteryEventDetailResponseDto.winnerCount()).isEqualTo(315);
-        assertThat(lotteryEventDetailResponseDto.status()).isEqualTo(EventStatus.DURING);
+        assertThat(lotteryEventResponseDto.getStartDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(lotteryEventResponseDto.getStartTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventResponseDto.getEndDate()).isEqualTo(LocalDate.of(2100, 9, 27));
+        assertThat(lotteryEventResponseDto.getEndTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(lotteryEventResponseDto.getAppliedCount()).isEqualTo(0);
+        assertThat(lotteryEventResponseDto.getWinnerCount()).isEqualTo(315);
+        assertThat(lotteryEventResponseDto.getStatus()).isEqualTo(EventStatus.DURING);
     }
 
     @Test

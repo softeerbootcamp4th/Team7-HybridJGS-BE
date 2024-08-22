@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -315,7 +316,7 @@ class AdminControllerTest {
     @DisplayName("추첨 이벤트 조회 성공 테스트")
     void getLotteryEventSuccessTest() throws Exception {
         //given
-        given(adminService.getLotteryEvent()).willReturn(LotteryEventDetailResponseDto.of(lotteryEvent));
+        given(adminService.getLotteryEvent()).willReturn(LotteryEventResponseDto.withDetail(lotteryEvent));
 
         //when
         ResultActions perform = mockMvc.perform(get("/admin/event/lottery").header("Authorization", accessToken).contentType(APPLICATION_JSON));
