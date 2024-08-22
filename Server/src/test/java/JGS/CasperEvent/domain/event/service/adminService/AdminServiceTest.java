@@ -11,6 +11,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -494,39 +495,40 @@ class AdminServiceTest {
 
 
         //when
-        AdminRushEventResponseDto adminRushEventResponseDto = adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto adminRushEventResponseDto = adminService.createRushEvent(rushEventRequestDto, prizeImg, leftOptionImg, rightOptionImg);
 
         //then
-        assertThat(adminRushEventResponseDto.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
-        assertThat(adminRushEventResponseDto.startTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(adminRushEventResponseDto.endTime()).isEqualTo(LocalTime.of(23, 59));
-        assertThat(adminRushEventResponseDto.winnerCount()).isEqualTo(100);
-        assertThat(adminRushEventResponseDto.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
-        assertThat(adminRushEventResponseDto.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
-        assertThat(adminRushEventResponseDto.status()).isEqualTo(EventStatus.AFTER);
+        assertThat(adminRushEventResponseDto.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(adminRushEventResponseDto.getStartTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(adminRushEventResponseDto.getEndTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(adminRushEventResponseDto.getWinnerCount()).isEqualTo(100);
+        assertThat(adminRushEventResponseDto.getPrizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(adminRushEventResponseDto.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(adminRushEventResponseDto.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<RushEventOptionResponseDto> options = adminRushEventResponseDto.options();
+        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = adminRushEventResponseDto.getOptions();
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (RushEventOptionResponseDto option : options) {
-            if (option.mainText().equals("Main Text 2") &&
-                    option.subText().equals("Sub Text 2") &&
-                    option.resultMainText().equals("Result Main Text 2") &&
-                    option.resultSubText().equals("Result Sub Text 2") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.RIGHT)) {
+        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+            if (option.getMainText().equals("Main Text 2") &&
+                    option.getSubText().equals("Sub Text 2") &&
+                    option.getResultMainText().equals("Result Main Text 2") &&
+                    option.getResultSubText().equals("Result Sub Text 2") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.RIGHT)) {
                 firstOptionFound = true;
-            } else if (option.mainText().equals("Main Text 1") &&
-                    option.subText().equals("Sub Text 1") &&
-                    option.resultMainText().equals("Result Main Text 1") &&
-                    option.resultSubText().equals("Result Sub Text 1") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.LEFT)) {
+            } else if (option.getMainText().equals("Main Text 1") &&
+                    option.getSubText().equals("Sub Text 1") &&
+                    option.getResultMainText().equals("Result Main Text 1") &&
+                    option.getResultSubText().equals("Result Sub Text 1") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.LEFT)) {
                 secondOptionFound = true;
             }
         }
+
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
@@ -561,39 +563,41 @@ class AdminServiceTest {
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
         //when
-        List<AdminRushEventResponseDto> rushEvents = adminService.getRushEvents();
+        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> rushEvents = adminService.getRushEvents();
 
         //then
-        AdminRushEventResponseDto firstEvent = rushEvents.get(0);
-        assertThat(firstEvent.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
-        assertThat(firstEvent.startTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(firstEvent.endTime()).isEqualTo(LocalTime.of(23, 59));
-        assertThat(firstEvent.winnerCount()).isEqualTo(100);
-        assertThat(firstEvent.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
-        assertThat(firstEvent.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
-        assertThat(firstEvent.status()).isEqualTo(EventStatus.AFTER);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto firstEvent = rushEvents.get(0);
+        assertThat(firstEvent.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(firstEvent.getStartTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(firstEvent.getEndTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(firstEvent.getWinnerCount()).isEqualTo(100);
+        assertThat(firstEvent.getPrizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(firstEvent.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(firstEvent.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<RushEventOptionResponseDto> options = firstEvent.options();
+        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = firstEvent.getOptions();
+
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
-        for (RushEventOptionResponseDto option : options) {
-            if (option.mainText().equals("Main Text 1") &&
-                    option.subText().equals("Sub Text 1") &&
-                    option.resultMainText().equals("Result Main Text 1") &&
-                    option.resultSubText().equals("Result Sub Text 1") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.LEFT)) {
+        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+            if (option.getMainText().equals("Main Text 2") &&
+                    option.getSubText().equals("Sub Text 2") &&
+                    option.getResultMainText().equals("Result Main Text 2") &&
+                    option.getResultSubText().equals("Result Sub Text 2") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.RIGHT)) {
                 firstOptionFound = true;
-            } else if (option.mainText().equals("Main Text 2") &&
-                    option.subText().equals("Sub Text 2") &&
-                    option.resultMainText().equals("Result Main Text 2") &&
-                    option.resultSubText().equals("Result Sub Text 2") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.RIGHT)) {
+            } else if (option.getMainText().equals("Main Text 1") &&
+                    option.getSubText().equals("Sub Text 1") &&
+                    option.getResultMainText().equals("Result Main Text 1") &&
+                    option.getResultSubText().equals("Result Sub Text 1") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.LEFT)) {
                 secondOptionFound = true;
             }
         }
+
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
@@ -1191,41 +1195,43 @@ class AdminServiceTest {
         given(rushEventRepository.findAll()).willReturn(rushEventList);
 
         //when
-        List<AdminRushEventResponseDto> rushEventResponseDtoList = adminService.updateRushEvents(rushEventRequestDtoList);
+        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> rushEventResponseDtoList = adminService.updateRushEvents(rushEventRequestDtoList);
 
         //then
 
-        AdminRushEventResponseDto actualRushEvent = rushEventResponseDtoList.iterator().next();
-        assertThat(actualRushEvent.eventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
-        assertThat(actualRushEvent.startTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(actualRushEvent.endTime()).isEqualTo(LocalTime.of(23, 59));
-        assertThat(actualRushEvent.winnerCount()).isEqualTo(100);
-        assertThat(actualRushEvent.prizeImageUrl()).isEqualTo("http://example.com/image.jpg");
-        assertThat(actualRushEvent.prizeDescription()).isEqualTo("This is a detailed description of the prize.");
-        assertThat(actualRushEvent.status()).isEqualTo(EventStatus.AFTER);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto actualRushEvent = rushEventResponseDtoList.iterator().next();
+        assertThat(actualRushEvent.getEventDate()).isEqualTo(LocalDate.of(2024, 8, 15));
+        assertThat(actualRushEvent.getStartTime()).isEqualTo(LocalTime.of(0, 0));
+        assertThat(actualRushEvent.getEndTime()).isEqualTo(LocalTime.of(23, 59));
+        assertThat(actualRushEvent.getWinnerCount()).isEqualTo(100);
+        assertThat(actualRushEvent.getPrizeImageUrl()).isEqualTo("http://example.com/image.jpg");
+        assertThat(actualRushEvent.getPrizeDescription()).isEqualTo("This is a detailed description of the prize.");
+        assertThat(actualRushEvent.getStatus()).isEqualTo(EventStatus.AFTER);
 
-        Set<RushEventOptionResponseDto> options = actualRushEvent.options();
+        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = actualRushEvent.getOptions();
+
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (RushEventOptionResponseDto option : options) {
-            if (option.mainText().equals("Main Text 2") &&
-                    option.subText().equals("Sub Text 2") &&
-                    option.resultMainText().equals("Result Main Text 2") &&
-                    option.resultSubText().equals("Result Sub Text 2") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.RIGHT)) {
+        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+            if (option.getMainText().equals("Main Text 2") &&
+                    option.getSubText().equals("Sub Text 2") &&
+                    option.getResultMainText().equals("Result Main Text 2") &&
+                    option.getResultSubText().equals("Result Sub Text 2") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.RIGHT)) {
                 firstOptionFound = true;
-            } else if (option.mainText().equals("Main Text 1") &&
-                    option.subText().equals("Sub Text 1") &&
-                    option.resultMainText().equals("Result Main Text 1") &&
-                    option.resultSubText().equals("Result Sub Text 1") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.LEFT)) {
+            } else if (option.getMainText().equals("Main Text 1") &&
+                    option.getSubText().equals("Sub Text 1") &&
+                    option.getResultMainText().equals("Result Main Text 1") &&
+                    option.getResultSubText().equals("Result Sub Text 1") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.LEFT)) {
                 secondOptionFound = true;
             }
         }
+
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
@@ -1523,28 +1529,29 @@ class AdminServiceTest {
         AdminRushEventOptionResponseDto rushEventOptions = adminService.getRushEventOptions(1L);
 
         //then
-        Set<RushEventOptionResponseDto> options = rushEventOptions.options();
+        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = rushEventOptions.options();
 
         boolean firstOptionFound = false;
         boolean secondOptionFound = false;
 
-        for (RushEventOptionResponseDto option : options) {
-            if (option.mainText().equals("Main Text 2") &&
-                    option.subText().equals("Sub Text 2") &&
-                    option.resultMainText().equals("Result Main Text 2") &&
-                    option.resultSubText().equals("Result Sub Text 2") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.RIGHT)) {
+        for (JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto option : options) {
+            if (option.getMainText().equals("Main Text 2") &&
+                    option.getSubText().equals("Sub Text 2") &&
+                    option.getResultMainText().equals("Result Main Text 2") &&
+                    option.getResultSubText().equals("Result Sub Text 2") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.RIGHT)) {
                 firstOptionFound = true;
-            } else if (option.mainText().equals("Main Text 1") &&
-                    option.subText().equals("Sub Text 1") &&
-                    option.resultMainText().equals("Result Main Text 1") &&
-                    option.resultSubText().equals("Result Sub Text 1") &&
-                    option.imageUrl().equals("http://example.com/image.jpg") &&
-                    option.position().equals(Position.LEFT)) {
+            } else if (option.getMainText().equals("Main Text 1") &&
+                    option.getSubText().equals("Sub Text 1") &&
+                    option.getResultMainText().equals("Result Main Text 1") &&
+                    option.getResultSubText().equals("Result Sub Text 1") &&
+                    option.getImageUrl().equals("http://example.com/image.jpg") &&
+                    option.getPosition().equals(Position.LEFT)) {
                 secondOptionFound = true;
             }
         }
+
 
         assertThat(firstOptionFound).isTrue();
         assertThat(secondOptionFound).isTrue();
