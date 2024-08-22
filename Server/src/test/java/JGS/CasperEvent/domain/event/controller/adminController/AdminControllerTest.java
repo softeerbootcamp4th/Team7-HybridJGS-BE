@@ -83,7 +83,7 @@ class AdminControllerTest {
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantsResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
-    private LotteryEventDetailResponseDto lotteryEventDetailResponseDto;
+    private LotteryEventResponseDto lotteryEventDetailResponseDto;
     private LotteryEventExpectationsResponseDto lotteryEventExpectationsResponseDto;
     private LotteryEventExpectationResponseDto lotteryEventExpectationResponseDto;
     private LotteryEventWinnerListResponseDto lotteryEventWinnerListResponseDto;
@@ -157,7 +157,7 @@ class AdminControllerTest {
         this.lotteryEventParticipantsListResponseDto = new LotteryEventParticipantsListResponseDto(participants, true, 1);
 
         // 추첨 이벤트 상세 응답 DTO
-        lotteryEventDetailResponseDto = LotteryEventDetailResponseDto.of(lotteryEvent);
+        lotteryEventDetailResponseDto = LotteryEventResponseDto.withDetail(lotteryEvent);
 
         // 캐스퍼 봇
         casperBotRequestDto = CasperBotRequestDto.builder()
