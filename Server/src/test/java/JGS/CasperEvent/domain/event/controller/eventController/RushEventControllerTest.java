@@ -1,6 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
@@ -92,9 +93,9 @@ class RushEventControllerTest {
 
         given(rushEventService.getAllRushEvents()).willReturn(rushEventListResponseDto);
 
-        MainRushEventOptionsResponseDto mainRushEventOptionsResponseDto = new MainRushEventOptionsResponseDto(
-                new MainRushEventOptionResponseDto("leftMainText", "leftSubText"),
-                new MainRushEventOptionResponseDto("rightMainText", "rightSubText")
+        RushEventResponseDto mainRushEventOptionsResponseDto =  RushEventResponseDto.withMainOption(
+                RushEventOptionResponseDto.inMain("leftMainText", "leftSubText"),
+                RushEventOptionResponseDto.inMain("rightMainText", "rightSubText")
         );
 
         given(rushEventService.getTodayRushEventOptions()).willReturn(mainRushEventOptionsResponseDto);
