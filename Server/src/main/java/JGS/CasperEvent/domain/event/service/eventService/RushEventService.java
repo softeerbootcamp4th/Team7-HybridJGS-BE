@@ -13,6 +13,7 @@ import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.util.RepositoryErrorHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,22 +39,17 @@ public class RushEventService {
         // 오늘의 선착순 이벤트 꺼내오기
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
 
-        // DB에서 모든 RushEvent 가져오기
-        List<RushEvent> rushEventList = rushEventRepository.findAll();
+        // 모든 이벤트 꺼내오기
+        List<MainRushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
 
         // 선착순 이벤트 전체 시작 날짜와 종료 날짜 구하기
-        List<LocalDate> dates = rushEventList.stream().map(rushEvent -> rushEvent.getStartDateTime().toLocalDate()).sorted().toList();
+        List<LocalDate> dates = mainRushEventDtoList.stream().map(rushEvent -> rushEvent.getStartDateTime().toLocalDate()).sorted().toList();
 
         LocalDate totalStartDate = dates.get(0);
         LocalDate totalEndDate = dates.get(dates.size() - 1);
 
         // 전체 이벤트 기간 구하기
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
-
-        // RushEvent를 DTO로 전환
-        List<MainRushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
-                .map(MainRushEventResponseDto::of)
-                .toList();
 
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListResponseDto(
@@ -72,6 +68,7 @@ public class RushEventService {
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
         return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(todayEventId, userId);
     }
+
 
     @Transactional
     public void apply(BaseUser user, int optionId) {
@@ -229,6 +226,7 @@ public class RushEventService {
         }
 
         eventCacheService.setCacheValue(LocalDate.now());
+        eventCacheService.setAllRushEvent();
     }
 
 
