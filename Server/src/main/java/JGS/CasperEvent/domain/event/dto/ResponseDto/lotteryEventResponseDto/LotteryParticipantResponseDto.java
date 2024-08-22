@@ -1,4 +1,5 @@
 package JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 
 import java.time.LocalDateTime;
