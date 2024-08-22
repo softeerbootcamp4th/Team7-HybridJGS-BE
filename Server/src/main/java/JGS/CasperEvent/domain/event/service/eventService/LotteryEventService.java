@@ -110,6 +110,6 @@ public class LotteryEventService {
 
     public LotteryEventResponseDto getLotteryEvent() {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
-        return JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 }
