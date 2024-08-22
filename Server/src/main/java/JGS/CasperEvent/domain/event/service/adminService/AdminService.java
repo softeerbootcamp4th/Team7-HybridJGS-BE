@@ -7,9 +7,9 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -89,7 +89,7 @@ public class AdminService {
     }
 
     // 추첨 이벤트 생성
-    public JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+    public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         if (lotteryEventRepository.count() >= 1) throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
@@ -99,7 +99,7 @@ public class AdminService {
         ));
 
         eventCacheService.setLotteryEvent();
-        return JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
     // 추첨 이벤트 조회
@@ -525,7 +525,7 @@ public class AdminService {
     }
 
     // 기대평 조회
-    public LotteryEventExpectationsResponseDto getLotteryEventExpectations(int page, int size, Long participantId) {
+    public ExpectationsPagingResponseDto getLotteryEventExpectations(int page, int size, Long participantId) {
         LotteryParticipants lotteryParticipant = lotteryParticipantsRepository.findById(participantId).orElseThrow(
                 () -> new CustomException(CustomErrorCode.USER_NOT_FOUND)
         );
@@ -542,7 +542,7 @@ public class AdminService {
         boolean isLastPage = casperBotPage.isLast();
 
         // 결과를 반환합니다.
-        return new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, isLastPage, casperBotPage.getTotalElements());
+        return new ExpectationsPagingResponseDto(lotteryEventExpectationResponseDtoList, isLastPage, casperBotPage.getTotalElements());
     }
 
     // 부적절한 기대평 삭제

@@ -9,7 +9,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRu
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -211,10 +211,10 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "User not found or did not participate.")
     })
     @GetMapping("/event/lottery/participants/{participantId}/expectations")
-    public ResponseEntity<LotteryEventExpectationsResponseDto> getLotteryEventExpectations(@PathVariable("participantId") Long participantId,
-                                                                                           @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                                                                           @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
-        LotteryEventExpectationsResponseDto lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(page, size, participantId);
+    public ResponseEntity<ExpectationsPagingResponseDto> getLotteryEventExpectations(@PathVariable("participantId") Long participantId,
+                                                                                     @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                                                     @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        ExpectationsPagingResponseDto lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(page, size, participantId);
 
         return ResponseEntity.ok(lotteryEventExpectationResponseDtoList);
     }
