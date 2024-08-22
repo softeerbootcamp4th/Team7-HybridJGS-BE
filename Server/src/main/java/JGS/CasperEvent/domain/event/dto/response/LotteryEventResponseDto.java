@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.dto.response;
 
+import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -97,5 +98,22 @@ public class LotteryEventResponseDto {
                 status,
                 event.getCreatedAt(),
                 event.getUpdatedAt());
+    }
+
+    private LotteryEventResponseDto(Long casperId, String expectation,
+                                    LocalDate createdDate, LocalTime createdTime) {
+        this.casperId = casperId;
+        this.expectation = expectation;
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
+    }
+
+    public static LotteryEventResponseDto withExpectation(CasperBot casperBot) {
+        return new LotteryEventResponseDto(
+                casperBot.getCasperId(),
+                casperBot.getExpectation(),
+                casperBot.getCreatedAt().toLocalDate(),
+                casperBot.getCreatedAt().toLocalTime()
+        );
     }
 }
