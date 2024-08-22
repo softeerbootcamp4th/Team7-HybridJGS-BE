@@ -31,6 +31,35 @@ public class RushEventResponseDto {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    private RushEventResponseDto(Long rushEventId, LocalDateTime startDateTime,
+                                 LocalDateTime endDateTime, int winnerCount,
+                                 String prizeImageUrl, String prizeDescription,
+                                 Set<RushEventOptionResponseDto> options) {
+        this.rushEventId = rushEventId;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.winnerCount = winnerCount;
+        this.prizeImageUrl = prizeImageUrl;
+        this.prizeDescription = prizeDescription;
+        this.options = options;
+    }
+
+    // RushEventResponseDto
+    public static RushEventResponseDto of(RushEvent rushEvent) {
+        Set<RushEventOptionResponseDto> options = rushEvent.getOptions().stream()
+                .map(RushEventOptionResponseDto::of)
+                .collect(Collectors.toSet());
+
+        return new RushEventResponseDto(
+                rushEvent.getRushEventId(),
+                rushEvent.getStartDateTime(),
+                rushEvent.getEndDateTime(),
+                rushEvent.getWinnerCount(),
+                rushEvent.getPrizeImageUrl(),
+                rushEvent.getPrizeDescription(),
+                options
+        );
+    }
 
     private RushEventResponseDto(Long rushEventId, LocalDate eventDate,
                                  LocalTime startTime, LocalTime endTime,
@@ -86,12 +115,12 @@ public class RushEventResponseDto {
     }
 
     // MainRushEventResponseDto
-    public static RushEventResponseDto withMain(Long rushEventId, LocalDateTime startDateTime, LocalDateTime endDateTime){
+    public static RushEventResponseDto withMain(Long rushEventId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return new RushEventResponseDto(
                 rushEventId, startDateTime, endDateTime
         );
     }
-    
+
     public static RushEventResponseDto withMain(RushEvent rushEvent) {
         return new RushEventResponseDto(
                 rushEvent.getRushEventId(),
@@ -113,14 +142,14 @@ public class RushEventResponseDto {
     }
 
     private RushEventResponseDto(RushEventOptionResponseDto leftOption,
-                                RushEventOptionResponseDto rightOption) {
+                                 RushEventOptionResponseDto rightOption) {
         this.leftOption = leftOption;
         this.rightOption = rightOption;
     }
 
     // MainRushEventOptionsResponseDto
     public static RushEventResponseDto withMainOption(RushEventOptionResponseDto leftOption,
-                                                      RushEventOptionResponseDto rightOption){
+                                                      RushEventOptionResponseDto rightOption) {
         return new RushEventResponseDto(leftOption, rightOption);
     }
 }
