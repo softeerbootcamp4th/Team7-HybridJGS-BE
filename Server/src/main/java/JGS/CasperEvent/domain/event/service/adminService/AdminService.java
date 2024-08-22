@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
@@ -213,13 +214,13 @@ public class AdminService {
         }
 
 
-        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
             String userId = rushParticipant.getBaseUser().getId();
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
-                    RushEventParticipantResponseDto.of(rushParticipant, rank)
+                    JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto.result(rushParticipant, rank)
             );
         }
 
@@ -269,7 +270,7 @@ public class AdminService {
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
-                    RushEventParticipantResponseDto.of(rushParticipant, rank)
+                    RushEventParticipantResponseDto.result(rushParticipant, rank)
             );
         }
 
