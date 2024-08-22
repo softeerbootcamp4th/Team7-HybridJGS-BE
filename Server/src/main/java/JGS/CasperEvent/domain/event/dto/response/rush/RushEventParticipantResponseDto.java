@@ -1,12 +1,13 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Getter
 public class RushEventParticipantResponseDto {
     private Long id;
     private String phoneNumber;
