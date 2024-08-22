@@ -1,6 +1,8 @@
 package JGS.CasperEvent.domain.event.dto.response.lottery;
 
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
+import JGS.CasperEvent.domain.event.entity.participants.LotteryWinners;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -21,12 +23,13 @@ public class LotteryEventParticipantResponseDto {
     private int expectation;
 
     private int appliedCount;
+    private Long ranking;
 
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    LocalDate createdDate;
-    LocalTime createdTime;
+    private LocalDate createdDate;
+    private LocalTime createdTime;
 
 
     private LotteryEventParticipantResponseDto(
@@ -73,5 +76,34 @@ public class LotteryEventParticipantResponseDto {
                 lotteryParticipants.getCreatedAt().toLocalTime()
         );
     }
+
+    private LotteryEventParticipantResponseDto(Long id, String phoneNumber,
+                                            int linkClickedCounts, int expectation,
+                                            int appliedCount, Long ranking,
+                                            LocalDate createdDate, LocalTime createdTime) {
+        this.id = id;
+        this.phoneNumber = phoneNumber;
+        this.linkClickedCounts = linkClickedCounts;
+        this.expectation = expectation;
+        this.appliedCount = appliedCount;
+        this.ranking = ranking;
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
+    }
+
+    // LotteryEventWinnerResponseDto
+    public static LotteryEventParticipantResponseDto winner(LotteryWinners lotteryWinner) {
+        return new LotteryEventParticipantResponseDto(
+                lotteryWinner.getId(),
+                lotteryWinner.getPhoneNumber(),
+                lotteryWinner.getLinkClickedCount(),
+                lotteryWinner.getExpectation(),
+                lotteryWinner.getAppliedCount(),
+                lotteryWinner.getRanking(),
+                lotteryWinner.getCreatedAt().toLocalDate(),
+                lotteryWinner.getCreatedAt().toLocalTime()
+        );
+    }
+
 
 }
