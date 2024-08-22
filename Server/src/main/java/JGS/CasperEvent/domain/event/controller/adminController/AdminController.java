@@ -6,10 +6,10 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,7 +100,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "More than six rush events already exist in the database.")
     })
     @PostMapping("/event/rush")
-    public ResponseEntity<AdminRushEventResponseDto> createRushEvent(
+    public ResponseEntity<RushEventResponseDto> createRushEvent(
             @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
             @RequestPart(value = "prizeImg") MultipartFile prizeImg,
             @RequestPart(value = "leftOptionImg") MultipartFile leftOptionImg,
@@ -113,7 +113,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 조회", description = "현재 데이터베이스에 존재하는 전체 선착순 이벤트를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Rush events retrieved successfully.")
     @GetMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents() {
+    public ResponseEntity<List<RushEventResponseDto>> getRushEvents() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEvents());
@@ -152,7 +152,7 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Failed to update rush event.")
     })
     @PutMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> updateRushEvent(
+    public ResponseEntity<List<RushEventResponseDto>> updateRushEvent(
             @RequestBody List<RushEventRequestDto> rushEventListRequestDto) {
 
         return ResponseEntity
