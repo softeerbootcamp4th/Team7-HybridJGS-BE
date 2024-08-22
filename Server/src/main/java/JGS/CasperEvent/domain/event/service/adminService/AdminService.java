@@ -86,7 +86,7 @@ public class AdminService {
     }
 
     // 추첨 이벤트 생성
-    public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+    public JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         if (lotteryEventRepository.count() >= 1) throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
@@ -96,7 +96,7 @@ public class AdminService {
         ));
 
         eventCacheService.setLotteryEvent();
-        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
     // 추첨 이벤트 조회
