@@ -416,11 +416,11 @@ public class AdminService {
             count = lotteryWinnerRepository.countByPhoneNumber(phoneNumber);
         }
 
-        List<LotteryEventWinnerResponseDto> lotteryEventWinnerResponseDto = new ArrayList<>();
+        List<LotteryEventParticipantResponseDto> lotteryEventWinnerResponseDto = new ArrayList<>();
 
         for (LotteryWinners lotteryWinners : lotteryWinnersPage) {
             lotteryEventWinnerResponseDto.add(
-                    LotteryEventWinnerResponseDto.of(lotteryWinners)
+                    LotteryEventParticipantResponseDto.winner(lotteryWinners)
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
