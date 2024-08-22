@@ -54,7 +54,7 @@ public class RushEventService {
 
         // 전체 이벤트 기간 구하기
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
-        
+
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListResponseDto(
                 mainRushEventDtoList,
@@ -99,9 +99,6 @@ public class RushEventService {
         LocalDate today = LocalDate.now();
         Long todayEventId = eventCacheService.getTodayEvent(today).getRushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
-
-//        long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
-//        long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
 
         // redis 에 캐싱 값 가져옴
         long leftOptionCount = rushEventRedisService.getOptionCount(todayEventId, 1);
