@@ -11,6 +11,7 @@ import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,20 +45,29 @@ class RushEventServiceTest {
     @InjectMocks
     RushEventService rushEventService;
 
+    private RushEvent rushEvent;
+    private JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayEvent;
+
+
+    @BeforeEach
+    void setUp(){
+        rushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
+        given(rushEvent.getRushEventId()).willReturn(1L);
+        RushOption leftOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+        RushOption rightOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto leftOptionResponse = JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto.of(leftOption);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto rightOptionResponse = JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto.of(rightOption);
+
+
+        todayEvent = JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto.withMainOption(
+                leftOptionResponse, rightOptionResponse
+        );
+    }
     @Test
     @DisplayName("모든 RushEvent 조회")
     void getAllRushEvents() {
         // given
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
-
         List<RushEvent> rushEventList = List.of(
                 new RushEvent(),
                 new RushEvent()
@@ -80,15 +90,6 @@ class RushEventServiceTest {
     void isExists() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
@@ -105,15 +106,6 @@ class RushEventServiceTest {
     void apply() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(false);
@@ -132,15 +124,6 @@ class RushEventServiceTest {
     void apply2() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
@@ -160,15 +143,6 @@ class RushEventServiceTest {
     void getRushEventRate() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
@@ -190,15 +164,6 @@ class RushEventServiceTest {
     void getRushEventResult() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
@@ -208,7 +173,7 @@ class RushEventServiceTest {
 
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
- 
+
         // then
         assertNotNull(result);
         assertEquals(1, result.getOptionId());
@@ -224,15 +189,6 @@ class RushEventServiceTest {
     void getRushEventResult2() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(2));
@@ -258,15 +214,6 @@ class RushEventServiceTest {
     void getRushEventResult3() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
@@ -292,15 +239,6 @@ class RushEventServiceTest {
     void getRushEventResult4() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
@@ -325,15 +263,6 @@ class RushEventServiceTest {
     void getRushEventResult5() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
@@ -358,15 +287,6 @@ class RushEventServiceTest {
     void getRushEventResult6() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.empty());
@@ -408,17 +328,17 @@ class RushEventServiceTest {
     @DisplayName("오늘의 선착순 이벤트의 선택지 조회 테스트")
     void getTodayRushEventOptions() {
         // given
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
+        RushEvent rushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
+        given(rushEvent.getRushEventId()).willReturn(1L);
+        RushOption leftOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+        RushOption rightOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto leftOptionResponse = JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto.of(leftOption);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto rightOptionResponse = JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto.of(rightOption);
+
+
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayEvent = JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto.withMainOption(
+                leftOptionResponse, rightOptionResponse
         );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
@@ -437,18 +357,6 @@ class RushEventServiceTest {
     void getRushEventOptionResult() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when
@@ -464,24 +372,11 @@ class RushEventServiceTest {
     void getRushEventOptionResult2() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
-            rushEventService.getRushEventOptionResult(optionId)
+                rushEventService.getRushEventOptionResult(optionId)
         );
 
         assertEquals(CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT, exception.getErrorCode());
@@ -508,18 +403,6 @@ class RushEventServiceTest {
     void getRushEventOptionResult4() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when & then
