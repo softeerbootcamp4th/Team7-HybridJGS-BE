@@ -23,12 +23,6 @@ public class LotteryEventResponseDto {
     private LocalDate endDate;
     private LocalTime endTime;
 
-
-    //    private LocalDate eventStartDate;
-    private LocalTime eventStartTime;
-    //    private LocalDate eventEndDate;
-    private LocalTime eventEndTime;
-
     private int winnerCount;
     private EventStatus status;
 
@@ -44,8 +38,6 @@ public class LotteryEventResponseDto {
 
     private LocalDate createdDate;
     private LocalTime createdTime;
-    private LocalDate updatedDate;
-    private LocalTime updatedTime;
 
     private LotteryEventResponseDto(LocalDateTime serverDateTime,
                                     LocalDateTime eventStartDate,

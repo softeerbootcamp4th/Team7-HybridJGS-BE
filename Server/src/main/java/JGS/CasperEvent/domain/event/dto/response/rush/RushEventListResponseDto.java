@@ -1,5 +1,6 @@
 package JGS.CasperEvent.domain.event.dto.response.rush;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RushEventListResponseDto {
     private List<RushEventResponseDto> events;
     private LocalDateTime serverTime;
