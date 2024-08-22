@@ -199,8 +199,8 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Failed to update lottery event.")
     })
     @PutMapping("/event/lottery")
-    public ResponseEntity<LotteryEventDetailResponseDto> updateLotteryEvent(@RequestBody @Valid LotteryEventRequestDto lotteryEventRequestDto) {
-        LotteryEventDetailResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
+    public ResponseEntity<LotteryEventResponseDto> updateLotteryEvent(@RequestBody @Valid LotteryEventRequestDto lotteryEventRequestDto) {
+        LotteryEventResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
 
         return ResponseEntity.ok(updatedLotteryEventDetailResponseDto);
     }
