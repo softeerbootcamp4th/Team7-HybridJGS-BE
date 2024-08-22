@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class RushOptionResponseDto {
+public class RushEventOptionResponseDto {
     private Long optionId;
     private String mainText;
     private String subText;
@@ -19,11 +19,11 @@ public class RushOptionResponseDto {
     private LocalDateTime updatedAt;
 
 
-    private RushOptionResponseDto(Long optionId, String mainText,
-                                  String subText, String resultSubText,
-                                  String resultMainText, String imageUrl,
-                                  Position position, LocalDateTime createdAt,
-                                  LocalDateTime updatedAt) {
+    private RushEventOptionResponseDto(Long optionId, String mainText,
+                                       String subText, String resultSubText,
+                                       String resultMainText, String imageUrl,
+                                       Position position, LocalDateTime createdAt,
+                                       LocalDateTime updatedAt) {
         this.optionId = optionId;
         this.mainText = mainText;
         this.subText = subText;
@@ -35,8 +35,8 @@ public class RushOptionResponseDto {
         this.updatedAt = updatedAt;
     }
 
-    public static RushOptionResponseDto of(RushOption rushOption) {
-        return new RushOptionResponseDto(
+    public static RushEventOptionResponseDto of(RushOption rushOption) {
+        return new RushEventOptionResponseDto(
                 rushOption.getOptionId(),
                 rushOption.getMainText(),
                 rushOption.getSubText(),
