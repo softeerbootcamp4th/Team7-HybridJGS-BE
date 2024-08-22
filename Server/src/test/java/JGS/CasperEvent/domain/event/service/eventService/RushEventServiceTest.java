@@ -10,6 +10,7 @@ import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.redisService.RushEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
@@ -43,6 +44,9 @@ class RushEventServiceTest {
     private RushOptionRepository rushOptionRepository;
     @Mock
     private EventCacheService eventCacheService;
+    @Mock
+    private RushEventRedisService rushEventRedisService;
+
 
     @InjectMocks
     RushEventService rushEventService;
@@ -67,13 +71,12 @@ class RushEventServiceTest {
     @DisplayName("모든 RushEvent 조회")
     void getAllRushEvents() {
         // given
-        List<RushEvent> rushEventList = List.of(
-                new RushEvent(),
-                new RushEvent()
+        List<RushEventResponseDto> rushEventList = List.of(
+                todayEvent, todayEvent
         );
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushEventRepository.findAll()).willReturn(rushEventList);
+        given(eventCacheService.getAllRushEvent()).willReturn(rushEventList);
 
         // when
         RushEventListResponseDto allRushEvents = rushEventService.getAllRushEvents();
@@ -91,10 +94,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, user.getPhoneNumber())).willReturn(true);
 
         // when
-        boolean exists = rushEventService.isExists(user.getId());
+        boolean exists = rushEventService.isExists(user.getPhoneNumber());
 
         // then
         assertTrue(exists);
@@ -107,7 +110,7 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(false);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, user.getPhoneNumber())).willReturn(false);
         RushEvent rushEvent = new RushEvent();
         given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
 
@@ -123,10 +126,10 @@ class RushEventServiceTest {
     void apply2() {
         // given
         BaseUser user = spy(new BaseUser());
-        given(user.getId()).willReturn("010-0000-0000");
+        given(user.getPhoneNumber()).willReturn("010-0000-0000");
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, "010-0000-0000")).willReturn(true);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, "010-0000-0000")).willReturn(true);
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -145,7 +148,7 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(100L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
 
@@ -166,10 +169,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 1)).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(300L);
 
         // when
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
@@ -191,10 +194,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(2));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(2));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 2)).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 2)).willReturn(300L);
 
         // when
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
@@ -216,10 +219,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 1)).willReturn(400L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(400L);
 
         // when
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
@@ -241,10 +244,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getId())).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(300L);
         // when
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
@@ -265,10 +268,10 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getId())).willReturn(400L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(400L);
         // when
         JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
@@ -289,7 +292,7 @@ class RushEventServiceTest {
         BaseUser user = new BaseUser();
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.empty());
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.empty());
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
 

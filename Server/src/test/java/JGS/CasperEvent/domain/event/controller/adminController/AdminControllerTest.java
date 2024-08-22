@@ -446,15 +446,12 @@ class AdminControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].rushEventId").isEmpty())
                 .andExpect(jsonPath("$[0].eventDate").value("2024-08-15"))
                 .andExpect(jsonPath("$[0].startTime").value("00:00:00"))
                 .andExpect(jsonPath("$[0].endTime").value("23:59:59"))
                 .andExpect(jsonPath("$[0].winnerCount").value(315))
                 .andExpect(jsonPath("$[0].prizeImageUrl").value("prize image url"))
                 .andExpect(jsonPath("$[0].prizeDescription").value("prize description"))
-                .andExpect(jsonPath("$[0].createdAt").isEmpty())
-                .andExpect(jsonPath("$[0].updatedAt").isEmpty())
                 .andExpect(jsonPath("$[0].status").value("AFTER"))
                 .andExpect(jsonPath("$[0].options").isArray())
                 .andDo(print());

@@ -31,7 +31,7 @@ class UserServiceTest {
         //given
         UserLoginDto userLoginDto = new UserLoginDto("010-0000-0000");
         BaseUser user = new BaseUser("010-0000-0000", Role.USER);
-        given(userRepository.findById("010-0000-0000")).willReturn(Optional.of(user));
+        given(userRepository.findByPhoneNumber("010-0000-0000")).willReturn(Optional.of(user));
 
         //when
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
@@ -47,7 +47,7 @@ class UserServiceTest {
         //given
         UserLoginDto userLoginDto = new UserLoginDto("010-0000-0000");
         BaseUser user = new BaseUser("010-0000-0000", Role.USER);
-        given(userRepository.findById("010-0000-0000")).willReturn(Optional.empty());
+        given(userRepository.findByPhoneNumber("010-0000-0000")).willReturn(Optional.empty());
         given(userRepository.save(user)).willReturn(user);
 
         //when
