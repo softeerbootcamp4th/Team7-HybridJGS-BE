@@ -64,7 +64,7 @@ public class AdminService {
 
     // 어드민 인증
     public Admin verifyAdmin(AdminRequestDto adminRequestDto) {
-        return adminRepository.findByIdAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
+        return adminRepository.findByPhoneNumberAndPassword(adminRequestDto.getAdminId(), adminRequestDto.getPassword()).orElseThrow(NoSuchElementException::new);
     }
 
     // 어드민 생성
@@ -72,7 +72,7 @@ public class AdminService {
         String adminId = adminRequestDto.getAdminId();
         String password = adminRequestDto.getPassword();
 
-        Admin admin = adminRepository.findById(adminId).orElse(null);
+        Admin admin = adminRepository.findByPhoneNumber(adminId).orElse(null);
 
         if (admin != null) throw new CustomException("이미 등록된 ID입니다.", CustomErrorCode.CONFLICT);
         adminRepository.save(new Admin(adminId, password, Role.ADMIN));
@@ -213,7 +213,7 @@ public class AdminService {
 
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
-            String userId = rushParticipant.getBaseUser().getId();
+            String userId = rushParticipant.getBaseUser().getPhoneNumber();
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
@@ -263,7 +263,7 @@ public class AdminService {
 
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
-            String userId = rushParticipant.getBaseUser().getId();
+            String userId = rushParticipant.getBaseUser().getPhoneNumber();
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
@@ -531,7 +531,7 @@ public class AdminService {
 
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<CasperBot> casperBotPage = casperBotRepository.findByPhoneNumberAndActiveExpectations(lotteryParticipant.getBaseUser().getId(), pageable);
+        Page<CasperBot> casperBotPage = casperBotRepository.findByPhoneNumberAndActiveExpectations(lotteryParticipant.getBaseUser().getPhoneNumber(), pageable);
 
         // DTO로 변환합니다.
         List<LotteryEventExpectationResponseDto> lotteryEventExpectationResponseDtoList = casperBotPage.getContent().stream()

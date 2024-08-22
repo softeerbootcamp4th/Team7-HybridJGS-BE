@@ -11,7 +11,7 @@ public record RushEventParticipantResponseDto(Long id, String phoneNumber,
     public static RushEventParticipantResponseDto of(RushParticipants rushParticipants, Long rank){
         return new RushEventParticipantResponseDto(
                 rushParticipants.getId(),
-                rushParticipants.getBaseUser().getId(),
+                rushParticipants.getBaseUser().getPhoneNumber(),
                 rushParticipants.getOptionId(),
                 rushParticipants.getCreatedAt().toLocalDate(),
                 rushParticipants.getCreatedAt().toLocalTime(),

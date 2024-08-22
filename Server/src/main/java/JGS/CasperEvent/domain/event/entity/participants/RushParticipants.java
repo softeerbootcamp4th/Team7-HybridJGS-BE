@@ -14,12 +14,13 @@ public class RushParticipants extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int optionId;
-    @OneToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "base_user_id")
     @JsonBackReference
     private BaseUser baseUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rush_event_id")
     private RushEvent rushEvent;
 

@@ -14,7 +14,7 @@ public class LotteryParticipants extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY) // mappedBy 이용하면 둘 다 저장 안해도 됨
+    @ManyToOne(fetch = FetchType.LAZY) // mappedBy 이용하면 둘 다 저장 안해도 됨
     @JoinColumn(name = "base_user_id")
     @JsonBackReference
     @JsonIgnore

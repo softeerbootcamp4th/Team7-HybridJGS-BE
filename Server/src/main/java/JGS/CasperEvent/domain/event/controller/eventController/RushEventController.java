@@ -39,7 +39,7 @@ public class RushEventController {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(rushEventService.isExists(user.getId()));
+                .body(rushEventService.isExists(user.getPhoneNumber()));
     }
 
     @Operation(summary = "선착순 이벤트 응모", description = "해당 유저가 오늘의 이벤트에 응모합니다. optionId 값이 필요합니다. optionId 값이 1이면 왼쪽 선택지, 2이면 오른쪽 선택지에 응모합니다.")

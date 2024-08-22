@@ -27,11 +27,11 @@ public class RushEvent extends BaseEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rushEventId;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private final Set<RushOption> options = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RushParticipants> rushParticipants;
 
     public RushEvent() {

@@ -16,10 +16,10 @@ import java.util.Optional;
 public interface LotteryParticipantsRepository extends JpaRepository<LotteryParticipants, Long> {
     Optional<LotteryParticipants> findByBaseUser(BaseUser baseUser);
 
-    @Query("SELECT p FROM LotteryParticipants p WHERE p.baseUser.id LIKE :id%")
+    @Query("SELECT p FROM LotteryParticipants p WHERE p.baseUser.phoneNumber LIKE :id%")
     Page<LotteryParticipants> findByBaseUser_Id(@Param("id") String id, Pageable pageable);
 
-    @Query("SELECT COUNT(p) FROM LotteryParticipants p WHERE p.baseUser.id LIKE :id%")
+    @Query("SELECT COUNT(p) FROM LotteryParticipants p WHERE p.baseUser.phoneNumber LIKE :id%")
     long countByBaseUser_Id(@Param("id") String id);
 
     @Query("SELECT lp.id, lp.appliedCount From LotteryParticipants lp")
