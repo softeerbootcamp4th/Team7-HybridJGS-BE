@@ -51,8 +51,8 @@ public class RushEventService {
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
 
         // RushEvent를 DTO로 전환
-        List<MainRushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
-                .map(MainRushEventResponseDto::of)
+        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
+                .map(JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto::withMain)
                 .toList();
 
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
