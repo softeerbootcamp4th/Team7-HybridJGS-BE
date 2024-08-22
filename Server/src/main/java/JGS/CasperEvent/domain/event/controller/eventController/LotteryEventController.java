@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
 import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
