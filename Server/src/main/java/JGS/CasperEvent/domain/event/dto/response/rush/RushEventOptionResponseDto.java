@@ -2,11 +2,15 @@ package JGS.CasperEvent.domain.event.dto.response.rush;
 
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.global.enums.Position;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RushEventOptionResponseDto {
     private Long optionId;
     private String mainText;
@@ -20,8 +24,8 @@ public class RushEventOptionResponseDto {
 
 
     private RushEventOptionResponseDto(Long optionId, String mainText,
-                                       String subText, String resultSubText,
-                                       String resultMainText, String imageUrl,
+                                       String subText, String resultMainText,
+                                       String resultSubText, String imageUrl,
                                        Position position, LocalDateTime createdAt,
                                        LocalDateTime updatedAt) {
         this.optionId = optionId;
@@ -34,6 +38,17 @@ public class RushEventOptionResponseDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public static RushEventOptionResponseDto of(Long optionId, String mainText,
+                                                String subText, String resultMainText,
+                                                String resultSubText, String imageUrl,
+                                                Position position, LocalDateTime createdAt,
+                                                LocalDateTime updatedAt) {
+        return new RushEventOptionResponseDto(
+                optionId, mainText, subText, resultMainText,
+                resultSubText, imageUrl, position, createdAt, updatedAt);
+    }
+
 
     // RushEventOptionResponseDto
     public static RushEventOptionResponseDto of(RushOption rushOption) {
@@ -63,7 +78,7 @@ public class RushEventOptionResponseDto {
         );
     }
 
-    public static RushEventOptionResponseDto inMain(String mainText, String subText){
+    public static RushEventOptionResponseDto inMain(String mainText, String subText) {
         return new RushEventOptionResponseDto(mainText, subText);
     }
 

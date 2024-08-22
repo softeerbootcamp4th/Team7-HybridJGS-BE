@@ -41,7 +41,7 @@ public class RushEventService {
         LocalDate today = LocalDate.now();
 
         // 오늘의 선착순 이벤트 꺼내오기
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
 
         // 모든 이벤트 꺼내오기
         List<MainRushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
@@ -56,8 +56,8 @@ public class RushEventService {
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
 
         // RushEvent를 DTO로 전환
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
-                .map(JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto::withMain)
+        List<RushEventResponseDto> mainRushEventDtoList = rushEventList.stream()
+                .map(RushEventResponseDto::withMain)
                 .toList();
 
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
@@ -123,7 +123,7 @@ public class RushEventService {
     @Transactional
     public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto getRushEventResult(BaseUser user) {
         LocalDate today = LocalDate.now();
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayRushEvent = eventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayRushEvent = eventCacheService.getTodayEvent(today);
         Long todayEventId = todayRushEvent.getRushEventId();
 
         // 최종 선택 비율을 조회
@@ -250,35 +250,35 @@ public class RushEventService {
 
 
     // 오늘의 이벤트 옵션 정보를 반환
-    public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto getTodayRushEventOptions() {
+    public RushEventResponseDto getTodayRushEventOptions() {
         LocalDate today = LocalDate.now();
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = todayEvent.getOptions();
+        RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
+        Set<RushEventOptionResponseDto> options = todayEvent.getOptions();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto leftOption = options.stream()
+        RushEventOptionResponseDto leftOption = options.stream()
                 .filter(option -> option.getPosition() == Position.LEFT)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("왼쪽 선택지가 존재하지 않습니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT));
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto rightOption = options.stream()
+        RushEventOptionResponseDto rightOption = options.stream()
                 .filter(option -> option.getPosition() == Position.RIGHT)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("오른쪽 선택지가 존재하지 않습니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT));
 
-        return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto.withMainOption(leftOption, rightOption);
+        return RushEventResponseDto.withMainOption(leftOption, rightOption);
     }
 
     public RushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
         LocalDate today = LocalDate.now();
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> options = todayEvent.getOptions();
+        Set<RushEventOptionResponseDto> options = todayEvent.getOptions();
 
         if (options.size() != 2) {
             throw new CustomException("해당 이벤트의 선택지가 2개가 아닙니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT);
         }
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto selectedOption = options.stream()
+        RushEventOptionResponseDto selectedOption = options.stream()
                 .filter(option -> option.getPosition() == position)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("사용자가 선택한 선택지가 존재하지 않습니다.", CustomErrorCode.NO_RUSH_EVENT_OPTION));
