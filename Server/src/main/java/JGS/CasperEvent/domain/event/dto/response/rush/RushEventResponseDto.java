@@ -2,6 +2,7 @@ package JGS.CasperEvent.domain.event.dto.response.rush;
 
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.global.enums.EventStatus;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 public class RushEventResponseDto {
     private Long rushEventId;
     private LocalDate eventDate;
