@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.controller.eventController;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -164,7 +165,7 @@ class LotteryEventControllerTest {
     void getLotteryParticipantsSuccessTest() throws Exception {
         //given
         given(lotteryEventService.getLotteryParticipant(user))
-                .willReturn(LotteryParticipantResponseDto.of(lotteryParticipants, casperBotResponse));
+                .willReturn(LotteryEventParticipantResponseDto.of(lotteryParticipants));
 
         //when
         ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
@@ -176,13 +177,6 @@ class LotteryEventControllerTest {
                 .andExpect(jsonPath("$.linkClickedCount").value(0))
                 .andExpect(jsonPath("$.expectations").value(0))
                 .andExpect(jsonPath("$.appliedCount").value(1))
-                .andExpect(jsonPath("$.casperBot.eyeShape").value(0))
-                .andExpect(jsonPath("$.casperBot.eyePosition").value(0))
-                .andExpect(jsonPath("$.casperBot.mouthShape").value(0))
-                .andExpect(jsonPath("$.casperBot.color").value(0))
-                .andExpect(jsonPath("$.casperBot.sticker").value(0))
-                .andExpect(jsonPath("$.casperBot.name").value("name"))
-                .andExpect(jsonPath("$.casperBot.expectation").value("expectation"))
                 .andDo(print());
     }
 
