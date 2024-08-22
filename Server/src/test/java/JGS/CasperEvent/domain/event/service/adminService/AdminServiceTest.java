@@ -1582,14 +1582,14 @@ class AdminServiceTest {
         LotteryEventExpectationsResponseDto lotteryEventExpectations = adminService.getLotteryEventExpectations(0, 1, 1L);
 
         //then
-        List<LotteryEventExpectationResponseDto> expectations = lotteryEventExpectations.expectations();
+        List<LotteryEventResponseDto> expectations = lotteryEventExpectations.expectations();
 
         boolean expectationFound = false;
 
-        for (LotteryEventExpectationResponseDto exp : expectations) {
-            if (exp.expectation().equals("expectation") &&
-                    exp.createdDate().equals(LocalDate.of(2000, 9, 27)) &&
-                    exp.createdTime().equals(LocalTime.of(0, 0))) {
+        for (LotteryEventResponseDto exp : expectations) {
+            if (exp.getExpectation().equals("expectation") &&
+                    exp.getCreatedDate().equals(LocalDate.of(2000, 9, 27)) &&
+                    exp.getCreatedTime().equals(LocalTime.of(0, 0))) {
                 expectationFound = true;
                 break;
             }
