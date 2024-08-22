@@ -53,6 +53,8 @@ class LotteryEventServiceTest {
     private CasperBotRepository casperBotRepository;
     @Mock
     private LotteryEventRedisService lotteryEventRedisService;
+    @Mock
+    private EventCacheService eventCacheService;
 
 
     @InjectMocks
@@ -104,9 +106,7 @@ class LotteryEventServiceTest {
     void postCasperBot_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         //given
         given(casperBotRepository.save(casperBot)).willReturn(casperBot);
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willReturn(lotteryEvent);
 
         //when
         CasperBotResponseDto casperBotResponseDto = lotteryEventService.postCasperBot(user, casperBotRequestDto);
@@ -170,9 +170,7 @@ class LotteryEventServiceTest {
     @DisplayName("추첨 이벤트 조회 테스트 - 성공")
     void getLotteryEventTest_Success() {
         //given
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willReturn(lotteryEvent);
 
         //when
         LotteryEventResponseDto lotteryEventResponseDto = lotteryEventService.getLotteryEvent();
@@ -189,7 +187,7 @@ class LotteryEventServiceTest {
     @DisplayName("추첨 이벤트 조회 테스트 - 실패 (진행중인 이벤트 없음)")
     void getLotteryEventTest_Failure_NoLotteryEvent() {
         //given
-        given(lotteryEventRepository.findAll()).willReturn(new ArrayList<>());
+        given(eventCacheService.getLotteryEvent()).willThrow(new CustomException(CustomErrorCode.NO_LOTTERY_EVENT));
 
         //when
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -198,17 +196,14 @@ class LotteryEventServiceTest {
 
         //then
         assertEquals(CustomErrorCode.NO_LOTTERY_EVENT, exception.getErrorCode());
-        assertEquals("현재 진행중인 lotteryEvent가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("추첨 이벤트를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("추첨 이벤트 조회 테스트 - 실패(2개 이상의 이벤트 존재)")
     void getLotteryEventTest_Failure_TooManyLotteryEvent() {
         //given
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willThrow(new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT));
 
         //when
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -217,7 +212,7 @@ class LotteryEventServiceTest {
 
         //then
         assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, exception.getErrorCode());
-        assertEquals("현재 진행중인 lotteryEvent가 2개 이상입니다.", exception.getMessage());
+        assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", exception.getMessage());
 
     }
 }
