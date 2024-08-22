@@ -151,13 +151,13 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
 
         // when
-        RushEventRateResponseDto result = rushEventService.getRushEventRate(user);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
 
         // then
         assertNotNull(result);
-        assertEquals(1, result.optionId());
-        assertEquals(100, result.leftOption());
-        assertEquals(200, result.rightOption());
+        assertEquals(1, result.getOptionId());
+        assertEquals(100, result.getLeftOption());
+        assertEquals(200, result.getRightOption());
     }
 
     @Test
