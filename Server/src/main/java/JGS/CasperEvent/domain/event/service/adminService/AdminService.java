@@ -517,8 +517,8 @@ public class AdminService {
     }
 
     // 선착순 이벤트 선택지 조회
-    public AdminRushEventOptionResponseDto getRushEventOptions(Long rushEventId) {
-        return AdminRushEventOptionResponseDto.of(
+    public RushEventResponseDto getRushEventOptions(Long rushEventId) {
+        return RushEventResponseDto.withOptions(
                 rushEventRepository.findById(rushEventId).orElseThrow(
                         () -> new CustomException(CustomErrorCode.NO_RUSH_EVENT)
                 )
