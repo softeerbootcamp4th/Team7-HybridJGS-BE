@@ -29,14 +29,14 @@ public class RushEventService {
     private final RushEventRepository rushEventRepository;
     private final RushParticipantsRepository rushParticipantsRepository;
     private final RushOptionRepository rushOptionRepository;
-    private final RushEventCacheService rushEventCacheService;
+    private final EventCacheService eventCacheService;
 
     @Transactional
     public RushEventListResponseDto getAllRushEvents() {
         LocalDate today = LocalDate.now();
 
         // 오늘의 선착순 이벤트 꺼내오기
-        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
 
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
@@ -69,14 +69,14 @@ public class RushEventService {
     // 응모 여부 조회
     public boolean isExists(String userId) {
         LocalDate today = LocalDate.now();
-        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
+        Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
         return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, userId);
     }
 
     @Transactional
     public void apply(BaseUser user, int optionId) {
         LocalDate today = LocalDate.now();
-        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
+        Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
 
         // 이미 응모한 회원인지 검증
         if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(todayEventId, user.getId())) {
@@ -94,7 +94,7 @@ public class RushEventService {
     // 진행중인 게임의 응모 비율 반환
     public RushEventRateResponseDto getRushEventRate(BaseUser user) {
         LocalDate today = LocalDate.now();
-        Long todayEventId = rushEventCacheService.getTodayEvent(today).rushEventId();
+        Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getId());
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
@@ -109,7 +109,7 @@ public class RushEventService {
     @Transactional
     public RushEventResultResponseDto getRushEventResult(BaseUser user) {
         LocalDate today = LocalDate.now();
-        RushEventResponseDto todayRushEvent = rushEventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayRushEvent = eventCacheService.getTodayEvent(today);
         Long todayEventId = todayRushEvent.rushEventId();
 
         // 최종 선택 비율을 조회
@@ -228,14 +228,14 @@ public class RushEventService {
             rushEvents.add(rushEvent);
         }
 
-        rushEventCacheService.setCacheValue(LocalDate.now());
+        eventCacheService.setCacheValue(LocalDate.now());
     }
 
 
     // 오늘의 이벤트 옵션 정보를 반환
     public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
         LocalDate today = LocalDate.now();
-        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         RushEventOptionResponseDto leftOption = options.stream()
@@ -257,7 +257,7 @@ public class RushEventService {
     public ResultRushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
         LocalDate today = LocalDate.now();
-        RushEventResponseDto todayEvent = rushEventCacheService.getTodayEvent(today);
+        RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
         Set<RushEventOptionResponseDto> options = todayEvent.options();
 
         if (options.size() != 2) {

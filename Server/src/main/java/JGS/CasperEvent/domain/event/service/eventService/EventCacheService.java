@@ -1,7 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
@@ -17,9 +19,36 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RushEventCacheService {
+public class EventCacheService {
 
     private final RushEventRepository rushEventRepository;
+    private final LotteryEventRepository lotteryEventRepository;
+
+    @Cacheable(value = "ongoingLotteryEvent")
+    public LotteryEvent getLotteryEvent(){
+        return fetchOngoingLotteryEvent();
+    }
+
+    @CachePut(value = "ongoingLotteryEvent")
+    public LotteryEvent setLotteryEvent() {
+        // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
+        return fetchOngoingLotteryEvent();
+    }
+
+    private LotteryEvent fetchOngoingLotteryEvent() {
+        // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
+        List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
+
+        if (lotteryEventList.isEmpty()) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
+        }
+
+        if (lotteryEventList.size() > 1) {
+            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+        }
+
+        return lotteryEventList.get(0);
+    }
 
     @Cacheable(value = "todayEventCache", key = "#today")
     public RushEventResponseDto getTodayEvent(LocalDate today) {
