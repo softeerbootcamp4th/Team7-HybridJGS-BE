@@ -22,7 +22,10 @@ public class RushEventResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private EventStatus status;
+
     private Set<RushEventOptionResponseDto> options;
+    private RushEventOptionResponseDto leftOption;
+    private RushEventOptionResponseDto rightOption;
 
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -100,5 +103,17 @@ public class RushEventResponseDto {
         optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getLeftOption()));
         optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getRightOption()));
         return new RushEventResponseDto(optionResponseDtoList);
+    }
+
+    private RushEventResponseDto(RushEventOptionResponseDto leftOption,
+                                RushEventOptionResponseDto rightOption) {
+        this.leftOption = leftOption;
+        this.rightOption = rightOption;
+    }
+
+    // MainRushEventOptionsResponseDto
+    public static RushEventResponseDto withMainOption(RushEventOptionResponseDto leftOption,
+                                                      RushEventOptionResponseDto rightOption){
+        return new RushEventResponseDto(leftOption, rightOption);
     }
 }
