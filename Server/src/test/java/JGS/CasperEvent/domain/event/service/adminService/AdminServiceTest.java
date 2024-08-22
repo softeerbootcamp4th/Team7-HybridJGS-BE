@@ -1120,14 +1120,14 @@ class AdminServiceTest {
         LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "");
 
         //then
-        LotteryEventWinnerResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
-        assertThat(actualWinner.phoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(actualWinner.linkClickedCounts()).isEqualTo(0);
-        assertThat(actualWinner.expectation()).isEqualTo(0);
-        assertThat(actualWinner.appliedCount()).isEqualTo(1);
-        assertThat(actualWinner.ranking()).isEqualTo(0);
-        assertThat(actualWinner.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
-        assertThat(actualWinner.createdTime()).isEqualTo(LocalTime.of(0, 0));
+        LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
+        assertThat(actualWinner.getPhoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(actualWinner.getLinkClickedCounts()).isEqualTo(0);
+        assertThat(actualWinner.getExpectation()).isEqualTo(0);
+        assertThat(actualWinner.getAppliedCount()).isEqualTo(1);
+        assertThat(actualWinner.getRanking()).isEqualTo(0);
+        assertThat(actualWinner.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(actualWinner.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
 
         assertThat(lotteryEventWinners.isLastPage()).isTrue();
 
@@ -1151,14 +1151,14 @@ class AdminServiceTest {
         LotteryEventWinnerListResponseDto lotteryEventWinners = adminService.getLotteryEventWinners(1, 0, "010-0000-0000");
 
         //then
-        LotteryEventWinnerResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
-        assertThat(actualWinner.phoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(actualWinner.linkClickedCounts()).isEqualTo(0);
-        assertThat(actualWinner.expectation()).isEqualTo(0);
-        assertThat(actualWinner.appliedCount()).isEqualTo(1);
-        assertThat(actualWinner.ranking()).isEqualTo(0);
-        assertThat(actualWinner.createdDate()).isEqualTo(LocalDate.of(2000, 9, 27));
-        assertThat(actualWinner.createdTime()).isEqualTo(LocalTime.of(0, 0));
+        LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
+        assertThat(actualWinner.getPhoneNumber()).isEqualTo("010-0000-0000");
+        assertThat(actualWinner.getLinkClickedCounts()).isEqualTo(0);
+        assertThat(actualWinner.getExpectation()).isEqualTo(0);
+        assertThat(actualWinner.getAppliedCount()).isEqualTo(1);
+        assertThat(actualWinner.getRanking()).isEqualTo(0);
+        assertThat(actualWinner.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
+        assertThat(actualWinner.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
 
         assertThat(lotteryEventWinners.isLastPage()).isTrue();
 
