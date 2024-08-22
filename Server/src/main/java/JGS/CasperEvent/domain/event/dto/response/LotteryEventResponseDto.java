@@ -13,9 +13,9 @@ import java.time.temporal.ChronoUnit;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class LotteryEventResponseDto {
-    private LocalDateTime serverDateTime;
-    private LocalDateTime eventStartDate;
-    private LocalDateTime eventEndDate;
+    private final LocalDateTime serverDateTime;
+    private final LocalDateTime eventStartDate;
+    private final LocalDateTime eventEndDate;
 
     //    private LocalDate eventStartDate;
     private LocalTime eventStartTime;
@@ -27,7 +27,7 @@ public class LotteryEventResponseDto {
 
 
     private int appliedCount;
-    private Long activePeriod;
+    private final Long activePeriod;
 
     private Long casperId;
     private String expectation;

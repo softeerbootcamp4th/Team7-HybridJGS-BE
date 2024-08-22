@@ -2,8 +2,8 @@ package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -176,10 +176,10 @@ class LotteryEventServiceTest {
         LotteryEventResponseDto lotteryEventResponseDto = lotteryEventService.getLotteryEvent();
 
         //then
-        assertThat(lotteryEventResponseDto.serverDateTime()).isNotNull();
-        assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
-        assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
-        assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
+        assertThat(lotteryEventResponseDto.getServerDateTime()).isNotNull();
+        assertThat(lotteryEventResponseDto.getEventStartDate()).isEqualTo("2000-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getEventEndDate()).isEqualTo("2100-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getActivePeriod()).isEqualTo(36524);
 
     }
 
