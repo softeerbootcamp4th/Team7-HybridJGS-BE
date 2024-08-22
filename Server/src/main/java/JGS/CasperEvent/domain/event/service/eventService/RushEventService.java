@@ -7,13 +7,13 @@ import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.redisService.RushEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import JGS.CasperEvent.global.util.RepositoryErrorHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +31,7 @@ public class RushEventService {
     private final RushParticipantsRepository rushParticipantsRepository;
     private final RushOptionRepository rushOptionRepository;
     private final EventCacheService eventCacheService;
+    private final RushEventRedisService rushEventRedisService;
 
     @Transactional
     public RushEventListResponseDto getAllRushEvents() {
@@ -83,6 +84,9 @@ public class RushEventService {
         // eventId 를 이용하여 rushEvent 를 꺼냄
         RushEvent rushEvent = RepositoryErrorHandler.findByIdOrElseThrow(rushEventRepository, todayEventId, CustomErrorCode.NO_RUSH_EVENT);
 
+        // redis incr 호출
+//        rushEventRedisService.incrementOptionCount(todayEventId, optionId);
+
         // 새로운 RushParticipants 를 생성하여 DB 에 저장
         RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
         rushParticipantsRepository.save(rushParticipants);
@@ -93,8 +97,13 @@ public class RushEventService {
         LocalDate today = LocalDate.now();
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
         Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
+
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
+
+        // redis 에 캐싱 값 가져옴
+//        long leftOptionCount = rushEventRedisService.getOptionCount(todayEventId, 1);
+//        long rightOptionCount = rushEventRedisService.getOptionCount(todayEventId, 2);
 
         return new RushEventRateResponseDto(
                 optionId.orElseThrow(() -> new CustomException("유저가 응모한 선택지가 존재하지 않습니다.", CustomErrorCode.USER_NOT_FOUND)),
@@ -227,6 +236,7 @@ public class RushEventService {
 
         eventCacheService.setCacheValue(LocalDate.now());
         eventCacheService.setAllRushEvent();
+        rushEventRedisService.clearAllrushEventRate();
     }
 
 
