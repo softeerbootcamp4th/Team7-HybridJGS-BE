@@ -17,6 +17,12 @@ public class LotteryEventResponseDto {
     private final LocalDateTime eventStartDate;
     private final LocalDateTime eventEndDate;
 
+    private LocalDate startDate;
+    private LocalTime startTime;
+    private LocalDate endDate;
+    private LocalTime endTime;
+
+
     //    private LocalDate eventStartDate;
     private LocalTime eventStartTime;
     //    private LocalDate eventEndDate;
@@ -31,6 +37,9 @@ public class LotteryEventResponseDto {
 
     private Long casperId;
     private String expectation;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private LocalDate createdDate;
     private LocalTime createdTime;
@@ -52,5 +61,41 @@ public class LotteryEventResponseDto {
                 lotteryEvent.getStartDateTime(),
                 lotteryEvent.getEndDateTime()
         );
+    }
+
+    private LotteryEventResponseDto(LocalDate startDate, LocalTime startTime,
+                                    LocalDate endDate, LocalTime endTime,
+                                    int appliedCount, int winnerCount,
+                                    EventStatus status,
+                                    LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.appliedCount = appliedCount;
+        this.winnerCount = winnerCount;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public static LotteryEventResponseDto withDetail(LotteryEvent event) {
+        EventStatus status;
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(event.getStartDateTime())) status = EventStatus.BEFORE;
+        else if (now.isAfter(event.getEndDateTime())) status = EventStatus.AFTER;
+        else status = EventStatus.DURING;
+
+        return new LotteryEventResponseDto(
+                event.getStartDateTime().toLocalDate(),
+                event.getStartDateTime().toLocalTime(),
+                event.getEndDateTime().toLocalDate(),
+                event.getEndDateTime().toLocalTime(),
+                event.getTotalAppliedCount(),
+                event.getWinnerCount(),
+                status,
+                event.getCreatedAt(),
+                event.getUpdatedAt());
     }
 }
