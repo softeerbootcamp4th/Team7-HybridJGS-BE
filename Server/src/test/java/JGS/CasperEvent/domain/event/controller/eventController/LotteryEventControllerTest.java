@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.response.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -62,7 +62,7 @@ class LotteryEventControllerTest {
     private CasperBotRequestDto casperBotRequest;
     private CasperBotResponseDto casperBotResponse;
     private LotteryParticipants lotteryParticipants;
-    private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
+    private LotteryEventResponseDto lotteryEventResponseDto;
 
     @TestConfiguration
     static class TestConfig {

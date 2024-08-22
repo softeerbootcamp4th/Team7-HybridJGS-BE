@@ -8,8 +8,8 @@ import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequest
 import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
 import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventParticipantResponseDto;
-import JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.admin.Admin;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
@@ -80,12 +80,12 @@ class AdminControllerTest {
     private CasperBot casperBot;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
-    private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
+    private LotteryEventResponseDto lotteryEventResponseDto;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantResponseDto lotteryEventParticipantsResponseDto;
     private LotteryEventParticipantsListResponseDto lotteryEventParticipantsListResponseDto;
     private LotteryEventResponseDto lotteryEventDetailResponseDto;
-    private LotteryEventExpectationsResponseDto lotteryEventExpectationsResponseDto;
+    private ExpectationsPagingResponseDto expectationsPagingResponseDto;
     private LotteryEventResponseDto lotteryEventExpectationResponseDto;
     private LotteryEventWinnerListResponseDto lotteryEventWinnerListResponseDto;
     private LotteryEventWinnerResponseDto lotteryEventWinnerResponseDto;
@@ -141,7 +141,7 @@ class AdminControllerTest {
                 .build();
 
         // 추첨 이벤트 응답 DTO
-        this.lotteryEventResponseDto = JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
+        this.lotteryEventResponseDto = LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
 
         // 추첨 이벤트 참여자 객체
         LotteryParticipants realLotteryParticipants = new LotteryParticipants(user);
@@ -195,7 +195,7 @@ class AdminControllerTest {
         // 추첨 이벤트 기대평 리스트 응답 DTO
         List<LotteryEventResponseDto> lotteryEventExpectationResponseDtoList = new ArrayList<>();
         lotteryEventExpectationResponseDtoList.add(lotteryEventExpectationResponseDto);
-        lotteryEventExpectationsResponseDto = new LotteryEventExpectationsResponseDto(lotteryEventExpectationResponseDtoList, true, 1);
+        expectationsPagingResponseDto = new ExpectationsPagingResponseDto(lotteryEventExpectationResponseDtoList, true, 1);
 
 
         // 선착순 이벤트 왼쪽 옵션
@@ -629,7 +629,7 @@ class AdminControllerTest {
     void getLotteryEventExpectationsSuccessTest() throws Exception {
         //given
         given(adminService.getLotteryEventExpectations(anyInt(), anyInt(), anyLong()))
-                .willReturn(lotteryEventExpectationsResponseDto);
+                .willReturn(expectationsPagingResponseDto);
 
         //when
         ResultActions perform = mockMvc.perform(get("/admin/event/lottery/participants/1/expectations")
