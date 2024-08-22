@@ -6,6 +6,7 @@ import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+// rushEvent 안으로
 public record AdminRushEventOptionResponseDto(Set<RushEventOptionResponseDto> options) {
     public static AdminRushEventOptionResponseDto of(RushEvent rushEvent){
         Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> optionResponseDtoList = new HashSet<>();
