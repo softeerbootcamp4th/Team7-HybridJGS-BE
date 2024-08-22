@@ -1,6 +1,5 @@
 package JGS.CasperEvent.domain.event.dto.response;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventParticipantsResponseDto;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import lombok.Getter;
 
