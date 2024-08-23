@@ -84,7 +84,7 @@ class EventCacheServiceTest {
     }
 
     @Test
-    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (이벤트 없음)")
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (이벤트 2개 이상)")
     void getLotteryEventTest_Failure_TooManyLotteryEvent() {
         //given
         List lotteryEventList = List.of(
@@ -148,4 +148,22 @@ class EventCacheServiceTest {
         assertEquals("선착순 이벤트가 존재하지않습니다.", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 조회 테스트 - 실패 (이벤트 2개 이상)")
+    void getLotteryEventTest_Failure_MultipleRushEventsFound() {
+        //given
+        List rushEventList = List.of(
+                new RushEvent(), new RushEvent()
+        );
+        given(rushEventRepository.findByEventDate(any())).willReturn(rushEventList);
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                eventCacheService.getTodayEvent(LocalDate.now())
+        );
+
+        //then
+        assertEquals(CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND, exception.getErrorCode());
+        assertEquals("선착순 이벤트가 2개 이상 존재합니다.", exception.getMessage());
+    }
 }
