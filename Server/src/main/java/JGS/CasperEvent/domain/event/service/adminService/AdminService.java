@@ -131,7 +131,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryParticipantsPage.hasNext();
-        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventParticipantsResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<>(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 생성
@@ -225,7 +225,7 @@ public class AdminService {
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
-        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<>(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 당첨자 조회
@@ -276,7 +276,7 @@ public class AdminService {
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         long totalParticipants = rushParticipantsList.size();
-        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
+        return new ParticipantsListResponseDto<>(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
     // 선착순 이벤트 삭제
@@ -424,7 +424,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
-        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventWinnerResponseDto, isLastPage, count);
+        return new ParticipantsListResponseDto<>(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
     // 선착순 이벤트 업데이트
