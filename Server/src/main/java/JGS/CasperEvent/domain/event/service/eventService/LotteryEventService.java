@@ -6,6 +6,7 @@ import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -40,6 +41,7 @@ public class LotteryEventService {
     private final LotteryEventRedisService lotteryEventRedisService;
     private final SecretKey secretKey;
     private final EventCacheService eventCacheService;
+    private final LotteryEventRepository lotteryEventRepository;
 
     public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
