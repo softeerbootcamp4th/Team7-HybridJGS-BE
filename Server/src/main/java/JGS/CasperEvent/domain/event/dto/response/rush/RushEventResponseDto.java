@@ -149,7 +149,7 @@ public class RushEventResponseDto {
 
     // AdminRushEventOptionResponseDto
     public static RushEventResponseDto withOptions(RushEvent rushEvent) {
-        Set<JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto> optionResponseDtoList = new HashSet<>();
+        Set<RushEventOptionResponseDto> optionResponseDtoList = new HashSet<>();
         optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getLeftOption()));
         optionResponseDtoList.add(RushEventOptionResponseDto.of(rushEvent.getRightOption()));
         return new RushEventResponseDto(optionResponseDtoList);

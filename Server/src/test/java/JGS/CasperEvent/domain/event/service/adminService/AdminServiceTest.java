@@ -380,7 +380,7 @@ class AdminServiceTest {
         assertThat(lotteryEventResponseDto.getStartTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(lotteryEventResponseDto.getEndDate()).isEqualTo(LocalDate.of(2100, 9, 27));
         assertThat(lotteryEventResponseDto.getEndTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(lotteryEventResponseDto.getAppliedCount()).isEqualTo(0);
+        assertThat(lotteryEventResponseDto.getAppliedCount()).isZero();
         assertThat(lotteryEventResponseDto.getWinnerCount()).isEqualTo(315);
         assertThat(lotteryEventResponseDto.getStatus()).isEqualTo(EventStatus.DURING);
     }
@@ -444,8 +444,8 @@ class AdminServiceTest {
         assertThat(lotteryEventParticipantsListResponseDto.totalParticipants()).isEqualTo(1);
 
         assertThat(retrievedParticipant.getPhoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(retrievedParticipant.getLinkClickedCounts()).isEqualTo(0);
-        assertThat(retrievedParticipant.getExpectation()).isEqualTo(0);
+        assertThat(retrievedParticipant.getLinkClickedCounts()).isZero();
+        assertThat(retrievedParticipant.getExpectation()).isZero();
         assertThat(retrievedParticipant.getAppliedCount()).isEqualTo(1);
         assertThat(retrievedParticipant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(retrievedParticipant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0, 0));
@@ -472,8 +472,8 @@ class AdminServiceTest {
         assertThat(lotteryEventParticipantsListResponseDto.totalParticipants()).isEqualTo(1);
 
         assertThat(retrievedParticipant.getPhoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(retrievedParticipant.getLinkClickedCounts()).isEqualTo(0);
-        assertThat(retrievedParticipant.getExpectation()).isEqualTo(0);
+        assertThat(retrievedParticipant.getLinkClickedCounts()).isZero();
+        assertThat(retrievedParticipant.getExpectation()).isZero();
         assertThat(retrievedParticipant.getAppliedCount()).isEqualTo(1);
         assertThat(retrievedParticipant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(retrievedParticipant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0, 0));
@@ -625,15 +625,15 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
 
     }
 
@@ -657,15 +657,15 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -688,15 +688,15 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -719,15 +719,15 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -754,15 +754,15 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -789,15 +789,15 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -824,15 +824,15 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -859,7 +859,7 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
         RushEventParticipantResponseDto participant = participantsList.get(0);
 
@@ -867,7 +867,7 @@ class AdminServiceTest {
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
         assertThat(participant.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(participant.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(participant.getRank()).isEqualTo(0);
+        assertThat(participant.getRank()).isZero();
     }
 
     @Test
@@ -899,7 +899,7 @@ class AdminServiceTest {
         assertThat(lotteryEventResponseDto.getStartTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(lotteryEventResponseDto.getEndDate()).isEqualTo(LocalDate.of(2100, 9, 27));
         assertThat(lotteryEventResponseDto.getEndTime()).isEqualTo(LocalTime.of(0, 0));
-        assertThat(lotteryEventResponseDto.getAppliedCount()).isEqualTo(0);
+        assertThat(lotteryEventResponseDto.getAppliedCount()).isZero();
         assertThat(lotteryEventResponseDto.getWinnerCount()).isEqualTo(315);
         assertThat(lotteryEventResponseDto.getStatus()).isEqualTo(EventStatus.DURING);
     }
@@ -1123,10 +1123,10 @@ class AdminServiceTest {
         //then
         LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
         assertThat(actualWinner.getPhoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(actualWinner.getLinkClickedCounts()).isEqualTo(0);
-        assertThat(actualWinner.getExpectation()).isEqualTo(0);
+        assertThat(actualWinner.getLinkClickedCounts()).isZero();
+        assertThat(actualWinner.getExpectation()).isZero();
         assertThat(actualWinner.getAppliedCount()).isEqualTo(1);
-        assertThat(actualWinner.getRanking()).isEqualTo(0);
+        assertThat(actualWinner.getRanking()).isZero();
         assertThat(actualWinner.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(actualWinner.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
 
@@ -1154,10 +1154,10 @@ class AdminServiceTest {
         //then
         LotteryEventParticipantResponseDto actualWinner = lotteryEventWinners.participantsList().get(0);
         assertThat(actualWinner.getPhoneNumber()).isEqualTo("010-0000-0000");
-        assertThat(actualWinner.getLinkClickedCounts()).isEqualTo(0);
-        assertThat(actualWinner.getExpectation()).isEqualTo(0);
+        assertThat(actualWinner.getLinkClickedCounts()).isZero();
+        assertThat(actualWinner.getExpectation()).isZero();
         assertThat(actualWinner.getAppliedCount()).isEqualTo(1);
-        assertThat(actualWinner.getRanking()).isEqualTo(0);
+        assertThat(actualWinner.getRanking()).isZero();
         assertThat(actualWinner.getCreatedDate()).isEqualTo(LocalDate.of(2000, 9, 27));
         assertThat(actualWinner.getCreatedTime()).isEqualTo(LocalTime.of(0, 0));
 

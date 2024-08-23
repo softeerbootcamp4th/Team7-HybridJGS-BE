@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -110,8 +111,8 @@ class RushEventServiceTest {
 
         given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, user.getPhoneNumber())).willReturn(false);
-        RushEvent rushEvent = new RushEvent();
-        given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
+        RushEvent mockRushEvent = new RushEvent();
+        given(rushEventRepository.findById(1L)).willReturn(Optional.of(mockRushEvent));
 
         // when
         rushEventService.apply(user, 1);
@@ -152,7 +153,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
 
         // then
         assertNotNull(result);
@@ -174,7 +175,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(300L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -199,7 +200,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 2)).willReturn(300L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -224,7 +225,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(400L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -248,7 +249,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
         given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(300L);
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -272,7 +273,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
         given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(400L);
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -312,9 +313,9 @@ class RushEventServiceTest {
     @DisplayName("선착순 이벤트 테스트 API 테스트")
     void setTodayEventToRedis() {
         // given
-        RushEvent rushEvent = new RushEvent();
+        RushEvent mockRushEvent = new RushEvent();
         RushOption rushOption = new RushOption();
-        given(rushEventRepository.save(any(RushEvent.class))).willReturn(rushEvent);
+        given(rushEventRepository.save(any(RushEvent.class))).willReturn(mockRushEvent);
         given(rushOptionRepository.save(any(RushOption.class))).willReturn(rushOption);
 
         // when
@@ -330,17 +331,16 @@ class RushEventServiceTest {
     @DisplayName("오늘의 선착순 이벤트의 선택지 조회 테스트")
     void getTodayRushEventOptions() {
         // given
-        RushEvent rushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
-        given(rushEvent.getRushEventId()).willReturn(1L);
-        RushOption leftOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
-        RushOption rightOption = new RushOption(rushEvent, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT);
+        RushEvent spyRushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
+        given(spyRushEvent.getRushEventId()).willReturn(1L);
+        RushOption leftOption = new RushOption(spyRushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+        RushOption rightOption = new RushOption(spyRushEvent, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT);
 
-        rushEvent.addOption(leftOption, rightOption);
+        spyRushEvent.addOption(leftOption, rightOption);
 
-        RushEventResponseDto todayEvent = RushEventResponseDto.of(rushEvent);
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(spyRushEvent);
 
-        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
-        System.out.println("todayEvent = " + todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
 
         // when
         RushEventResponseDto result = rushEventService.getTodayRushEventOptions();
@@ -371,7 +371,7 @@ class RushEventServiceTest {
         // given
         int optionId = 1;
 
-        RushEventResponseDto todayEvent = RushEventResponseDto.of(
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(
                 1L,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
@@ -386,7 +386,7 @@ class RushEventServiceTest {
         );
 
 
-        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
                 rushEventService.getRushEventOptionResult(optionId)
@@ -417,7 +417,7 @@ class RushEventServiceTest {
         // given
         int optionId = 1;
 
-        RushEventResponseDto todayEvent = RushEventResponseDto.of(
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(
                 1L,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
@@ -430,7 +430,7 @@ class RushEventServiceTest {
                 )
         );
 
-        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
                 rushEventService.getRushEventOptionResult(optionId)

@@ -82,7 +82,7 @@ class AdminControllerTest {
     private CasperBot casperBot;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
-    private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
+    private LotteryEventResponseDto lotteryEventResponseDto;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantResponseDto lotteryEventParticipantsResponseDto;
     private ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventParticipantsListResponseDto;
@@ -102,7 +102,7 @@ class AdminControllerTest {
     private RushOption leftOption;
     private RushOption rightOption;
     private RushParticipants rushParticipants;
-    private JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto rushEventParticipantResponseDto;
+    private RushEventParticipantResponseDto rushEventParticipantResponseDto;
     private ParticipantsListResponseDto<RushEventParticipantResponseDto> rushEventParticipantsListResponseDto;
 
     @TestConfiguration
@@ -143,7 +143,7 @@ class AdminControllerTest {
                 .build();
 
         // 추첨 이벤트 응답 DTO
-        this.lotteryEventResponseDto = JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
+        this.lotteryEventResponseDto = LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
 
         // 추첨 이벤트 참여자 객체
         LotteryParticipants realLotteryParticipants = new LotteryParticipants(user);
@@ -279,7 +279,7 @@ class AdminControllerTest {
         lenient().when(rushParticipants.getUpdatedAt()).thenReturn(LocalDateTime.of(2000, 9, 27, 0, 0, 0));
 
         // 선착순 이벤트 참여자 응답 DTO
-        rushEventParticipantResponseDto = JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto.result(rushParticipants, 1L);
+        rushEventParticipantResponseDto = RushEventParticipantResponseDto.result(rushParticipants, 1L);
 
         // 선착순 이벤트 참여자 리스트 조회 응답 DTO
         List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();

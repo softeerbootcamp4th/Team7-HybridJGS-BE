@@ -64,9 +64,9 @@ public class RushEventController {
     @Operation(summary = "실시간 응모 비율 조회", description = "실시간으로 변경되는 응모 비율을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the balance rate.")
     @GetMapping("/balance")
-    public ResponseEntity<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto> rushEventRate(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<RushEventResultResponseDto> rushEventRate(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(user);
+        RushEventResultResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(rushEventRateResponseDto);
@@ -77,7 +77,7 @@ public class RushEventController {
     @GetMapping("/result")
     public ResponseEntity<RushEventResultResponseDto> rushEventResult(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);

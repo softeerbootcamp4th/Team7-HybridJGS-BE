@@ -37,7 +37,6 @@ public class EventCacheService {
 
     @CachePut(value = "ongoingLotteryEvent")
     public LotteryEvent setLotteryEvent() {
-        // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
         return fetchOngoingLotteryEvent();
     }
 

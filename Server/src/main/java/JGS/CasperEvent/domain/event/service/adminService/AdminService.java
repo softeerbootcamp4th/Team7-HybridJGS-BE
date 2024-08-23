@@ -91,7 +91,7 @@ public class AdminService {
     }
 
     // 추첨 이벤트 생성
-    public JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
+    public LotteryEventResponseDto createLotteryEvent(LotteryEventRequestDto lotteryEventRequestDto) {
         if (lotteryEventRepository.count() >= 1) throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
 
         LotteryEvent lotteryEvent = lotteryEventRepository.save(new LotteryEvent(
@@ -101,7 +101,7 @@ public class AdminService {
         ));
 
         eventCacheService.setLotteryEvent();
-        return JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
+        return LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.now());
     }
 
     // 추첨 이벤트 조회
@@ -131,7 +131,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryParticipantsPage.hasNext();
-        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventParticipantsResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<>(lotteryEventParticipantsResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 생성
@@ -214,18 +214,18 @@ public class AdminService {
         }
 
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
             String userId = rushParticipant.getBaseUser().getPhoneNumber();
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
-                    JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto.result(rushParticipant, rank)
+                    RushEventParticipantResponseDto.result(rushParticipant, rank)
             );
         }
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
-        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, count);
+        return new ParticipantsListResponseDto<>(rushEventParticipantResponseDtoList, isLastPage, count);
     }
 
     // 선착순 이벤트 당첨자 조회
@@ -276,7 +276,7 @@ public class AdminService {
 
         Boolean isLastPage = !rushParticipantsPage.hasNext();
         long totalParticipants = rushParticipantsList.size();
-        return new ParticipantsListResponseDto<RushEventParticipantResponseDto>(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
+        return new ParticipantsListResponseDto<>(rushEventParticipantResponseDtoList, isLastPage, totalParticipants);
     }
 
     // 선착순 이벤트 삭제
@@ -424,7 +424,7 @@ public class AdminService {
             );
         }
         Boolean isLastPage = !lotteryWinnersPage.hasNext();
-        return new ParticipantsListResponseDto<LotteryEventParticipantResponseDto>(lotteryEventWinnerResponseDto, isLastPage, count);
+        return new ParticipantsListResponseDto<>(lotteryEventWinnerResponseDto, isLastPage, count);
     }
 
     // 선착순 이벤트 업데이트

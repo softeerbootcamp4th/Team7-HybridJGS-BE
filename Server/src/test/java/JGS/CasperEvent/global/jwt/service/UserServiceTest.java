@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +36,7 @@ class UserServiceTest {
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
 
         //then
-        assertThat(verifiedUser.getId()).isEqualTo("010-0000-0000");
+        assertThat(verifiedUser.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(verifiedUser.getRole()).isEqualTo(Role.USER);
     }
 
@@ -54,7 +53,7 @@ class UserServiceTest {
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
 
         //then
-        assertThat(verifiedUser.getId()).isEqualTo("010-0000-0000");
+        assertThat(verifiedUser.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(verifiedUser.getRole()).isEqualTo(Role.USER);
     }
 

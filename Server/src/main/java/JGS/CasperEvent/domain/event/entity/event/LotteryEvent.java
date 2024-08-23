@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class LotteryEvent extends BaseEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

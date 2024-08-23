@@ -39,7 +39,7 @@ class S3ServiceTest {
     S3Service s3Service;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         bucketName = "s3Bucket";
         ReflectionTestUtils.setField(s3Service, "bucketName", bucketName);
     }
@@ -122,7 +122,7 @@ class S3ServiceTest {
 
     @Test
     @DisplayName("이미지 업로드 테스트 - 실패 (버킷 업로드 실패)")
-    void uploadTest_Failure_BucketException() throws Exception {
+    void uploadTest_Failure_BucketException() {
         //given
         image = new MockMultipartFile("image", "image.png", "png", "<<data>>".getBytes());
         doThrow(new RuntimeException()).when(amazonS3).putObject(any());
@@ -175,7 +175,7 @@ class S3ServiceTest {
 
     @Test
     @DisplayName("이미지 삭제 테스트 - 실패 (url 인코딩 실패)")
-    void deleteImageFromS3Test_Failure_UrlEncodingException() throws UnsupportedEncodingException {
+    void deleteImageFromS3Test_Failure_UrlEncodingException() {
         // given
         String url = "https://www.example.com/image.jpg";
 

@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"rushEvent"})
+@EqualsAndHashCode(exclude = {"rushEvent"}, callSuper = false)
 @ToString(exclude = {"rushEvent"})
 public class RushOption extends BaseEntity {
     @Id

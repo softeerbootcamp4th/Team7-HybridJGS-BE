@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;
