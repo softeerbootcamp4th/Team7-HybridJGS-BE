@@ -64,6 +64,24 @@ class EventCacheServiceTest {
         assertEquals("추첨 이벤트를 찾을 수 없습니다.", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("추첨 이벤트 조회 테스트 - 실패 (이벤트 없음)")
+    void getLotteryEventTest_Failure_TooManyLotteryEvent() {
+        //given
+        List lotteryEventList = List.of(
+                new LotteryEvent(), new LotteryEvent()
+        );
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                eventCacheService.getLotteryEvent()
+        );
+
+        //then
+        assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, exception.getErrorCode());
+        assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", exception.getMessage());
+    }
 
 
 }
