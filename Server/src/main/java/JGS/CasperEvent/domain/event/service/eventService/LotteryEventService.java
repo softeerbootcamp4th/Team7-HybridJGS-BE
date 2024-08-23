@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -21,12 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -42,11 +38,12 @@ public class LotteryEventService {
     private final LotteryEventRedisService lotteryEventRedisService;
     private final SecretKey secretKey;
     private final EventCacheService eventCacheService;
+    private final LotteryEventRepository lotteryEventRepository;
 
-    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
-
+    public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
+        LotteryParticipants participants = registerUserIfNeed(lotteryEvent, user, casperBotRequestDto);
+
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getPhoneNumber()));
         lotteryEvent.addAppliedCount();
@@ -60,6 +57,8 @@ public class LotteryEventService {
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
         lotteryEventRedisService.addData(casperBotDto);
+        eventCacheService.setLotteryEvent();
+        lotteryEventRepository.save(lotteryEvent);
 
         return casperBotDto;
     }
@@ -77,7 +76,7 @@ public class LotteryEventService {
     }
 
 
-    public LotteryParticipants registerUserIfNeed(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public LotteryParticipants registerUserIfNeed(LotteryEvent lotteryEvent, BaseUser user, CasperBotRequestDto casperBotRequestDto) {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user).orElse(null);
 
         if (participant == null) {
@@ -85,14 +84,12 @@ public class LotteryEventService {
             lotteryParticipantsRepository.save(participant);
 
             addReferralAppliedCount(casperBotRequestDto);
-
-            userRepository.save(user);
-        }
+        } else lotteryEvent.addAppliedCount();
 
         return participant;
     }
 
-    private void addReferralAppliedCount(CasperBotRequestDto casperBotRequestDto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    private void addReferralAppliedCount(CasperBotRequestDto casperBotRequestDto) {
         String encryptedReferralId = casperBotRequestDto.getReferralId();
         if (encryptedReferralId == null) return;
         try {
