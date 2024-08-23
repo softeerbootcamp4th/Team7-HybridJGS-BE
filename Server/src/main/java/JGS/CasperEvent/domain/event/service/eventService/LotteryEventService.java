@@ -8,6 +8,7 @@ import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.repository.CasperBotRepository;
+import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.LotteryParticipantsRepository;
 import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
@@ -42,11 +43,11 @@ public class LotteryEventService {
     private final LotteryEventRedisService lotteryEventRedisService;
     private final SecretKey secretKey;
     private final EventCacheService eventCacheService;
+    private final LotteryEventRepository lotteryEventRepository;
 
     public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
-
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
+        LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getPhoneNumber()));
         lotteryEvent.addAppliedCount();
@@ -55,11 +56,12 @@ public class LotteryEventService {
 
         if (!casperBot.getExpectation().isEmpty()) {
             participants.expectationAdded();
-            lotteryEvent.addAppliedCount();
         }
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
         lotteryEventRedisService.addData(casperBotDto);
+        eventCacheService.setLotteryEvent();
+        lotteryEventRepository.save(lotteryEvent);
 
         return casperBotDto;
     }
