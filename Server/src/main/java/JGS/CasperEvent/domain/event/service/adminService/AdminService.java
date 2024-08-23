@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.service.adminService;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
@@ -106,7 +106,8 @@ public class AdminService {
 
     // 추첨 이벤트 조회
     public LotteryEventResponseDto getLotteryEvent() {
-        return LotteryEventResponseDto.withDetail(getCurrentLotteryEvent());
+        long appliedCount = lotteryParticipantsRepository.count();
+        return LotteryEventResponseDto.withDetail(getCurrentLotteryEvent(), appliedCount);
     }
 
     // 추첨 이벤트 참여자 조회
@@ -318,7 +319,8 @@ public class AdminService {
         // 필드 업데이트
         currentLotteryEvent.updateLotteryEvent(newStartDateTime, newEndDateTime, lotteryEventRequestDto.getWinnerCount());
         eventCacheService.setLotteryEvent();
-        return LotteryEventResponseDto.withDetail(currentLotteryEvent);
+        Long appliedCount = lotteryParticipantsRepository.count();
+        return LotteryEventResponseDto.withDetail(currentLotteryEvent, appliedCount);
     }
 
     // 추첨 이벤트 조회

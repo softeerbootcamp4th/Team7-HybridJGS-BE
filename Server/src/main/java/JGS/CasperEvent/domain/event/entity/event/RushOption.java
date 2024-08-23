@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.enums.Position;
 import com.fasterxml.jackson.annotation.JsonBackReference;

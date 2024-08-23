@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -42,10 +42,9 @@ public class LotteryEventService {
 
     public CasperBotResponseDto postCasperBot(BaseUser user, CasperBotRequestDto casperBotRequestDto) throws CustomException {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
-        LotteryParticipants participants = registerUserIfNeed(lotteryEvent, user, casperBotRequestDto);
+        LotteryParticipants participants = registerUserIfNeed(user, casperBotRequestDto);
 
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getPhoneNumber()));
-        lotteryEvent.addAppliedCount();
 
         participants.updateCasperId(casperBot.getCasperId());
 
@@ -74,15 +73,14 @@ public class LotteryEventService {
     }
 
 
-    public LotteryParticipants registerUserIfNeed(LotteryEvent lotteryEvent, BaseUser user, CasperBotRequestDto casperBotRequestDto) {
+    public LotteryParticipants registerUserIfNeed(BaseUser user, CasperBotRequestDto casperBotRequestDto) {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user).orElse(null);
 
         if (participant == null) {
             participant = new LotteryParticipants(user);
             lotteryParticipantsRepository.save(participant);
-
             addReferralAppliedCount(casperBotRequestDto);
-        } else lotteryEvent.addAppliedCount();
+        }
 
         return participant;
     }

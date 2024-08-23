@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -61,7 +61,7 @@ public class LotteryEventController {
     @PostMapping("/casperBot")
     public ResponseEntity<CasperBotResponseDto> postCasperBot(
             HttpServletRequest request,
-            @RequestBody @Valid CasperBotRequestDto postCasperBot) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+            @RequestBody @Valid CasperBotRequestDto postCasperBot) {
         BaseUser user = (BaseUser) request.getAttribute("user");
         return ResponseEntity
                 .status(HttpStatus.CREATED)

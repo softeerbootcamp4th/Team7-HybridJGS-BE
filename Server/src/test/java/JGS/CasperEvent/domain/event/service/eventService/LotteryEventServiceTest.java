@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
@@ -65,7 +65,7 @@ class LotteryEventServiceTest {
     private CasperBot casperBot;
 
     @BeforeEach
-    void setUp()  {
+    void setUp() {
         byte[] decodedKey = "I0EM1X1NeXKJv4Q+ifZllg==".getBytes();
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
         ReflectionTestUtils.setField(lotteryEventService, "secretKey", secretKey);
@@ -100,7 +100,7 @@ class LotteryEventServiceTest {
 
     @Test
     @DisplayName("캐스퍼 봇 등록 테스트 - 성공")
-    void postCasperBot_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    void postCasperBot_Success() {
         //given
         given(casperBotRepository.save(casperBot)).willReturn(casperBot);
         given(eventCacheService.getLotteryEvent()).willReturn(lotteryEvent);

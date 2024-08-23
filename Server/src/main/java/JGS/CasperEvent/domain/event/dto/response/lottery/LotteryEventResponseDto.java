@@ -27,7 +27,7 @@ public class LotteryEventResponseDto {
     private EventStatus status;
 
 
-    private int appliedCount;
+    private Long appliedCount;
     private Long activePeriod;
 
     private Long casperId;
@@ -58,7 +58,7 @@ public class LotteryEventResponseDto {
 
     private LotteryEventResponseDto(LocalDate startDate, LocalTime startTime,
                                     LocalDate endDate, LocalTime endTime,
-                                    int appliedCount, int winnerCount,
+                                    Long appliedCount, int winnerCount,
                                     EventStatus status,
                                     LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.startDate = startDate;
@@ -72,7 +72,7 @@ public class LotteryEventResponseDto {
         this.updatedAt = updatedAt;
     }
 
-    public static LotteryEventResponseDto withDetail(LotteryEvent event) {
+    public static LotteryEventResponseDto withDetail(LotteryEvent event, Long appliedCount) {
         EventStatus status;
         LocalDateTime now = LocalDateTime.now();
 
@@ -85,7 +85,7 @@ public class LotteryEventResponseDto {
                 event.getStartDateTime().toLocalTime(),
                 event.getEndDateTime().toLocalDate(),
                 event.getEndDateTime().toLocalTime(),
-                event.getTotalAppliedCount(),
+                appliedCount,
                 event.getWinnerCount(),
                 status,
                 event.getCreatedAt(),
