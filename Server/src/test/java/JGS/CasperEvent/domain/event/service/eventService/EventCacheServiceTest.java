@@ -1,7 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
+import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
@@ -13,12 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,15 +106,15 @@ class EventCacheServiceTest {
     @DisplayName("선착순 이벤트 조회 테스트 - 성공")
     void getTodayEventTest_Success() {
         //given
-        LotteryEvent lotteryEvent = new LotteryEvent();
-        List<LotteryEvent> lotteryEventList = List.of(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        RushEvent rushEvent = new RushEvent();
+        List<RushEvent> rushEventList = List.of(rushEvent);
+        given(rushEventRepository.findByEventDate(any())).willReturn(rushEventList);
 
         //when
-        LotteryEvent actualLotteryEvent = eventCacheService.getLotteryEvent();
+        RushEventResponseDto rushEventResponseDto = eventCacheService.getTodayEvent(LocalDate.now());
 
         //then
-        assertThat(actualLotteryEvent).isEqualTo(lotteryEvent);
+        assertThat(rushEventResponseDto).isNotNull();
     }
 
 }
