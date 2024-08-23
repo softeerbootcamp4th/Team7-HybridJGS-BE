@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.service.adminService;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.AdminRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.LotteryEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.response.ImageUrlResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.ParticipantsListResponseDto;
 import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;

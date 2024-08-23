@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.RequestDto;
+package JGS.CasperEvent.domain.event.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

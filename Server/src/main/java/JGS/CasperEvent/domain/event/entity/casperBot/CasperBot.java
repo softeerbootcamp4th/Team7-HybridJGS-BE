@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.casperBot;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.CasperBotRequestDto;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

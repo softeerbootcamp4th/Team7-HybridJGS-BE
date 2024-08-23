@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;

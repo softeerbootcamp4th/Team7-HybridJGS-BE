@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto;
+package JGS.CasperEvent.domain.event.dto.request.rushEventDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import JGS.CasperEvent.global.enums.Position;
