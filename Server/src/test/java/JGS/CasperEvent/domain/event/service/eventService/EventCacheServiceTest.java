@@ -49,6 +49,21 @@ class EventCacheServiceTest {
     }
 
     @Test
+    @DisplayName("추첨 이벤트 업데이트 테스트 - 성공")
+    void setLotteryEventTest_Success() {
+        //given
+        LotteryEvent lotteryEvent = new LotteryEvent();
+        List<LotteryEvent> lotteryEventList = List.of(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        LotteryEvent actualLotteryEvent = eventCacheService.getLotteryEvent();
+
+        //then
+        assertThat(actualLotteryEvent).isEqualTo(lotteryEvent);
+    }
+
+    @Test
     @DisplayName("추첨 이벤트 조회 테스트 - 실패 (이벤트 없음)")
     void getLotteryEventTest_Failure_NoLotteryEvent() {
         //given
@@ -83,5 +98,19 @@ class EventCacheServiceTest {
         assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("선착순 이벤트 조회 테스트 - 성공")
+    void getTodayEventTest_Success() {
+        //given
+        LotteryEvent lotteryEvent = new LotteryEvent();
+        List<LotteryEvent> lotteryEventList = List.of(lotteryEvent);
+        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+
+        //when
+        LotteryEvent actualLotteryEvent = eventCacheService.getLotteryEvent();
+
+        //then
+        assertThat(actualLotteryEvent).isEqualTo(lotteryEvent);
+    }
 
 }
