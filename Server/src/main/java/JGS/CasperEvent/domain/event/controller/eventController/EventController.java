@@ -1,7 +1,7 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.TotalEventDateResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.TotalEventDateResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

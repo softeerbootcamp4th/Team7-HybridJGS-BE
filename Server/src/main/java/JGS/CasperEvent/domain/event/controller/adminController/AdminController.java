@@ -3,12 +3,13 @@ package JGS.CasperEvent.domain.event.controller.adminController;
 import JGS.CasperEvent.domain.event.dto.RequestDto.AdminRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.LotteryEventRequestDto;
 import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.ImageUrlResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventOptionResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.AdminRushEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.LotteryEventWinnerListResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.ImageUrlResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.ParticipantsListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.ExpectationsPagingResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.global.response.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +63,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "Multiple lottery events found in the database.")
     })
     @GetMapping("/event/lottery")
-    public ResponseEntity<LotteryEventDetailResponseDto> getLotteryEvent() {
+    public ResponseEntity<LotteryEventResponseDto> getLotteryEvent() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getLotteryEvent());
@@ -84,7 +85,7 @@ public class AdminController {
     @Operation(summary = "추첨 이벤트 참여자 조회", description = "추첨 이벤트 참여자를 조회합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Lottery event participants retrieved successfully.")
     @GetMapping("/event/lottery/participants")
-    public ResponseEntity<LotteryEventParticipantsListResponseDto> getLotteryEventParticipants(
+    public ResponseEntity<ParticipantsListResponseDto<LotteryEventParticipantResponseDto>> getLotteryEventParticipants(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {
@@ -99,7 +100,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "More than six rush events already exist in the database.")
     })
     @PostMapping("/event/rush")
-    public ResponseEntity<AdminRushEventResponseDto> createRushEvent(
+    public ResponseEntity<RushEventResponseDto> createRushEvent(
             @RequestPart(value = "dto") RushEventRequestDto rushEventRequestDto,
             @RequestPart(value = "prizeImg") MultipartFile prizeImg,
             @RequestPart(value = "leftOptionImg") MultipartFile leftOptionImg,
@@ -112,7 +113,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 조회", description = "현재 데이터베이스에 존재하는 전체 선착순 이벤트를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Rush events retrieved successfully.")
     @GetMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> getRushEvents() {
+    public ResponseEntity<List<RushEventResponseDto>> getRushEvents() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEvents());
@@ -121,7 +122,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 참여자 조회", description = "선착순 이벤트 참여자를 조회합니다. rushEventId가 필요합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Rush event participants retrieved successfully.")
     @GetMapping("/event/rush/{rushEventId}/participants")
-    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventParticipants(
+    public ResponseEntity<ParticipantsListResponseDto<RushEventParticipantResponseDto>> getRushEventParticipants(
             @PathVariable("rushEventId") Long rushEventId,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
@@ -135,7 +136,7 @@ public class AdminController {
     @Operation(summary = "선착순 이벤트 당첨자 조회", description = "선착순 이벤트 당첨자를 조회합니다. rushEventId가 필요합니다. size, page를 통해 페이지네이션이 가능하며, 전화번호를 통해 검색할 수 있습니다.")
     @ApiResponse(responseCode = "200", description = "Rush event winners retrieved successfully.")
     @GetMapping("/event/rush/{rushEventId}/winner")
-    public ResponseEntity<RushEventParticipantsListResponseDto> getRushEventWinners(
+    public ResponseEntity<ParticipantsListResponseDto<RushEventParticipantResponseDto>> getRushEventWinners(
             @PathVariable("rushEventId") Long rushEventId,
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
@@ -151,7 +152,7 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Failed to update rush event.")
     })
     @PutMapping("/event/rush")
-    public ResponseEntity<List<AdminRushEventResponseDto>> updateRushEvent(
+    public ResponseEntity<List<RushEventResponseDto>> updateRushEvent(
             @RequestBody List<RushEventRequestDto> rushEventListRequestDto) {
 
         return ResponseEntity
@@ -177,7 +178,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "No rush event found matching the provided ID.")
     })
     @GetMapping("/event/rush/{rushEventId}/options")
-    public ResponseEntity<AdminRushEventOptionResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
+    public ResponseEntity<RushEventResponseDto> getRushEventOptions(@PathVariable Long rushEventId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(adminService.getRushEventOptions(rushEventId));
@@ -198,8 +199,8 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Failed to update lottery event.")
     })
     @PutMapping("/event/lottery")
-    public ResponseEntity<LotteryEventDetailResponseDto> updateLotteryEvent(@RequestBody @Valid LotteryEventRequestDto lotteryEventRequestDto) {
-        LotteryEventDetailResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
+    public ResponseEntity<LotteryEventResponseDto> updateLotteryEvent(@RequestBody @Valid LotteryEventRequestDto lotteryEventRequestDto) {
+        LotteryEventResponseDto updatedLotteryEventDetailResponseDto = adminService.updateLotteryEvent(lotteryEventRequestDto);
 
         return ResponseEntity.ok(updatedLotteryEventDetailResponseDto);
     }
@@ -210,10 +211,10 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "User not found or did not participate.")
     })
     @GetMapping("/event/lottery/participants/{participantId}/expectations")
-    public ResponseEntity<LotteryEventExpectationsResponseDto> getLotteryEventExpectations(@PathVariable("participantId") Long participantId,
-                                                                                           @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                                                                           @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
-        LotteryEventExpectationsResponseDto lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(page, size, participantId);
+    public ResponseEntity<ExpectationsPagingResponseDto> getLotteryEventExpectations(@PathVariable("participantId") Long participantId,
+                                                                                     @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                                                     @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        ExpectationsPagingResponseDto lotteryEventExpectationResponseDtoList = adminService.getLotteryEventExpectations(page, size, participantId);
 
         return ResponseEntity.ok(lotteryEventExpectationResponseDtoList);
     }
@@ -257,7 +258,7 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Lottery event has not yet been drawn.")
     })
     @GetMapping("/event/lottery/winner")
-    public ResponseEntity<LotteryEventWinnerListResponseDto> getWinners(
+    public ResponseEntity<ParticipantsListResponseDto<LotteryEventParticipantResponseDto>> getWinners(
             @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "number", required = false, defaultValue = "") String phoneNumber) {

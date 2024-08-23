@@ -1,6 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
@@ -41,7 +44,7 @@ public class RushEventService {
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
 
         // 모든 이벤트 꺼내오기
-        List<MainRushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
+        List<RushEventResponseDto> mainRushEventDtoList = eventCacheService.getAllRushEvent();
 
         // 선착순 이벤트 전체 시작 날짜와 종료 날짜 구하기
         List<LocalDate> dates = mainRushEventDtoList.stream().map(rushEvent -> rushEvent.getStartDateTime().toLocalDate()).sorted().toList();
@@ -51,12 +54,12 @@ public class RushEventService {
 
         // 전체 이벤트 기간 구하기
         long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
-
+        
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListResponseDto(
                 mainRushEventDtoList,
                 LocalDateTime.now(),
-                todayEvent.rushEventId(),
+                todayEvent.getRushEventId(),
                 totalStartDate,
                 totalEndDate,
                 activePeriod
@@ -66,15 +69,14 @@ public class RushEventService {
     // 응모 여부 조회
     public boolean isExists(String userId) {
         LocalDate today = LocalDate.now();
-        Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
+        Long todayEventId = eventCacheService.getTodayEvent(today).getRushEventId();
         return rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(todayEventId, userId);
     }
-
 
     @Transactional
     public void apply(BaseUser user, int optionId) {
         LocalDate today = LocalDate.now();
-        Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
+        Long todayEventId = eventCacheService.getTodayEvent(today).getRushEventId();
 
         // 이미 응모한 회원인지 검증
         if (rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(todayEventId, user.getPhoneNumber())) {
@@ -94,8 +96,9 @@ public class RushEventService {
     }
 
     // 진행중인 게임의 응모 비율 반환
-    public RushEventRateResponseDto getRushEventRate(BaseUser user) {
+    public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto getRushEventRate(BaseUser user) {
         LocalDate today = LocalDate.now();
+
         Long todayEventId = eventCacheService.getTodayEvent(today).rushEventId();
 
         // 해당 유저의 optionId 를 가져옴
@@ -103,6 +106,7 @@ public class RushEventService {
 
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
+
 
         return new RushEventRateResponseDto(
                 optionId,
@@ -112,10 +116,10 @@ public class RushEventService {
     // 이벤트 결과를 반환
     // 응모하지 않은 유저가 요청하는 경우가 존재 -> 응모 비율만 반환하도록 수정
     @Transactional
-    public RushEventResultResponseDto getRushEventResult(BaseUser user) {
+    public JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto getRushEventResult(BaseUser user) {
         LocalDate today = LocalDate.now();
         RushEventResponseDto todayRushEvent = eventCacheService.getTodayEvent(today);
-        Long todayEventId = todayRushEvent.rushEventId();
+        Long todayEventId = todayRushEvent.getRushEventId();
 
         // 최종 선택 비율을 조회
         // TODO: 레디스에 캐시
@@ -124,7 +128,7 @@ public class RushEventService {
 
         Optional<Integer> optionIdOptional = rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber());
         if (optionIdOptional.isEmpty()) {
-            return new RushEventResultResponseDto(
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(
                     null,
                     leftOption,
                     rightOption,
@@ -140,31 +144,32 @@ public class RushEventService {
         // 동점인 경우
         if (leftOption == rightOption) {
             // 전체 참여자에서 등수 계산하기
-            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.rushEventId(), user.getPhoneNumber());
+            long rank = rushParticipantsRepository.findUserRankByEventIdAndUserId(todayRushEvent.getRushEventId(), user.getPhoneNumber());
 
             // 각 옵션 선택지를 더하여 전체 참여자 수 구하기
             long totalParticipants = leftOption + rightOption;
 
             // 당첨 여부
-            boolean isWinner = rank <= todayRushEvent.winnerCount();
+            boolean isWinner = rank <= todayRushEvent.getWinnerCount();
 
-            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
         }
 
         long totalParticipants = (optionId == 1 ? leftOption : rightOption);
 
         // eventId, userId, optionId 를 이용하여 해당 유저가 응모한 선택지에서 등수를 가져옴
-        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayRushEvent.rushEventId(), user.getPhoneNumber(), optionId);
+        long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(todayRushEvent.getRushEventId(), user.getPhoneNumber(), optionId);
 
         // 해당 유저가 선택한 옵션이 패배한 경우
         if ((optionId == 1 && leftOption < rightOption) || (optionId == 2 && leftOption > rightOption)) {
-            return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, false);
+
+            return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, false);
         }
 
         // 당첨 여부
-        boolean isWinner = rank <= todayRushEvent.winnerCount();
+        boolean isWinner = rank <= todayRushEvent.getWinnerCount();
 
-        return new RushEventResultResponseDto(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
+        return  RushEventResultResponseDto.withDetail(optionId, leftOption, rightOption, rank, totalParticipants, isWinner);
     }
 
     @Transactional
@@ -243,46 +248,39 @@ public class RushEventService {
 
 
     // 오늘의 이벤트 옵션 정보를 반환
-    public MainRushEventOptionsResponseDto getTodayRushEventOptions() {
+    public RushEventResponseDto getTodayRushEventOptions() {
         LocalDate today = LocalDate.now();
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
-        Set<RushEventOptionResponseDto> options = todayEvent.options();
+        Set<RushEventOptionResponseDto> options = todayEvent.getOptions();
 
         RushEventOptionResponseDto leftOption = options.stream()
-                .filter(option -> option.position() == Position.LEFT)
+                .filter(option -> option.getPosition() == Position.LEFT)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("왼쪽 선택지가 존재하지 않습니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT));
 
         RushEventOptionResponseDto rightOption = options.stream()
-                .filter(option -> option.position() == Position.RIGHT)
+                .filter(option -> option.getPosition() == Position.RIGHT)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("오른쪽 선택지가 존재하지 않습니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT));
 
-        return new MainRushEventOptionsResponseDto(
-                MainRushEventOptionResponseDto.of(leftOption),
-                MainRushEventOptionResponseDto.of(rightOption)
-        );
+        return RushEventResponseDto.withMainOption(leftOption, rightOption);
     }
 
-    public ResultRushEventOptionResponseDto getRushEventOptionResult(int optionId) {
+    public RushEventOptionResponseDto getRushEventOptionResult(int optionId) {
         Position position = Position.of(optionId);
         LocalDate today = LocalDate.now();
         RushEventResponseDto todayEvent = eventCacheService.getTodayEvent(today);
-        Set<RushEventOptionResponseDto> options = todayEvent.options();
+        Set<RushEventOptionResponseDto> options = todayEvent.getOptions();
 
         if (options.size() != 2) {
             throw new CustomException("해당 이벤트의 선택지가 2개가 아닙니다.", CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT);
         }
 
         RushEventOptionResponseDto selectedOption = options.stream()
-                .filter(option -> option.position() == position)
+                .filter(option -> option.getPosition() == position)
                 .findFirst()
                 .orElseThrow(() -> new CustomException("사용자가 선택한 선택지가 존재하지 않습니다.", CustomErrorCode.NO_RUSH_EVENT_OPTION));
 
-        return new ResultRushEventOptionResponseDto(
-                selectedOption.mainText(),
-                selectedOption.resultMainText(),
-                selectedOption.resultSubText()
-        );
+        return RushEventOptionResponseDto.inResult(selectedOption);
     }
 }

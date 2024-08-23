@@ -1,4 +1,4 @@
-package JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto;
+package JGS.CasperEvent.domain.event.dto.response.lottery;
 
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import org.springframework.data.annotation.Id;

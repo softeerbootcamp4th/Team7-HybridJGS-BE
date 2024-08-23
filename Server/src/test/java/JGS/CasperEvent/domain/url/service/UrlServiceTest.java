@@ -70,7 +70,7 @@ class UrlServiceTest {
     @DisplayName("단축 url 생성 테스트 - 성공")
     void generateShortUrlTest_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         //given
-        Url originalUrl = spy(new Url(AESUtils.encrypt(user.getId(), secretKey)));
+        Url originalUrl = spy(new Url(AESUtils.encrypt(user.getPhoneNumber(), secretKey)));
 
         given(urlRepository.save(any())).willReturn(originalUrl);
         given(originalUrl.getId()).willReturn(1L);
@@ -87,7 +87,7 @@ class UrlServiceTest {
     @DisplayName("원본 url 조회 테스트 - 성공")
     void getOriginalUrlTest_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         //given
-        Url url = new Url(AESUtils.encrypt(user.getId(), secretKey));
+        Url url = new Url(AESUtils.encrypt(user.getPhoneNumber(), secretKey));
         given(urlRepository.findById(any())).willReturn(Optional.of(url));
 
         //when

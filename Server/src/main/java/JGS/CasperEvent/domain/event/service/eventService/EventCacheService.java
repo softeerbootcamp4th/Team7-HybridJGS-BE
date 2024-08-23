@@ -1,7 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.MainRushEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
@@ -47,11 +46,11 @@ public class EventCacheService {
         List<LotteryEvent> lotteryEventList = lotteryEventRepository.findAll();
 
         if (lotteryEventList.isEmpty()) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 존재하지 않습니다.", CustomErrorCode.NO_LOTTERY_EVENT);
+            throw new CustomException(CustomErrorCode.NO_LOTTERY_EVENT);
         }
 
         if (lotteryEventList.size() > 1) {
-            throw new CustomException("현재 진행중인 lotteryEvent가 2개 이상입니다.", CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
+            throw new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT);
         }
 
         return lotteryEventList.get(0);
@@ -86,7 +85,7 @@ public class EventCacheService {
     }
 
     @Cacheable(value = "allRushEventCache")
-    public List<MainRushEventResponseDto> getAllRushEvent() {
+    public List<RushEventResponseDto> getAllRushEvent() {
         log.info("전체 이벤트 캐싱");
         // 오늘 날짜에 해당하는 모든 이벤트 꺼내옴
         return fetchAllRushEvent();
@@ -94,18 +93,18 @@ public class EventCacheService {
 
     //todo: 어드민 선착순 이벤트 변경 시 메서드 호출
     @CachePut(value = "allRushEventCache")
-    public List<MainRushEventResponseDto> setAllRushEvent() {
+    public List<RushEventResponseDto> setAllRushEvent() {
         log.info("이벤트 변경 캐싱");
         return fetchAllRushEvent();
     }
 
-    private List<MainRushEventResponseDto> fetchAllRushEvent() {
+    private List<RushEventResponseDto> fetchAllRushEvent() {
         // DB에서 모든 RushEvent 가져오기
         List<RushEvent> rushEventList = rushEventRepository.findAll();
 
         // RushEvent를 DTO로 전환
         return  rushEventList.stream()
-                .map(MainRushEventResponseDto::of)
+                .map(RushEventResponseDto::withMain)
                 .toList();
     }
 

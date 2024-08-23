@@ -1,7 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -64,10 +66,10 @@ public class LotteryEventService {
         return casperBotDto;
     }
 
-    public LotteryParticipantResponseDto getLotteryParticipant(BaseUser user) {
+    public LotteryEventParticipantResponseDto getLotteryParticipant(BaseUser user) {
         LotteryParticipants participant = lotteryParticipantsRepository.findByBaseUser(user)
                 .orElseThrow(() -> new CustomException("응모 내역이 없습니다.", CustomErrorCode.USER_NOT_FOUND));
-        return LotteryParticipantResponseDto.of(participant, getCasperBot(participant.getCasperId()));
+        return LotteryEventParticipantResponseDto.of(participant);
     }
 
     public CasperBotResponseDto getCasperBot(Long casperId) {

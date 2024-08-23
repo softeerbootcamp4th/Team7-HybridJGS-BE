@@ -1,9 +1,9 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
@@ -30,14 +30,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +50,8 @@ class LotteryEventServiceTest {
     private CasperBotRepository casperBotRepository;
     @Mock
     private LotteryEventRedisService lotteryEventRedisService;
+    @Mock
+    private EventCacheService eventCacheService;
 
 
     @InjectMocks
@@ -104,9 +103,7 @@ class LotteryEventServiceTest {
     void postCasperBot_Success() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         //given
         given(casperBotRepository.save(casperBot)).willReturn(casperBot);
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willReturn(lotteryEvent);
 
         //when
         CasperBotResponseDto casperBotResponseDto = lotteryEventService.postCasperBot(user, casperBotRequestDto);
@@ -127,26 +124,14 @@ class LotteryEventServiceTest {
         //given
         given(lotteryParticipantsRepository.findByBaseUser(user))
                 .willReturn(Optional.ofNullable(lotteryParticipants));
-        given(casperBotRepository.findById(any())).willReturn(Optional.ofNullable(casperBot));
-
         //when
-        LotteryParticipantResponseDto lotteryParticipantResponseDto = lotteryEventService.getLotteryParticipant(user);
-        CasperBotResponseDto casperBotResponseDto = lotteryParticipantResponseDto.casperBot();
+        LotteryEventParticipantResponseDto lotteryEventParticipantResponseDto = lotteryEventService.getLotteryParticipant(user);
 
         //then
-        assertThat(lotteryParticipantResponseDto).isNotNull();
-        assertThat(lotteryParticipantResponseDto.linkClickedCount()).isEqualTo(0);
-        assertThat(lotteryParticipantResponseDto.expectations()).isEqualTo(0);
-        assertThat(lotteryParticipantResponseDto.appliedCount()).isEqualTo(1);
-
-        assertThat(lotteryParticipantResponseDto.casperBot()).isNotNull();
-        assertThat(casperBotResponseDto.eyeShape()).isEqualTo(0);
-        assertThat(casperBotResponseDto.eyePosition()).isEqualTo(0);
-        assertThat(casperBotResponseDto.mouthShape()).isEqualTo(0);
-        assertThat(casperBotResponseDto.color()).isEqualTo(0);
-        assertThat(casperBotResponseDto.sticker()).isEqualTo(0);
-        assertThat(casperBotResponseDto.name()).isEqualTo("name");
-        assertThat(casperBotResponseDto.expectation()).isEqualTo("expectation");
+        assertThat(lotteryEventParticipantResponseDto).isNotNull();
+        assertThat(lotteryEventParticipantResponseDto.getLinkClickedCount()).isEqualTo(0);
+        assertThat(lotteryEventParticipantResponseDto.getExpectations()).isEqualTo(0);
+        assertThat(lotteryEventParticipantResponseDto.getAppliedCount()).isEqualTo(1);
     }
 
     @Test
@@ -170,18 +155,16 @@ class LotteryEventServiceTest {
     @DisplayName("추첨 이벤트 조회 테스트 - 성공")
     void getLotteryEventTest_Success() {
         //given
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willReturn(lotteryEvent);
 
         //when
         LotteryEventResponseDto lotteryEventResponseDto = lotteryEventService.getLotteryEvent();
 
         //then
-        assertThat(lotteryEventResponseDto.serverDateTime()).isNotNull();
-        assertThat(lotteryEventResponseDto.eventStartDate()).isEqualTo("2000-09-27T00:00");
-        assertThat(lotteryEventResponseDto.eventEndDate()).isEqualTo("2100-09-27T00:00");
-        assertThat(lotteryEventResponseDto.activePeriod()).isEqualTo(36524);
+        assertThat(lotteryEventResponseDto.getServerDateTime()).isNotNull();
+        assertThat(lotteryEventResponseDto.getEventStartDate()).isEqualTo("2000-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getEventEndDate()).isEqualTo("2100-09-27T00:00");
+        assertThat(lotteryEventResponseDto.getActivePeriod()).isEqualTo(36524);
 
     }
 
@@ -189,7 +172,7 @@ class LotteryEventServiceTest {
     @DisplayName("추첨 이벤트 조회 테스트 - 실패 (진행중인 이벤트 없음)")
     void getLotteryEventTest_Failure_NoLotteryEvent() {
         //given
-        given(lotteryEventRepository.findAll()).willReturn(new ArrayList<>());
+        given(eventCacheService.getLotteryEvent()).willThrow(new CustomException(CustomErrorCode.NO_LOTTERY_EVENT));
 
         //when
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -198,17 +181,14 @@ class LotteryEventServiceTest {
 
         //then
         assertEquals(CustomErrorCode.NO_LOTTERY_EVENT, exception.getErrorCode());
-        assertEquals("현재 진행중인 lotteryEvent가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("추첨 이벤트를 찾을 수 없습니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("추첨 이벤트 조회 테스트 - 실패(2개 이상의 이벤트 존재)")
     void getLotteryEventTest_Failure_TooManyLotteryEvent() {
         //given
-        List<LotteryEvent> lotteryEventList = new ArrayList<>();
-        lotteryEventList.add(lotteryEvent);
-        lotteryEventList.add(lotteryEvent);
-        given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
+        given(eventCacheService.getLotteryEvent()).willThrow(new CustomException(CustomErrorCode.TOO_MANY_LOTTERY_EVENT));
 
         //when
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -217,7 +197,7 @@ class LotteryEventServiceTest {
 
         //then
         assertEquals(CustomErrorCode.TOO_MANY_LOTTERY_EVENT, exception.getErrorCode());
-        assertEquals("현재 진행중인 lotteryEvent가 2개 이상입니다.", exception.getMessage());
+        assertEquals("현재 진행중인 추첨 이벤트가 2개 이상입니다.", exception.getMessage());
 
     }
 }

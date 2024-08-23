@@ -1,7 +1,10 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.service.eventService.RushEventService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,9 +64,9 @@ public class RushEventController {
     @Operation(summary = "실시간 응모 비율 조회", description = "실시간으로 변경되는 응모 비율을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the balance rate.")
     @GetMapping("/balance")
-    public ResponseEntity<RushEventRateResponseDto> rushEventRate(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto> rushEventRate(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        RushEventRateResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(user);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto rushEventRateResponseDto = rushEventService.getRushEventRate(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(rushEventRateResponseDto);
@@ -74,7 +77,7 @@ public class RushEventController {
     @GetMapping("/result")
     public ResponseEntity<RushEventResultResponseDto> rushEventResult(HttpServletRequest httpServletRequest) {
         BaseUser user = (BaseUser) httpServletRequest.getAttribute("user");
-        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result);
@@ -93,8 +96,8 @@ public class RushEventController {
     @Operation(summary = "오늘의 이벤트 옵션을 조회합니다.", description = "이벤트 참여자가 이벤트에 진입했을 때 보여질 옵션 선택지 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved today's rush event options.")
     @GetMapping("/today")
-    public ResponseEntity<MainRushEventOptionsResponseDto> getTodayEvent() {
-        MainRushEventOptionsResponseDto mainRushEventOptionsResponseDto = rushEventService.getTodayRushEventOptions();
+    public ResponseEntity<RushEventResponseDto> getTodayEvent() {
+        RushEventResponseDto mainRushEventOptionsResponseDto = rushEventService.getTodayRushEventOptions();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(mainRushEventOptionsResponseDto);
@@ -106,8 +109,8 @@ public class RushEventController {
             @ApiResponse(responseCode = "400", description = "Invalid option ID provided.")
     })
     @GetMapping("/options/{optionId}/result")
-    public ResponseEntity<ResultRushEventOptionResponseDto> getResultOption(@PathVariable("optionId") int optionId) {
-        ResultRushEventOptionResponseDto resultRushEventOptionResponseDto = rushEventService.getRushEventOptionResult(optionId);
+    public ResponseEntity<RushEventOptionResponseDto> getResultOption(@PathVariable("optionId") int optionId) {
+        RushEventOptionResponseDto resultRushEventOptionResponseDto = rushEventService.getRushEventOptionResult(optionId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(resultRushEventOptionResponseDto);

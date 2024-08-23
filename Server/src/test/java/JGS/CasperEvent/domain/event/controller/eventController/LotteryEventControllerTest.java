@@ -1,10 +1,11 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
 import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
@@ -28,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +65,9 @@ class LotteryEventControllerTest {
     private LotteryEventResponseDto lotteryEventResponseDto;
 
     @TestConfiguration
-    static class TestConfig{
+    static class TestConfig {
         @Bean
-        public JwtProvider jwtProvider(){
+        public JwtProvider jwtProvider() {
             String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
             byte[] secret = secretKey.getBytes();
             return new JwtProvider(Keys.hmacShaKeyFor(secret));
@@ -89,11 +89,14 @@ class LotteryEventControllerTest {
         this.accessToken = getToken(this.phoneNumber);
 
         // 추첨 이벤트 조회
-        lotteryEventResponseDto = new LotteryEventResponseDto(
-                LocalDateTime.of(2024, 8, 15, 0, 0, 0),
+        LotteryEvent lotteryEvent = new LotteryEvent(
                 LocalDateTime.of(2024, 8, 1, 0, 0, 0),
                 LocalDateTime.of(2024, 8, 31, 0, 0, 0),
-                ChronoUnit.DAYS.between(LocalDateTime.of(2024, 8, 1, 0, 0, 0), LocalDateTime.of(2024, 8, 31, 0, 0, 0))
+                315
+        );
+        lotteryEventResponseDto = LotteryEventResponseDto.of(
+                lotteryEvent,
+                LocalDateTime.of(2024, 8, 1, 0, 0, 0)
         );
 
         casperBotRequest = CasperBotRequestDto.builder()
@@ -124,7 +127,7 @@ class LotteryEventControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.serverDateTime").value("2024-08-15T00:00:00"))
+                .andExpect(jsonPath("$.serverDateTime").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventStartDate").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventEndDate").value("2024-08-31T00:00:00"))
                 .andDo(print());
@@ -161,7 +164,7 @@ class LotteryEventControllerTest {
     void getLotteryParticipantsSuccessTest() throws Exception {
         //given
         given(lotteryEventService.getLotteryParticipant(user))
-                .willReturn(LotteryParticipantResponseDto.of(lotteryParticipants, casperBotResponse));
+                .willReturn(LotteryEventParticipantResponseDto.of(lotteryParticipants));
 
         //when
         ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
@@ -173,13 +176,6 @@ class LotteryEventControllerTest {
                 .andExpect(jsonPath("$.linkClickedCount").value(0))
                 .andExpect(jsonPath("$.expectations").value(0))
                 .andExpect(jsonPath("$.appliedCount").value(1))
-                .andExpect(jsonPath("$.casperBot.eyeShape").value(0))
-                .andExpect(jsonPath("$.casperBot.eyePosition").value(0))
-                .andExpect(jsonPath("$.casperBot.mouthShape").value(0))
-                .andExpect(jsonPath("$.casperBot.color").value(0))
-                .andExpect(jsonPath("$.casperBot.sticker").value(0))
-                .andExpect(jsonPath("$.casperBot.name").value("name"))
-                .andExpect(jsonPath("$.casperBot.expectation").value("expectation"))
                 .andDo(print());
     }
 
