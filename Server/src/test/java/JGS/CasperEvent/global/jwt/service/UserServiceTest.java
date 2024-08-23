@@ -37,7 +37,7 @@ class UserServiceTest {
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
 
         //then
-        assertThat(verifiedUser.getId()).isEqualTo("010-0000-0000");
+        assertThat(verifiedUser.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(verifiedUser.getRole()).isEqualTo(Role.USER);
     }
 
@@ -54,7 +54,7 @@ class UserServiceTest {
         BaseUser verifiedUser = userService.verifyUser(userLoginDto);
 
         //then
-        assertThat(verifiedUser.getId()).isEqualTo("010-0000-0000");
+        assertThat(verifiedUser.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(verifiedUser.getRole()).isEqualTo(Role.USER);
     }
 

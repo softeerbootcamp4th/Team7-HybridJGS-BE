@@ -82,7 +82,7 @@ class AdminControllerTest {
     private CasperBot casperBot;
     private LotteryEvent lotteryEvent;
     private LotteryEventRequestDto lotteryEventRequestDto;
-    private JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto lotteryEventResponseDto;
+    private LotteryEventResponseDto lotteryEventResponseDto;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventParticipantResponseDto lotteryEventParticipantsResponseDto;
     private ParticipantsListResponseDto<LotteryEventParticipantResponseDto> lotteryEventParticipantsListResponseDto;
@@ -143,7 +143,7 @@ class AdminControllerTest {
                 .build();
 
         // 추첨 이벤트 응답 DTO
-        this.lotteryEventResponseDto = JGS.CasperEvent.domain.event.dto.response.LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
+        this.lotteryEventResponseDto = LotteryEventResponseDto.of(lotteryEvent, LocalDateTime.of(2024, 8, 15, 0, 0, 0));
 
         // 추첨 이벤트 참여자 객체
         LotteryParticipants realLotteryParticipants = new LotteryParticipants(user);
