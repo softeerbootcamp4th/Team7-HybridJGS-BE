@@ -166,4 +166,19 @@ class EventCacheServiceTest {
         assertEquals(CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND, exception.getErrorCode());
         assertEquals("선착순 이벤트가 2개 이상 존재합니다.", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 전체 조회 테스트 - 성공")
+    void getAllRushEventTest_Success() {
+        //given
+        RushEvent rushEvent = new RushEvent();
+        List<RushEvent> rushEventList = List.of(rushEvent);
+        given(rushEventRepository.findAll()).willReturn(rushEventList);
+
+        //when
+        List<RushEventResponseDto> allRushEvent = eventCacheService.getAllRushEvent();
+
+        //then
+        assertThat(allRushEvent).isNotNull();
+    }
 }
