@@ -61,7 +61,7 @@ class EventCacheServiceTest {
         given(lotteryEventRepository.findAll()).willReturn(lotteryEventList);
 
         //when
-        LotteryEvent actualLotteryEvent = eventCacheService.getLotteryEvent();
+        LotteryEvent actualLotteryEvent = eventCacheService.setLotteryEvent();
 
         //then
         assertThat(actualLotteryEvent).isEqualTo(lotteryEvent);
@@ -115,6 +115,37 @@ class EventCacheServiceTest {
 
         //then
         assertThat(rushEventResponseDto).isNotNull();
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 패치 테스트 - 성공")
+    void setTodayEventTest_Success() {
+        //given
+        RushEvent rushEvent = new RushEvent();
+        List<RushEvent> rushEventList = List.of(rushEvent);
+        given(rushEventRepository.findByEventDate(any())).willReturn(rushEventList);
+
+        //when
+        RushEventResponseDto rushEventResponseDto = eventCacheService.setCacheValue(LocalDate.now());
+
+        //then
+        assertThat(rushEventResponseDto).isNotNull();
+    }
+
+    @Test
+    @DisplayName("선착순 이벤트 조회 테스트 - 실패 (이벤트 없음)")
+    void getRushEventTest_Failure_NoRushEvent() {
+        //given
+        given(rushEventRepository.findByEventDate(any())).willReturn(new ArrayList<>());
+
+        //when
+        CustomException exception = assertThrows(CustomException.class, () ->
+                eventCacheService.getTodayEvent(LocalDate.now())
+        );
+
+        //then
+        assertEquals(CustomErrorCode.NO_RUSH_EVENT, exception.getErrorCode());
+        assertEquals("선착순 이벤트가 존재하지않습니다.", exception.getMessage());
     }
 
 }
