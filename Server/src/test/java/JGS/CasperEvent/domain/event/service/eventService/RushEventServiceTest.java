@@ -153,7 +153,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
 
         // then
         assertNotNull(result);
@@ -175,7 +175,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(300L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -200,7 +200,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 2)).willReturn(300L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -225,7 +225,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(400L);
 
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -249,7 +249,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
         given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(300L);
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
@@ -273,7 +273,7 @@ class RushEventServiceTest {
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
         given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(400L);
         // when
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);

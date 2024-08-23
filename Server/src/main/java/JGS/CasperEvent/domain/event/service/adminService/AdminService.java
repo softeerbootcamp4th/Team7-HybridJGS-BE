@@ -214,13 +214,13 @@ public class AdminService {
         }
 
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
+        List<RushEventParticipantResponseDto> rushEventParticipantResponseDtoList = new ArrayList<>();
         for (RushParticipants rushParticipant : rushParticipantsPage) {
             String userId = rushParticipant.getBaseUser().getPhoneNumber();
             int userChoice = rushParticipant.getOptionId();
             long rank = rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(rushEventId, userId, userChoice);
             rushEventParticipantResponseDtoList.add(
-                    JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto.result(rushParticipant, rank)
+                    RushEventParticipantResponseDto.result(rushParticipant, rank)
             );
         }
 

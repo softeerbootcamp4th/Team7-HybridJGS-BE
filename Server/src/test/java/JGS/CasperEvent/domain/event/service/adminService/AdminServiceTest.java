@@ -625,9 +625,9 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -657,9 +657,9 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -688,9 +688,9 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -719,9 +719,9 @@ class AdminServiceTest {
         assertThat(rushEventParticipants.isLastPage()).isTrue();
         assertThat(rushEventParticipants.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventParticipants.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -754,9 +754,9 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -789,9 +789,9 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -824,9 +824,9 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto participant = participantsList.get(0);
+        RushEventParticipantResponseDto participant = participantsList.get(0);
 
         assertThat(participant.getPhoneNumber()).isEqualTo("010-0000-0000");
         assertThat(participant.getBalanceGameChoice()).isEqualTo(1);
@@ -859,7 +859,7 @@ class AdminServiceTest {
         assertThat(rushEventWinners.isLastPage()).isTrue();
         assertThat(rushEventWinners.totalParticipants()).isEqualTo(1);
 
-        List<JGS.CasperEvent.domain.event.dto.response.rush.RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
+        List<RushEventParticipantResponseDto> participantsList = rushEventWinners.participantsList();
 
         RushEventParticipantResponseDto participant = participantsList.get(0);
 

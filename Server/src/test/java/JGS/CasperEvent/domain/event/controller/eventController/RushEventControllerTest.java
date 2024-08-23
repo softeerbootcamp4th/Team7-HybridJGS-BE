@@ -116,7 +116,7 @@ class RushEventControllerTest {
         willThrow(new CustomException("이미 응모한 회원입니다.", CustomErrorCode.CONFLICT))
                 .given(rushEventService).apply(any(BaseUser.class), eq(1));
 
-        JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto rushEventRateResponseDto =  JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.of(
+        RushEventResultResponseDto rushEventRateResponseDto =  RushEventResultResponseDto.of(
                 1,
                 315L,
                 1000L
