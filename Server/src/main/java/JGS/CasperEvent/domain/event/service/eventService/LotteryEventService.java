@@ -44,7 +44,6 @@ public class LotteryEventService {
         LotteryEvent lotteryEvent = eventCacheService.getLotteryEvent();
         LotteryParticipants participants = registerUserIfNeed(lotteryEvent, user, casperBotRequestDto);
 
-
         CasperBot casperBot = casperBotRepository.save(new CasperBot(casperBotRequestDto, user.getPhoneNumber()));
         lotteryEvent.addAppliedCount();
 
@@ -52,7 +51,6 @@ public class LotteryEventService {
 
         if (!casperBot.getExpectation().isEmpty()) {
             participants.expectationAdded();
-            lotteryEvent.addAppliedCount();
         }
 
         CasperBotResponseDto casperBotDto = CasperBotResponseDto.of(casperBot);
