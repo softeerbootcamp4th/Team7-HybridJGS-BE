@@ -181,4 +181,19 @@ class EventCacheServiceTest {
         //then
         assertThat(allRushEvent).isNotNull();
     }
+
+    @Test
+    @DisplayName("선착순 이벤트 세팅 테스트 - 성공")
+    void setAllRushEventTest_Success() {
+        //given
+        RushEvent rushEvent = new RushEvent();
+        List<RushEvent> rushEventList = List.of(rushEvent);
+        given(rushEventRepository.findAll()).willReturn(rushEventList);
+
+        //when
+        List<RushEventResponseDto> allRushEvent = eventCacheService.setAllRushEvent();
+
+        //then
+        assertThat(allRushEvent).isNotNull();
+    }
 }
