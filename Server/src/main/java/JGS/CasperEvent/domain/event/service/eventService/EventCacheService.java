@@ -6,24 +6,30 @@ import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
+import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EventCacheService {
 
+    private final CacheManager cacheManager;
     private final RushEventRepository rushEventRepository;
     private final LotteryEventRepository lotteryEventRepository;
+    private final RushParticipantsRepository rushParticipantsRepository;
 
     @Cacheable(value = "ongoingLotteryEvent")
     public LotteryEvent getLotteryEvent(){
@@ -101,5 +107,24 @@ public class EventCacheService {
         return  rushEventList.stream()
                 .map(MainRushEventResponseDto::of)
                 .toList();
+    }
+
+    // phoneNumber와 date 따른 optionId 캐싱
+    @Cacheable(value = "userOptionCache", key = "#today + ':' + #phoneNumber")
+    public int getOptionId(LocalDate today, String phoneNumber) {
+        return fetchOptionId(phoneNumber);
+    }
+
+    // userOptionCache 전체 초기화
+    public void clearUserOptionCache() {
+        Cache userOptionCache = cacheManager.getCache("userOptionCache");
+        if (userOptionCache != null) {
+            userOptionCache.clear();
+        }
+    }
+
+    private int fetchOptionId(String phoneNumber) {
+        Optional<Integer> optionId = rushParticipantsRepository.getOptionIdByUserId(phoneNumber);
+        return optionId.orElseThrow(() -> new CustomException("유저가 응모한 선택지가 존재하지 않습니다.", CustomErrorCode.USER_NOT_FOUND));
     }
 }
