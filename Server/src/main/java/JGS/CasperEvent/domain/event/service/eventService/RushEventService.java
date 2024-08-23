@@ -53,7 +53,7 @@ public class RushEventService {
         LocalDate totalEndDate = dates.get(dates.size() - 1);
 
         // 전체 이벤트 기간 구하기
-        long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1;
+        long activePeriod = totalStartDate.until(totalEndDate).getDays() + 1L;
         
         // DTO 리스트와 서버 시간을 담은 RushEventListAndServerTimeResponse 객체 생성 후 반환
         return new RushEventListResponseDto(
@@ -86,10 +86,6 @@ public class RushEventService {
         // eventId 를 이용하여 rushEvent 를 꺼냄
         RushEvent rushEvent = RepositoryErrorHandler.findByIdOrElseThrow(rushEventRepository, todayEventId, CustomErrorCode.NO_RUSH_EVENT);
 
-        // redis incr 호출
-//        rushEventRedisService.incrementOptionCount(todayEventId, optionId);
-
-
         // 새로운 RushParticipants 를 생성하여 DB 에 저장
         RushParticipants rushParticipants = new RushParticipants(user, rushEvent, optionId);
         rushParticipantsRepository.save(rushParticipants);
@@ -103,10 +99,6 @@ public class RushEventService {
 
         long leftOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 1);
         long rightOptionCount = rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(todayEventId, 2);
-
-        // redis 에 캐싱 값 가져옴
-//        long leftOptionCount = rushEventRedisService.getOptionCount(todayEventId, 1);
-//        long rightOptionCount = rushEventRedisService.getOptionCount(todayEventId, 2);
 
         return JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto.of(
                 optionId.orElseThrow(() -> new CustomException("유저가 응모한 선택지가 존재하지 않습니다.", CustomErrorCode.USER_NOT_FOUND)),
