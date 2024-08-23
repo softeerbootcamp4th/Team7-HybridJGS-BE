@@ -162,7 +162,7 @@ class AdminControllerTest {
         this.lotteryEventParticipantsListResponseDto = new ParticipantsListResponseDto<>(participants, true, 1);
 
         // 추첨 이벤트 상세 응답 DTO
-        lotteryEventDetailResponseDto = LotteryEventResponseDto.withDetail(lotteryEvent);
+        lotteryEventDetailResponseDto = LotteryEventResponseDto.withDetail(lotteryEvent, 1L);
 
         // 캐스퍼 봇
         casperBotRequestDto = CasperBotRequestDto.builder()
@@ -321,7 +321,7 @@ class AdminControllerTest {
     @DisplayName("추첨 이벤트 조회 성공 테스트")
     void getLotteryEventSuccessTest() throws Exception {
         //given
-        given(adminService.getLotteryEvent()).willReturn(LotteryEventResponseDto.withDetail(lotteryEvent));
+        given(adminService.getLotteryEvent()).willReturn(LotteryEventResponseDto.withDetail(lotteryEvent, 1L));
 
         //when
         ResultActions perform = mockMvc.perform(get("/admin/event/lottery").header("Authorization", accessToken).contentType(APPLICATION_JSON));
@@ -332,7 +332,7 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.startTime").value("00:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2100-09-27"))
                 .andExpect(jsonPath("$.endTime").value("00:00:00"))
-                .andExpect(jsonPath("$.appliedCount").value(0))
+                .andExpect(jsonPath("$.appliedCount").value(1L))
                 .andExpect(jsonPath("$.winnerCount").value(315))
                 .andExpect(jsonPath("$.status").value("DURING"))
                 .andDo(print());
@@ -619,7 +619,7 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.startTime").value("00:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2100-09-27"))
                 .andExpect(jsonPath("$.endTime").value("00:00:00"))
-                .andExpect(jsonPath("$.appliedCount").value(0))
+                .andExpect(jsonPath("$.appliedCount").value(1L))
                 .andExpect(jsonPath("$.winnerCount").value(315))
                 .andExpect(jsonPath("$.status").value("DURING"))
                 .andDo(print());
