@@ -109,11 +109,11 @@ class LotteryEventServiceTest {
         CasperBotResponseDto casperBotResponseDto = lotteryEventService.postCasperBot(user, casperBotRequestDto);
 
         //then
-        assertThat(casperBotResponseDto.eyeShape()).isEqualTo(0);
-        assertThat(casperBotResponseDto.eyePosition()).isEqualTo(0);
-        assertThat(casperBotResponseDto.mouthShape()).isEqualTo(0);
-        assertThat(casperBotResponseDto.color()).isEqualTo(0);
-        assertThat(casperBotResponseDto.sticker()).isEqualTo(0);
+        assertThat(casperBotResponseDto.eyeShape()).isZero();
+        assertThat(casperBotResponseDto.eyePosition()).isZero();
+        assertThat(casperBotResponseDto.mouthShape()).isZero();
+        assertThat(casperBotResponseDto.color()).isZero();
+        assertThat(casperBotResponseDto.sticker()).isZero();
         assertThat(casperBotResponseDto.name()).isEqualTo("name");
         assertThat(casperBotResponseDto.expectation()).isEqualTo("expectation");
     }
@@ -129,8 +129,8 @@ class LotteryEventServiceTest {
 
         //then
         assertThat(lotteryEventParticipantResponseDto).isNotNull();
-        assertThat(lotteryEventParticipantResponseDto.getLinkClickedCount()).isEqualTo(0);
-        assertThat(lotteryEventParticipantResponseDto.getExpectations()).isEqualTo(0);
+        assertThat(lotteryEventParticipantResponseDto.getLinkClickedCount()).isZero();
+        assertThat(lotteryEventParticipantResponseDto.getExpectations()).isZero();
         assertThat(lotteryEventParticipantResponseDto.getAppliedCount()).isEqualTo(1);
     }
 
