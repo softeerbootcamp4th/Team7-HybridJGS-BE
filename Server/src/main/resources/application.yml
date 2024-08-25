@@ -1,4 +1,4 @@
 spring:
-  jpa:
-    show-sql: true
+  application:
+    name: hybrid-jgs
   # 데이터베이스 설정은 공통으로 지정하지 않음

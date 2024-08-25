@@ -8,15 +8,15 @@ public enum Position {
     LEFT(1),
     RIGHT(2);
 
-    private final int position;
+    private final int positionNum;
 
-    Position(int position) {
-        this.position = position;
+    Position(int positionNum) {
+        this.positionNum = positionNum;
     }
 
     public static Position of(int position) {
         for (Position pos : Position.values()) {
-            if (pos.getPosition() == position) {
+            if (pos.getPositionNum() == position) {
                 return pos;
             }
         }

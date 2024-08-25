@@ -3,34 +3,41 @@ package JGS.CasperEvent.global.entity;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.global.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Entity
 @EqualsAndHashCode(callSuper = false)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class BaseUser extends BaseEntity {
+
+
     @Id
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(unique = true)
+    String phoneNumber;
     Role role;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
-    private LotteryParticipants lotteryParticipants;
+    @OneToMany(mappedBy = "baseUser", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<LotteryParticipants> lotteryParticipants;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "baseUser", cascade = CascadeType.ALL)
-    private RushParticipants rushParticipants;
+    @OneToMany(mappedBy = "baseUser", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<RushParticipants> rushParticipants;
 
-    public void updateLotteryParticipants(LotteryParticipants lotteryParticipant) {
-        this.lotteryParticipants = lotteryParticipant;
-    }
-
-    public BaseUser(String id, Role role) {
-        this.id = id;
+    public BaseUser(String phoneNumber, Role role) {
+        this.phoneNumber = phoneNumber;
         this.role = role;
     }
 

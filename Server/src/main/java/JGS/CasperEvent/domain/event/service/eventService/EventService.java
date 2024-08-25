@@ -1,6 +1,6 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.TotalEventDateResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.TotalEventDateResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.repository.eventRepository.LotteryEventRepository;

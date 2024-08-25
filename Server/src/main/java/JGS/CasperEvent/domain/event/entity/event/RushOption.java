@@ -1,16 +1,19 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventOptionRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventOptionRequestDto;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.enums.Position;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = {"rushEvent"}, callSuper = false)
+@ToString(exclude = {"rushEvent"})
 public class RushOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

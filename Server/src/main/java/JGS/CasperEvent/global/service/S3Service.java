@@ -36,7 +36,11 @@ public class S3Service {
     }
 
     private String uploadImage(MultipartFile image) {
-        this.validateImageFileExtension(image.getOriginalFilename());
+        String originalFilename = image.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new AmazonS3Exception("파일명이 null입니다.");
+        }
+        this.validateImageFileExtension(originalFilename);
         try {
             return this.uploadImageToS3(image);
         } catch (IOException e) {
@@ -59,7 +63,7 @@ public class S3Service {
     }
 
     private String uploadImageToS3(MultipartFile image) throws IOException {
-        String originalFilename = image.getOriginalFilename(); //원본 파일 명
+        String originalFilename = image.getOriginalFilename();
         String extension = Objects.requireNonNull(originalFilename).substring(originalFilename.lastIndexOf(".") + 1); //확장자 명
 
         String s3FileName = "image/" + UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
@@ -67,23 +71,17 @@ public class S3Service {
         InputStream is = image.getInputStream();
         byte[] bytes = IOUtils.toByteArray(is);
 
-        ObjectMetadata metadata = new ObjectMetadata(); //metadata 생성
+        ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType("image/" + extension);
         metadata.setContentLength(bytes.length);
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-
-        try {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
             PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
-//                            .withCannedAcl(CannedAccessControlList.PublicRead);
-            //실제로 S3에 이미지 데이터를 넣는 부분이다.
-            amazonS3.putObject(putObjectRequest); // put image to S3
+            amazonS3.putObject(putObjectRequest);
+            is.close();
         } catch (Exception e) {
             throw new AmazonS3Exception("이미지 업로드에 실패했습니다.");
-        } finally {
-            byteArrayInputStream.close();
-            is.close();
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();

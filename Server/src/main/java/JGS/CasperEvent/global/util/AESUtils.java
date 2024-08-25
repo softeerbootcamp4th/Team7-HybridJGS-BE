@@ -8,6 +8,9 @@ import java.util.Base64;
 
 public class AESUtils {
 
+    private AESUtils() {
+    }
+
     public static SecretKey stringToKey(String keyString) {
         byte[] decodedKey = keyString.getBytes();
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");

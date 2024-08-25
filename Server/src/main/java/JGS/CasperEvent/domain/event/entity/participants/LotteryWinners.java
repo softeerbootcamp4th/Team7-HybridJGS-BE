@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 public class LotteryWinners {
-    private long id;
+    private Long id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class LotteryWinners {
 
     public  LotteryWinners(LotteryParticipants lotteryParticipants) {
         this.id = lotteryParticipants.getId();
-        this.phoneNumber = lotteryParticipants.getBaseUser().getId();
+        this.phoneNumber = lotteryParticipants.getBaseUser().getPhoneNumber();
         this.linkClickedCount = lotteryParticipants.getLinkClickedCount();
         this.expectation = lotteryParticipants.getExpectations();
         this.appliedCount = lotteryParticipants.getAppliedCount();

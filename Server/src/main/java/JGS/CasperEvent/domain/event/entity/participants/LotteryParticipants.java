@@ -3,6 +3,7 @@ package JGS.CasperEvent.domain.event.entity.participants;
 import JGS.CasperEvent.global.entity.BaseEntity;
 import JGS.CasperEvent.global.entity.BaseUser;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -13,10 +14,10 @@ public class LotteryParticipants extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne // mappedBy 이용하면 둘 다 저장 안해도 됨
+    @ManyToOne(fetch = FetchType.LAZY) // mappedBy 이용하면 둘 다 저장 안해도 됨
     @JoinColumn(name = "base_user_id")
-    //todo: 왜이런지 알아보기
     @JsonBackReference
+    @JsonIgnore
     private BaseUser baseUser;
 
     private int linkClickedCount;

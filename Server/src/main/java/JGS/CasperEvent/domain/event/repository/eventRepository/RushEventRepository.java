@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface RushEventRepository extends JpaRepository<RushEvent, Long> {
-    @Query("SELECT e FROM RushEvent e WHERE DATE(e.startDateTime) = :eventDate")
+    @Query("SELECT e FROM RushEvent e WHERE DATE(CONVERT_TZ(e.startDateTime, '+00:00', '+09:00')) = :eventDate")
     List<RushEvent> findByEventDate(@Param("eventDate") LocalDate eventDate);
 
     RushEvent findByRushEventId(Long rushEventId);

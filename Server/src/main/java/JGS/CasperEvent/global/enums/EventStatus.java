@@ -8,9 +8,9 @@ public enum EventStatus {
     DURING(2),
     AFTER(3);
 
-    private final int eventStatus;
+    private final int statusNum;
 
-    EventStatus(int eventStatus){
-        this.eventStatus = eventStatus;
+    EventStatus(int statusNum){
+        this.statusNum = statusNum;
     }
 }

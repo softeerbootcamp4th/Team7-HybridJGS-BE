@@ -1,12 +1,13 @@
 package JGS.CasperEvent.domain.event.entity.event;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.rushEventDto.RushEventRequestDto;
+import JGS.CasperEvent.domain.event.dto.request.rushEventDto.RushEventRequestDto;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class RushEvent extends BaseEvent {
     private String prizeImageUrl;
     private String prizeDescription;
@@ -25,11 +27,11 @@ public class RushEvent extends BaseEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rushEventId;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private final Set<RushOption> options = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rushEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RushParticipants> rushParticipants;
 
     public RushEvent() {

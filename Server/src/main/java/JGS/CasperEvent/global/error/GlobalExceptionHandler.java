@@ -2,53 +2,32 @@ package JGS.CasperEvent.global.error;
 
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.error.exception.CustomException;
-import JGS.CasperEvent.global.error.exception.TooManyLotteryEventException;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
-
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler  {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handler(CustomException e){
+        log.error("CustomException: {} {}", e.getErrorCode(), e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.valueOf(e.getErrorCode().getStatus()))
                 .body(ErrorResponse.of(e.getErrorCode(), e.getMessage()));
     }
 
-    @ExceptionHandler(MissingRequestCookieException.class)
-    public ResponseEntity<ErrorResponse> missingCookieHandler(){
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(CustomErrorCode.UNAUTHORIZED));
-    }
-
-    @ExceptionHandler(UserPrincipalNotFoundException.class)
-    public ResponseEntity<ErrorResponse> userPrincipalNotFoundHandler(){
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(ErrorResponse.of(CustomErrorCode.USER_NOT_FOUND));
-    }
-
-    @ExceptionHandler(TooManyLotteryEventException.class)
-    public ResponseEntity<ErrorResponse> tooManyLotteryEventExceptionHandler(){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.of(CustomErrorCode.LOTTERY_EVENT_ALREADY_EXISTS));
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
-        BindingResult bindingResult = e.getBindingResult();
+        log.error("MethodArgumentNotValidException: [{}]", e.getMessage());
 
+        BindingResult bindingResult = e.getBindingResult();
         StringBuilder builder = new StringBuilder();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             builder.append(fieldError.getDefaultMessage());
@@ -63,10 +42,27 @@ public class GlobalExceptionHandler  {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> RuntimeExceptionHandler(RuntimeException e){
+    public ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException e){
+        log.error("RuntimeException: [{}]", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
     }
 
+    @ExceptionHandler(JDBCConnectionException.class)
+    public ResponseEntity<ErrorResponse> handleJDBCConnectionException(JDBCConnectionException e) {
+        log.error("JDBCConnectionException: [{}]", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+        log.error("Exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(CustomErrorCode.BAD_REQUEST, e.getMessage()));
+    }
 }

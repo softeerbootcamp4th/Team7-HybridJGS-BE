@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CustomErrorCode {
     NO_RUSH_EVENT("선착순 이벤트를 찾을 수 없습니다.", 404),
-    NO_LOTTERY_EVENT("선착순 이벤트를 찾을 수 없습니다.", 404),
+    NO_LOTTERY_EVENT("추첨 이벤트를 찾을 수 없습니다.", 404),
     NO_RUSH_EVENT_OPTION("해당 밸런스 게임 선택지를 찾을 수 없습니다.", 404),
     INVALID_PARAMETER("잘못된 파라미터 입력입니다.", 400),
     CASPERBOT_NOT_FOUND("배지를 찾을 수 없습니다.", 404),
@@ -24,6 +24,7 @@ public enum CustomErrorCode {
     INVALID_RUSH_EVENT_OPTION_ID("옵션 ID는 1 또는 2여야 합니다.", 400),
     EMPTY_FILE("유효하지 않은 파일입니다.", 422),
     TOO_MANY_LOTTERY_EVENT("현재 진행중인 추첨 이벤트가 2개 이상입니다.", 409),
+    TOO_MANY_RUSH_EVENT("현재 진행중인 선착순 이벤트가 6개 이상입니다.", 409),
     EVENT_IN_PROGRESS_CANNOT_CHANGE_START_TIME("현재 진행 중인 이벤트의 시작 시간을 변경할 수 없습니다.", 400),
     EVENT_IN_PROGRESS_END_TIME_BEFORE_NOW("현재 진행 중인 이벤트의 종료 시간을 현재 시간보다 이전으로 설정할 수 없습니다.", 400),
     EVENT_BEFORE_START_TIME("이벤트 시작 시간은 현재 시간 이후로 설정해야 합니다.", 400),

@@ -6,7 +6,7 @@ import JGS.CasperEvent.domain.url.repository.UrlRepository;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.util.AESUtils;
 import JGS.CasperEvent.global.util.Base62Utils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class UrlService {
 
     @Value("${client.url}")
@@ -33,15 +33,10 @@ public class UrlService {
     private final UrlRepository urlRepository;
     private final SecretKey secretKey;
 
-    @Autowired
-    public UrlService(UrlRepository urlRepository, SecretKey secretKey) {
-        this.urlRepository = urlRepository;
-        this.secretKey = secretKey;
-    }
-
     //todo: 테스트 끝나면 수정필요
+    // 단축 url 생성
     public ShortenUrlResponseDto generateShortUrl(BaseUser user) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String encryptedUserId = AESUtils.encrypt(user.getId(), secretKey);
+        String encryptedUserId = AESUtils.encrypt(user.getPhoneNumber(), secretKey);
 
         String originalUrl = clientUrl + "?" + "referralId=" + encryptedUserId;
         String originalLocalUrl = localClientUrl + "?" + "referralId=" + encryptedUserId;
@@ -62,9 +57,10 @@ public class UrlService {
         return new ShortenUrlResponseDto(shortenUrl, shortenLocalUrl);
     }
 
-    public String getOriginalUrl(String encodedId){
+    // 원본 url 조회 테스트
+    public String getOriginalUrl(String encodedId) {
         Long urlId = Base62Utils.decode(encodedId);
-        Url url = urlRepository.findById(urlId).orElseThrow(NoSuchElementException::new);
+        Url url = urlRepository.findById(urlId).orElseGet(() -> new Url(clientUrl));
         return url.getOriginalUrl();
     }
 

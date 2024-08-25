@@ -1,28 +1,30 @@
 package JGS.CasperEvent.domain.event.service.eventService;
 
-import JGS.CasperEvent.domain.event.dto.ResponseDto.rushEventResponseDto.*;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventListResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventOptionResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.rush.RushEventResultResponseDto;
 import JGS.CasperEvent.domain.event.entity.event.RushEvent;
 import JGS.CasperEvent.domain.event.entity.event.RushOption;
 import JGS.CasperEvent.domain.event.entity.participants.RushParticipants;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushEventRepository;
 import JGS.CasperEvent.domain.event.repository.eventRepository.RushOptionRepository;
 import JGS.CasperEvent.domain.event.repository.participantsRepository.RushParticipantsRepository;
+import JGS.CasperEvent.domain.event.service.redisService.RushEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.CustomErrorCode;
 import JGS.CasperEvent.global.enums.Position;
 import JGS.CasperEvent.global.error.exception.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,41 +41,42 @@ class RushEventServiceTest {
     @Mock
     private RushParticipantsRepository rushParticipantsRepository;
     @Mock
-    private RedisTemplate<String, RushEventResponseDto> rushEventRedisTemplate;
-    @Mock
     private RushOptionRepository rushOptionRepository;
-
     @Mock
-    private ValueOperations<String, RushEventResponseDto> valueOperations;
+    private EventCacheService eventCacheService;
+    @Mock
+    private RushEventRedisService rushEventRedisService;
+
 
     @InjectMocks
     RushEventService rushEventService;
+
+    private RushEvent rushEvent;
+    private RushEventResponseDto todayEvent;
+
+
+    @BeforeEach
+    void setUp() {
+        rushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
+        lenient().doReturn(1L).when(rushEvent).getRushEventId();
+        RushOption leftOption = new RushOption(rushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+        RushOption rightOption = new RushOption(rushEvent, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT);
+
+        rushEvent.addOption(leftOption, rightOption);
+
+        todayEvent = RushEventResponseDto.of(rushEvent);
+    }
 
     @Test
     @DisplayName("모든 RushEvent 조회")
     void getAllRushEvents() {
         // given
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
+        List<RushEventResponseDto> rushEventList = List.of(
+                todayEvent, todayEvent
         );
 
-        List<RushEvent> rushEventList = List.of(
-                new RushEvent(),
-                new RushEvent()
-        );
-
-        List<MainRushEventResponseDto> mainRushEventResponseDtoList = rushEventList.stream()
-                .map(MainRushEventResponseDto::of).toList();
-
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(valueOperations.get("todayEvent")).willReturn(todayEvent);
-        given(rushEventRepository.findAll()).willReturn(rushEventList);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(eventCacheService.getAllRushEvent()).willReturn(rushEventList);
 
         // when
         RushEventListResponseDto allRushEvents = rushEventService.getAllRushEvents();
@@ -81,7 +84,7 @@ class RushEventServiceTest {
         // then
         assertNotNull(allRushEvents);
         assertEquals(2, allRushEvents.getEvents().size());
-        assertEquals(allRushEvents.getTodayEventId(), 1);
+        assertEquals(1, allRushEvents.getTodayEventId());
     }
 
     @Test
@@ -89,22 +92,12 @@ class RushEventServiceTest {
     void isExists() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, user.getPhoneNumber())).willReturn(true);
 
         // when
-        boolean exists = rushEventService.isExists(user.getId());
+        boolean exists = rushEventService.isExists(user.getPhoneNumber());
 
         // then
         assertTrue(exists);
@@ -115,21 +108,11 @@ class RushEventServiceTest {
     void apply() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(false);
-        RushEvent rushEvent = new RushEvent();
-        given(rushEventRepository.findById(1L)).willReturn(Optional.of(rushEvent));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, user.getPhoneNumber())).willReturn(false);
+        RushEvent mockRushEvent = new RushEvent();
+        given(rushEventRepository.findById(1L)).willReturn(Optional.of(mockRushEvent));
 
         // when
         rushEventService.apply(user, 1);
@@ -142,20 +125,11 @@ class RushEventServiceTest {
     @DisplayName("선착순 이벤트 응모 테스트 (이미 응모한 유저인 경우)")
     void apply2() {
         // given
-        BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
+        BaseUser user = spy(new BaseUser());
+        given(user.getPhoneNumber()).willReturn("010-0000-0000");
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_Id(1L, user.getId())).willReturn(true);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.existsByRushEvent_RushEventIdAndBaseUser_PhoneNumber(1L, "010-0000-0000")).willReturn(true);
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -172,30 +146,20 @@ class RushEventServiceTest {
     void getRushEventRate() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(100L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(200L);
 
         // when
-        RushEventRateResponseDto result = rushEventService.getRushEventRate(user);
+        RushEventResultResponseDto result = rushEventService.getRushEventRate(user);
 
         // then
         assertNotNull(result);
-        assertEquals(1, result.optionId());
-        assertEquals(100, result.leftOption());
-        assertEquals(200, result.rightOption());
+        assertEquals(1, result.getOptionId());
+        assertEquals(100, result.getLeftOption());
+        assertEquals(200, result.getRightOption());
     }
 
     @Test
@@ -203,33 +167,24 @@ class RushEventServiceTest {
     void getRushEventResult() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 1)).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(300L);
 
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
- 
+
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertTrue(result.isWinner());
+        assertTrue(result.getIsWinner());
     }
 
     @Test
@@ -237,33 +192,24 @@ class RushEventServiceTest {
     void getRushEventResult2() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(2));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(2));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 2)).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 2)).willReturn(300L);
 
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
+        assertEquals(2, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(500, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test
@@ -271,33 +217,24 @@ class RushEventServiceTest {
     void getRushEventResult3() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(700L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getId(), 1)).willReturn(400L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserIdAndOptionId(1L, user.getPhoneNumber(), 1)).willReturn(400L);
 
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(700, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(700, result.getTotalParticipants());
         assertEquals(400, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test
@@ -305,32 +242,23 @@ class RushEventServiceTest {
     void getRushEventResult4() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getId())).willReturn(300L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(300L);
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(500, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
         assertEquals(300, result.getRank());
-        assertTrue(result.isWinner());
+        assertTrue(result.getIsWinner());
     }
 
     @Test
@@ -338,131 +266,89 @@ class RushEventServiceTest {
     void getRushEventResult5() {
         // given
         BaseUser user = new BaseUser();
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                new HashSet<>()
-        );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-        given(rushParticipantsRepository.getOptionIdByUserId(user.getId())).willReturn(Optional.of(1));
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.of(1));
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
         given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
-        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getId())).willReturn(400L);
+        given(rushParticipantsRepository.findUserRankByEventIdAndUserId(1L, user.getPhoneNumber())).willReturn(400L);
         // when
         RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
+        assertEquals(1, result.getOptionId());
         assertEquals(500, result.getLeftOption());
         assertEquals(500, result.getRightOption());
         assertEquals(1000, result.getTotalParticipants());
         assertEquals(400, result.getRank());
-        assertFalse(result.isWinner());
+        assertFalse(result.getIsWinner());
     }
 
     @Test
-    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트")
-    void getTodayRushEvent() {
+    @DisplayName("선착순 이벤트 결과 조회 테스트 (응모하지 않았는데 결과 조회창으로 넘어가서 호출되는 경우)")
+    void getRushEventResult6() {
         // given
-        LocalDate today = LocalDate.now();
-        RushEvent rushEvent = new RushEvent();
-        given(rushEventRepository.findByEventDate(today)).willReturn(List.of(rushEvent));
+        BaseUser user = new BaseUser();
 
-        // when
-        RushEventResponseDto result = rushEventService.getTodayRushEvent(today);
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
+        given(rushParticipantsRepository.getOptionIdByUserId(user.getPhoneNumber())).willReturn(Optional.empty());
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 1)).willReturn(500L);
+        given(rushParticipantsRepository.countByRushEvent_RushEventIdAndOptionId(1L, 2)).willReturn(500L);
+
+        // when & then
+        RushEventResultResponseDto result = rushEventService.getRushEventResult(user);
 
         // then
         assertNotNull(result);
-        assertEquals(rushEvent.getRushEventId(), result.rushEventId());
+        assertNull(result.getOptionId());
+        assertEquals(500, result.getLeftOption());
+        assertEquals(500, result.getRightOption());
+        assertNull(result.getTotalParticipants());
+        assertNull(result.getRank());
+        assertNull(result.getIsWinner());
     }
 
     @Test
-    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (Redis에 선착순 이벤트가 없는 경우)")
-    void getTodayRushEvent2() {
-        // given
-        LocalDate today = LocalDate.now();
-        given(rushEventRepository.findByEventDate(today)).willReturn(List.of());
-
-        // when & then
-        CustomException exception = assertThrows(CustomException.class, () ->
-                rushEventService.getTodayRushEvent(today)
-        );
-
-        assertEquals(CustomErrorCode.NO_RUSH_EVENT, exception.getErrorCode());
-        assertEquals("선착순 이벤트가 존재하지않습니다.", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("오늘의 선착순 이벤트 DB에서 가져오기 테스트 (Redis에 선착순 이벤트가 2개 이상인 경우)")
-    void getTodayRushEvent3() {
-        // given
-        LocalDate today = LocalDate.now();
-        RushEvent rushEvent1 = new RushEvent();
-        RushEvent rushEvent2 = new RushEvent();
-        given(rushEventRepository.findByEventDate(today)).willReturn(List.of(
-                rushEvent1, rushEvent2
-        ));
-
-        // when & then
-        CustomException exception = assertThrows(CustomException.class, () ->
-                rushEventService.getTodayRushEvent(today)
-        );
-
-        assertEquals(CustomErrorCode.MULTIPLE_RUSH_EVENTS_FOUND, exception.getErrorCode());
-        assertEquals("선착순 이벤트가 2개 이상 존재합니다.", exception.getMessage());
-    }
-
-    @Test
+    @DisplayName("선착순 이벤트 테스트 API 테스트")
     void setTodayEventToRedis() {
         // given
-        RushEvent rushEvent = new RushEvent();
+        RushEvent mockRushEvent = new RushEvent();
         RushOption rushOption = new RushOption();
-        given(rushEventRepository.save(any(RushEvent.class))).willReturn(rushEvent);
+        given(rushEventRepository.save(any(RushEvent.class))).willReturn(mockRushEvent);
         given(rushOptionRepository.save(any(RushOption.class))).willReturn(rushOption);
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
 
         // when
-        rushEventService.setTodayEventToRedis();
+        rushEventService.setRushEvents();
 
         // then
         verify(rushParticipantsRepository).deleteAllInBatch();
         verify(rushOptionRepository).deleteAllInBatch();
         verify(rushEventRepository).deleteAllInBatch();
-        verify(rushEventRedisTemplate.opsForValue()).set(eq("todayEvent"), any(RushEventResponseDto.class));
     }
 
     @Test
+    @DisplayName("오늘의 선착순 이벤트의 선택지 조회 테스트")
     void getTodayRushEventOptions() {
         // given
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
+        RushEvent spyRushEvent = spy(new RushEvent(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 315, "image-url", "prize-description"));
+        given(spyRushEvent.getRushEventId()).willReturn(1L);
+        RushOption leftOption = new RushOption(spyRushEvent, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT);
+        RushOption rightOption = new RushOption(spyRushEvent, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT);
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
+        spyRushEvent.addOption(leftOption, rightOption);
+
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(spyRushEvent);
+
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
 
         // when
-        MainRushEventOptionsResponseDto result = rushEventService.getTodayRushEventOptions();
+        RushEventResponseDto result = rushEventService.getTodayRushEventOptions();
 
         // then
         assertNotNull(result);
-        assertEquals("leftMainText", result.leftOption().mainText());
-        assertEquals("rightMainText", result.rightOption().mainText());
+        assertEquals("leftMainText", result.getLeftOption().getMainText());
+        assertEquals("rightMainText", result.getRightOption().getMainText());
     }
 
     @Test
@@ -470,28 +356,13 @@ class RushEventServiceTest {
     void getRushEventOptionResult() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
-
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayEvent);
         // when
-        ResultRushEventOptionResponseDto result = rushEventService.getRushEventOptionResult(optionId);
+        RushEventOptionResponseDto result = rushEventService.getRushEventOptionResult(optionId);
 
         // then
         assertNotNull(result);
-        assertEquals("leftMainText", result.mainText());
+        assertEquals("leftMainText", result.getMainText());
     }
 
     @Test
@@ -499,7 +370,8 @@ class RushEventServiceTest {
     void getRushEventOptionResult2() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
+
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(
                 1L,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
@@ -507,18 +379,17 @@ class RushEventServiceTest {
                 "image-url",
                 "prize-description",
                 Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
+                        RushEventOptionResponseDto.of(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
+                        RushEventOptionResponseDto.of(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
+                        RushEventOptionResponseDto.of(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
                 )
         );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
 
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
-            rushEventService.getRushEventOptionResult(optionId)
+                rushEventService.getRushEventOptionResult(optionId)
         );
 
         assertEquals(CustomErrorCode.INVALID_RUSH_EVENT_OPTIONS_COUNT, exception.getErrorCode());
@@ -530,18 +401,6 @@ class RushEventServiceTest {
     void getRushEventOptionResult3() {
         // given
         int optionId = 3;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                315,
-                "image-url",
-                "prize-description",
-                Set.of(
-                        new RushEventOptionResponseDto(1L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.LEFT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
-                )
-        );
 
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -557,7 +416,8 @@ class RushEventServiceTest {
     void getRushEventOptionResult4() {
         // given
         int optionId = 1;
-        RushEventResponseDto todayEvent = new RushEventResponseDto(
+
+        RushEventResponseDto todayRushEvent = RushEventResponseDto.of(
                 1L,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
@@ -565,14 +425,12 @@ class RushEventServiceTest {
                 "image-url",
                 "prize-description",
                 Set.of(
-                        new RushEventOptionResponseDto(2L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
-                        new RushEventOptionResponseDto(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
+                        RushEventOptionResponseDto.of(2L, "leftMainText", "leftSubText", "resultMainText", "resultSubText", "leftImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now()),
+                        RushEventOptionResponseDto.of(3L, "rightMainText", "rightSubText", "resultMainText", "resultSubText", "rightImageUrl", Position.RIGHT, LocalDateTime.now(), LocalDateTime.now())
                 )
         );
 
-        given(rushEventRedisTemplate.opsForValue()).willReturn(valueOperations);
-        given(rushEventRedisTemplate.opsForValue().get("todayEvent")).willReturn(todayEvent);
-
+        given(eventCacheService.getTodayEvent(LocalDate.now())).willReturn(todayRushEvent);
         // when & then
         CustomException exception = assertThrows(CustomException.class, () ->
                 rushEventService.getRushEventOptionResult(optionId)

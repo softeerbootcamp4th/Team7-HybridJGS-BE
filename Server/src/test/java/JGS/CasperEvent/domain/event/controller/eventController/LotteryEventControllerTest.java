@@ -1,32 +1,34 @@
 package JGS.CasperEvent.domain.event.controller.eventController;
 
-import JGS.CasperEvent.domain.event.dto.RequestDto.lotteryEventDto.CasperBotRequestDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.CasperBotResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryEventResponseDto;
-import JGS.CasperEvent.domain.event.dto.ResponseDto.lotteryEventResponseDto.LotteryParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.request.lotteryEventDto.CasperBotRequestDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.CasperBotResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventParticipantResponseDto;
+import JGS.CasperEvent.domain.event.dto.response.lottery.LotteryEventResponseDto;
 import JGS.CasperEvent.domain.event.entity.casperBot.CasperBot;
+import JGS.CasperEvent.domain.event.entity.event.LotteryEvent;
 import JGS.CasperEvent.domain.event.entity.participants.LotteryParticipants;
 import JGS.CasperEvent.domain.event.service.adminService.AdminService;
 import JGS.CasperEvent.domain.event.service.eventService.LotteryEventService;
-import JGS.CasperEvent.domain.event.service.redisService.RedisService;
+import JGS.CasperEvent.domain.event.service.redisService.LotteryEventRedisService;
 import JGS.CasperEvent.global.entity.BaseUser;
 import JGS.CasperEvent.global.enums.Role;
 import JGS.CasperEvent.global.jwt.service.UserService;
 import JGS.CasperEvent.global.jwt.util.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LotteryEventController.class)
-@Import(JwtProvider.class)
-public class LotteryEventControllerTest {
+class LotteryEventControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -52,7 +53,7 @@ public class LotteryEventControllerTest {
     @MockBean
     private AdminService adminService;
     @MockBean
-    private RedisService redisService;
+    private LotteryEventRedisService lotteryEventRedisService;
 
     private BaseUser user;
     private String phoneNumber;
@@ -62,6 +63,16 @@ public class LotteryEventControllerTest {
     private CasperBotResponseDto casperBotResponse;
     private LotteryParticipants lotteryParticipants;
     private LotteryEventResponseDto lotteryEventResponseDto;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public JwtProvider jwtProvider() {
+            String secretKey = "mockKEymockKEymockKEymockKEymockKEymockKEymockKEy";
+            byte[] secret = secretKey.getBytes();
+            return new JwtProvider(Keys.hmacShaKeyFor(secret));
+        }
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -78,11 +89,14 @@ public class LotteryEventControllerTest {
         this.accessToken = getToken(this.phoneNumber);
 
         // 추첨 이벤트 조회
-        lotteryEventResponseDto = new LotteryEventResponseDto(
-                LocalDateTime.of(2024, 8, 15, 0, 0, 0),
+        LotteryEvent lotteryEvent = new LotteryEvent(
                 LocalDateTime.of(2024, 8, 1, 0, 0, 0),
                 LocalDateTime.of(2024, 8, 31, 0, 0, 0),
-                ChronoUnit.DAYS.between(LocalDateTime.of(2024, 8, 1, 0, 0, 0), LocalDateTime.of(2024, 8, 31, 0, 0, 0))
+                315
+        );
+        lotteryEventResponseDto = LotteryEventResponseDto.of(
+                lotteryEvent,
+                LocalDateTime.of(2024, 8, 1, 0, 0, 0)
         );
 
         casperBotRequest = CasperBotRequestDto.builder()
@@ -93,7 +107,8 @@ public class LotteryEventControllerTest {
                 .sticker(0)
                 .name("name")
                 .expectation("expectation")
-                .referralId("QEszP1K8IqcapUHAVwikXA==").build();
+                .referralId("QEszP1K8IqcapUHAVwikXA==")
+                .build();
 
         casperBot = new CasperBot(casperBotRequest, "010-0000-0000");
 
@@ -112,7 +127,7 @@ public class LotteryEventControllerTest {
 
         //then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.serverDateTime").value("2024-08-15T00:00:00"))
+                .andExpect(jsonPath("$.serverDateTime").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventStartDate").value("2024-08-01T00:00:00"))
                 .andExpect(jsonPath("$.eventEndDate").value("2024-08-31T00:00:00"))
                 .andDo(print());
@@ -146,10 +161,10 @@ public class LotteryEventControllerTest {
 
     @Test
     @DisplayName("응모 여부 조회 성공 테스트")
-    void GetLotteryParticipantsSuccessTest() throws Exception {
+    void getLotteryParticipantsSuccessTest() throws Exception {
         //given
         given(lotteryEventService.getLotteryParticipant(user))
-                .willReturn(LotteryParticipantResponseDto.of(lotteryParticipants, casperBotResponse));
+                .willReturn(LotteryEventParticipantResponseDto.of(lotteryParticipants));
 
         //when
         ResultActions perform = mockMvc.perform(get("/event/lottery/applied")
@@ -161,13 +176,6 @@ public class LotteryEventControllerTest {
                 .andExpect(jsonPath("$.linkClickedCount").value(0))
                 .andExpect(jsonPath("$.expectations").value(0))
                 .andExpect(jsonPath("$.appliedCount").value(1))
-                .andExpect(jsonPath("$.casperBot.eyeShape").value(0))
-                .andExpect(jsonPath("$.casperBot.eyePosition").value(0))
-                .andExpect(jsonPath("$.casperBot.mouthShape").value(0))
-                .andExpect(jsonPath("$.casperBot.color").value(0))
-                .andExpect(jsonPath("$.casperBot.sticker").value(0))
-                .andExpect(jsonPath("$.casperBot.name").value("name"))
-                .andExpect(jsonPath("$.casperBot.expectation").value("expectation"))
                 .andDo(print());
     }
 
@@ -179,7 +187,7 @@ public class LotteryEventControllerTest {
         for (int i = 0; i < 100; i++) {
             recentData.add(casperBotResponse);
         }
-        given(redisService.getRecentData())
+        given(lotteryEventRedisService.getRecentData())
                 .willReturn(recentData);
 
         //when
