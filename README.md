@@ -325,7 +325,7 @@ fix/#2-category
 
 ![image](https://github.com/user-attachments/assets/b2a9050e-a565-441f-98c3-25ec1b6547c1)
 
-### 서버 구성
+### 서버 아키텍쳐
 
 ![Untitled (2)](https://github.com/user-attachments/assets/6f2ed338-1f09-4e78-bbca-cf9d1673e5f1)
 
